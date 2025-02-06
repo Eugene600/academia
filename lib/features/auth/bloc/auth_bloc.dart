@@ -34,9 +34,7 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       emit(AuthLoadingState());
-      final result = await _userRepository.authenticateRemotely(
-
-      )
+      // final result = await _userRepository.authenticateRemotely();
     });
   }
 }

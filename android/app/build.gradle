@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 android {
 
     namespace = "com.dita.academia"
-    compileSdk = 34
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
