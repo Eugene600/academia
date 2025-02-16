@@ -16,7 +16,7 @@ on:
 jobs:
   build:
     name: Build & Release
-    runs-on: macos-latest # For iOS builds
+    runs-on: ubuntu-latest # For iOS builds
 
     strategy:
       matrix:
@@ -50,12 +50,6 @@ jobs:
         run: flutter build apk --flavor ${{ matrix.flavor }} --release --target lib/main_${{ matrix.flavor }}.dart
       - name: Build appBundle
         run: flutter build appbundle --flavor ${{ matrix.flavor }} --release --target lib/main_${{ matrix.flavor }}.dart
-      - name: Build IPA
-        run: flutter build ipa --flavor ${{ matrix.flavor }} --no-codesign --target lib/main_${{ matrix.flavor }}.dart
-      - name: Compress Archives and IPAs
-        run: |
-          cd build
-          tar -czf ios_build_${{ matrix.flavor }}.tar.gz ios
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -63,7 +57,6 @@ jobs:
           path: |
             build/app/outputs/flutter-apk/app-${{ matrix.flavor }}-release.apk
             build/app/outputs/bundle/${{ matrix.flavor }}/release/app-${{ matrix.flavor }}-release.aab
-            build/ios_build_${{ matrix.flavor }}.tar.gz
       - name: Extract version from pubspec.yaml
         id: extract_version
         run: |
@@ -86,7 +79,7 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/app-${{ matrix.flavor }}-release.apk,build/app/outputs/bundle/${{ matrix.flavor }}/release/app-${{ matrix.flavor }}-release.aab,build/ios_build_${{ matrix.flavor }}.tar.gz"
+          artifacts: "build/app/outputs/flutter-apk/app-${{ matrix.flavor }}-release.apk,build/app/outputs/bundle/${{ matrix.flavor }}/release/app-${{ matrix.flavor }}-release.aab"
           tag: v${{ env.VERSION }}-${{ matrix.flavor }}
           token: ${{ secrets.TOKEN }}
 
