@@ -1,0 +1,2 @@
+/home/erick/Projects/apps/academia/android/app/.cxx/RelWithDebInfo/674mz282/x86_64/CMakeFiles/edit_cache.dir
+/home/erick/Projects/apps/academia/android/app/.cxx/RelWithDebInfo/674mz282/x86_64/CMakeFiles/rebuild_cache.dir

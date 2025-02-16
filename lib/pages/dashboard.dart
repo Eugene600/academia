@@ -150,7 +150,7 @@ class DashBoard extends StatelessWidget {
                           ? Column(
                               children: [
                                 Text(
-                                  "You have no classes today, take the day off complete assignments ${Emojis.smile_face_with_tongue}",
+                                  "You have no classes today, take the day off complete assignments ",
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.titleSmall,
                                 )
@@ -282,7 +282,7 @@ class DashBoard extends StatelessWidget {
                       child: Obx(
                         () => todoController.filterTodosByDate("today").isEmpty
                             ? Text(
-                                "You are clear for the day try visiting the library ${Emojis.smile_ghost}",
+                                "You are clear for the day try visiting the library",
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.titleSmall,
                               )

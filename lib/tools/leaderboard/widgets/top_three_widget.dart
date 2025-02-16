@@ -20,7 +20,7 @@ class LeaderBoardProfileWidget extends StatelessWidget {
     return Column(
       children: [
         Text(
-          position == 1 ? Emojis.clothing_crown : "$position",
+          position == 1 ? "1" : "$position",
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         const Spacer(),

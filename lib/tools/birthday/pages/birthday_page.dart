@@ -40,7 +40,7 @@ class BirthDayPage extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             sliver: SliverToBoxAdapter(
               child: Text(
-                "Happy birthday ${userController.user.value!.firstName} ${Emojis.activites_confetti_ball}",
+                "Happy birthday ${userController.user.value!.firstName}",
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineLarge,
               ),

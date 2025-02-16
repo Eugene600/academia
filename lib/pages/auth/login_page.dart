@@ -1,6 +1,4 @@
 import 'package:academia/exports/barrel.dart';
-import 'package:academia/notifier/local_notification_channel.dart';
-import 'package:academia/notifier/local_notifier_service.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
@@ -56,14 +54,6 @@ class _LoginPageState extends State<LoginPage> {
                 (predicate) => false
                 // (Route<dynamic route>) => false,
                 );
-            LocalNotifierService().showNotification(
-              id: 0,
-              title: "Welcome",
-              body:
-                  "Welcome back ${userController.user.value!.firstName.title()} to Academia!, we've missed you",
-              channelKey: LocalNotificationChannelType.general.channelKey,
-              notificationType: NotificationType.defaultNotification,
-            );
             return;
           }
         });

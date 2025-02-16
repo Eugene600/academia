@@ -1,20 +1,12 @@
 import 'package:academia/app.dart';
 import 'package:academia/exports/barrel.dart';
-import 'package:academia/notifier/notifier.dart';
 import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize the background services
-  await LocalNotifierService().initialize();
-  await LocalNotificationStatusManager().initialize();
-  await BackgroundWorker().initialize();
-
   // initialize the controllers
   Get.put(UserController());
   Get.put(SettingsController());
-  Get.put(NotificationsController());
   Get.put(NetworkController());
   Get.put(TodoController());
   Get.put(RewardController());

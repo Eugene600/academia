@@ -41,7 +41,7 @@ class CourseViewPage extends StatelessWidget {
                         .isEmpty
                     ? Center(
                         child: Text(
-                          "Add topics you learn in class for easier revision ${Emojis.smile_nerd_face}",
+                          "Add topics you learn in class for easier revision",
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),

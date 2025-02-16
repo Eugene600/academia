@@ -40,7 +40,7 @@ class IntroPage extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.all(16),
                   child: Text(
-                    'Academia is for students by students ${Emojis.game_heart_suit}',
+                    'Academia is for students by students',
                     textAlign: TextAlign.center,
                   ),
                 ),

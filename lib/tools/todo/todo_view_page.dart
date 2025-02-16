@@ -1,6 +1,4 @@
 import 'package:academia/exports/barrel.dart';
-import 'package:academia/notifier/local_notification_channel.dart';
-import 'package:academia/notifier/notifier.dart';
 import 'package:get/get.dart';
 
 class TodoViewPage extends StatefulWidget {
@@ -13,8 +11,6 @@ class TodoViewPage extends StatefulWidget {
 
 class _TodoViewPageState extends State<TodoViewPage> {
   final TodoController todoController = Get.find<TodoController>();
-  final NotificationsController notificationsController =
-      Get.find<NotificationsController>();
   final Map<String, bool> subtasks = {};
   final TextEditingController titleController = TextEditingController();
   final TextEditingController duedateController = TextEditingController();
@@ -264,17 +260,7 @@ class _TodoViewPageState extends State<TodoViewPage> {
 
                 if (ok) {
                   if (!context.mounted) return;
-                  if (notify) {
-                    // notification logic
-                    LocalNotifierService().showNotification(
-                      id: LocalNotificationStatusManager().getNextId(),
-                      title: "Todos",
-                      body:
-                          "Todo ${titleController.text} has been scheduled successfully ${Emojis.smile_clown_face}",
-                      channelKey:
-                          LocalNotificationChannelType.reminders.channelKey,
-                    );
-                  }
+
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(
                       notify
@@ -308,17 +294,6 @@ class _TodoViewPageState extends State<TodoViewPage> {
                 final ok = await todoController.updateTodo(widget.todo!);
                 if (ok) {
                   if (!context.mounted) return;
-                  if (notify) {
-                    // notification logic
-                    LocalNotifierService().showNotification(
-                      id: LocalNotificationStatusManager().getNextId(),
-                      title: "Todos",
-                      body:
-                          "Todo ${titleController.text} has been scheduled successfully ${Emojis.smile_clown_face}",
-                      channelKey:
-                          LocalNotificationChannelType.reminders.channelKey,
-                    );
-                  }
 
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     content: Text(
