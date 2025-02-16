@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -17,9 +18,11 @@ class OnboardingPage extends StatelessWidget {
         child: Column(
           children: [
             const Spacer(),
-            const CircleAvatar(
-              radius: 120,
-              backgroundImage: AssetImage("assets/icons/academia-splash.png"),
+            CircleAvatar(
+              radius: 80,
+              child: Lottie.asset(
+                "assets/lotties/bunny.json",
+              ),
             ),
             const Spacer(),
             Expanded(

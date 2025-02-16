@@ -74,7 +74,13 @@ class _LoginPageState extends State<LoginPage> {
                         Image.asset(
                           "assets/icons/academia.png",
                         ),
-                        const Text("Academia"),
+                        Text(
+                          "Academia",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(color: Colors.white),
+                        ),
                       ],
                     ),
                   ),
