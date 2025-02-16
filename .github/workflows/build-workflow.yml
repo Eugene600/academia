@@ -1,7 +1,6 @@
 # Academia Build and release
 # Build action borrowed from
 # https://medium.com/@colonal/automating-flutter-builds-and-releases-with-github-actions-77ccf4a1ccdd
-
 name: "Academia Build & Release"
 
 on:
@@ -17,7 +16,11 @@ on:
 jobs:
   build:
     name: Build & Release
-    runs-on: macos-latest # For ios builds
+    runs-on: macos-latest # For iOS builds
+
+    strategy:
+      matrix:
+        flavor: [development, staging, production]
 
     steps:
       - name: Checkout Repository
@@ -44,23 +47,23 @@ jobs:
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=keystore.jks" >> android/key.properties
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --flavor ${{ matrix.flavor }} --release --target lib/main_${{ matrix.flavor }}.dart
       - name: Build appBundle
-        run: flutter build appBundle
+        run: flutter build appbundle --flavor ${{ matrix.flavor }} --release --target lib/main_${{ matrix.flavor }}.dart
       - name: Build IPA
-        run: flutter build ipa --no-codesign
+        run: flutter build ipa --flavor ${{ matrix.flavor }} --no-codesign --target lib/main_${{ matrix.flavor }}.dart
       - name: Compress Archives and IPAs
         run: |
           cd build
-          tar -czf ios_build.tar.gz ios
+          tar -czf ios_build_${{ matrix.flavor }}.tar.gz ios
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Releases
+          name: Releases-${{ matrix.flavor }}
           path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab
-            build/ios_build.tar.g
+            build/app/outputs/flutter-apk/app-${{ matrix.flavor }}-release.apk
+            build/app/outputs/bundle/${{ matrix.flavor }}/release/app-${{ matrix.flavor }}-release.aab
+            build/ios_build_${{ matrix.flavor }}.tar.gz
       - name: Extract version from pubspec.yaml
         id: extract_version
         run: |
@@ -69,7 +72,7 @@ jobs:
       - name: Check if Tag Exists
         id: check_tag
         run: |
-          if git rev-parse "v${{ env.VERSION }}" >/dev/null 2>&1; then
+          if git rev-parse "v${{ env.VERSION }}-${{ matrix.flavor }}" >/dev/null 2>&1; then
             echo "TAG_EXISTS=true" >> $GITHUB_ENV
           else
             echo "TAG_EXISTS=false" >> $GITHUB_ENV
@@ -78,11 +81,12 @@ jobs:
         if: env.TAG_EXISTS == 'true'
         id: modify_tag
         run: |
-          new_version="${{ env.VERSION }}-build-${{ github.run_number }}"
+          new_version="${{ env.VERSION }}-${{ matrix.flavor }}-build-${{ github.run_number }}"
           echo "VERSION=$new_version" >> $GITHUB_ENV
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/app-release.apk,build/app/outputs/bundle/release/app-release.aab,build/ios_build.tar.gz"
-          tag: v${{ env.VERSION }}
+          artifacts: "build/app/outputs/flutter-apk/app-${{ matrix.flavor }}-release.apk,build/app/outputs/bundle/${{ matrix.flavor }}/release/app-${{ matrix.flavor }}-release.aab,build/ios_build_${{ matrix.flavor }}.tar.gz"
+          tag: v${{ env.VERSION }}-${{ matrix.flavor }}
           token: ${{ secrets.TOKEN }}
+
