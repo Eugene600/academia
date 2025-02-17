@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:vibration/vibration.dart';
 
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({super.key});
@@ -18,13 +20,12 @@ class OnboardingPage extends StatelessWidget {
         child: Column(
           children: [
             const Spacer(),
-            CircleAvatar(
-              radius: 80,
-              child: Lottie.asset(
-                "assets/lotties/bunny.json",
-              ),
+            Lottie.asset(
+              "assets/lotties/onboarding.json",
+              repeat: false,
+              height: 250,
             ),
-            const Spacer(),
+            //const Spacer(),
             Expanded(
               child: Column(
                 spacing: 12,
@@ -32,25 +33,35 @@ class OnboardingPage extends StatelessWidget {
                 children: [
                   const Spacer(),
                   Text(
-                    "A scholarly haven for students, crafted by students. 📜✨",
+                    "Academia is for you by you, crafted by students, for students",
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontFamily: GoogleFonts.marcellus().fontFamily,
                         ),
                     textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
+                  ).animate().fadeIn(delay: 1000.ms),
+                  const SizedBox(height: 12),
                   BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
                     return state is AuthInitialState ||
                             state is AuthLoadingState
-                        ? const CircularProgressIndicator.adaptive()
+                        ? Lottie.asset(
+                            "assets/lotties/loading-bounce.json",
+                            height: 80,
+                          )
                         : FilledButton(
-                            onPressed: () {
-                              GoRouter.of(context).pushNamed(
+                            onPressed: () async {
+                              if (await Vibration.hasVibrator()) {
+                                Vibration.vibrate(amplitude: 32);
+                              }
+                              if (!context.mounted) return;
+                              GoRouter.of(context).pushReplacementNamed(
                                 AcademiaRouter.auth,
                               );
                             },
                             child: const Text("Get Started"),
-                          );
+                          )
+                            .animate(delay: 1500.ms)
+                            .shake()
+                            .then(delay: 1000.ms);
                   }),
                   const SizedBox(height: 16),
                 ],

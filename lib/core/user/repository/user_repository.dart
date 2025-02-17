@@ -1,5 +1,7 @@
 import 'package:academia/database/database.dart';
+import 'package:academia/exports/barrel.dart';
 import 'package:dartz/dartz.dart';
+import 'package:get_it/get_it.dart';
 import 'user_local_repository.dart';
 import 'user_remote_repository.dart';
 
@@ -45,16 +47,15 @@ final class UserRepository {
       UserCredentialData credentials) async {
     // Register a magnet singleton instance
 
-    // TODO: (erick) enable auth with magnet
-    // GetIt.instance.registerSingletonIfAbsent(
-    //   () => Magnet(credentials.admno, credentials.password),
-    //   instanceName: "magnet",
-    // );
+    GetIt.instance.registerSingletonIfAbsent(
+      () => Magnet(credentials.admno, credentials.password),
+      instanceName: "magnet",
+    );
 
     // authenticate with magnet
-    const magnetResult =
-        // await (GetIt.instance.get<Magnet>(instanceName: "magnet").login());
-        Right(Object());
+    final magnetResult =
+        await (GetIt.instance.get<Magnet>(instanceName: "magnet").login());
+    //Right(Object());
     return magnetResult.fold((error) {
       return left(error.toString());
     }, (session) async {

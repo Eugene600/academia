@@ -1,6 +1,7 @@
 import 'package:academia/features/features.dart';
 import 'package:academia/utils/validator/validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
@@ -48,10 +49,11 @@ class _LoginPageState extends State<LoginPage> {
         }
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: true,
+        resizeToAvoidBottomInset: false,
         body: Form(
           key: _formState,
           child: CustomScrollView(
+            physics: NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
                 centerTitle: true,
@@ -185,9 +187,16 @@ class _LoginPageState extends State<LoginPage> {
                               );
                               return;
                             }
+
+                            context.read<AuthBloc>().add(
+                                  AuthenticationRequested(
+                                    admno: _admissionController.text,
+                                    password: _passwordController.text,
+                                  ),
+                                );
                           },
                           label: const Text("Continue to Academia"),
-                        );
+                        ).animate().fadeIn(curve: Curves.easeOutBack);
                       }),
                     ],
                   ),

@@ -23,8 +23,8 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
       });
     });
 
-    on<AuthenticationRequested>((event, emit) {
-      if (event.password.trim().isEmpty) {
+    on<AuthenticationRequested>((event, emit) async {
+      if (event.password.trim().isEmpty || event.password.trim().length < 6) {
         return emit(AuthErrorState(error: "Please enter a valid password"));
       }
       if (event.admno.trim().isEmpty) {
@@ -34,7 +34,19 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       emit(AuthLoadingState());
-      // final result = await _userRepository.authenticateRemotely();
+      final result = await _userRepository.authenticateRemotely(
+        UserCredentialData(
+            admno: event.admno.trim(),
+            username: '',
+            email: '',
+            password: event.password.trim()),
+      );
+
+      return result.fold((error) {
+        return emit(AuthErrorState(error: error));
+      }, (user) {
+        return emit(AuthenticatedState(user: user));
+      });
     });
   }
 }

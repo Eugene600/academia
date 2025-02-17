@@ -1,0 +1,1 @@
+/home/erick/Projects/apps/academia/build/app/intermediates/cxx/Debug/4u3t253t/obj/arm64-v8a

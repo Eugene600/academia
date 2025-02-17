@@ -14,7 +14,7 @@ final class UserRemoteRepository with DioErrorHandler {
   ) async {
     try {
       final response = await _client.dio.post(
-        "/verisafe/v2/auth/authenticate",
+        "/v2/auth/authenticate",
         data: credentials.toJson(),
       );
 
@@ -22,7 +22,7 @@ final class UserRemoteRepository with DioErrorHandler {
         return right(UserData.fromJson(response.data));
       }
 
-      return left(response.data["error"] ?? response.statusMessage);
+      return left(response.data["message"] ?? response.statusMessage);
     } on DioException catch (de) {
       return handleDioError(de);
     } catch (e) {

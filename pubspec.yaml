@@ -87,6 +87,8 @@ dependencies:
   sliver_tools: ^0.2.12
   pretty_dio_logger: ^1.4.0
   skeletonizer: ^1.4.3 
+  flutter_animate: ^4.5.2
+  vibration: ^3.1.3
 
 
 
