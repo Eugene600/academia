@@ -1,8 +1,11 @@
 import 'package:academia/features/features.dart';
+import 'package:academia/utils/router/router.dart';
 import 'package:academia/utils/validator/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -20,10 +23,47 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final _formState = GlobalKey<FormState>();
   bool _showPassword = true;
+  bool _newToAcademia = false;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  /// Notify the user on agreeing to the terms of service and
+  /// privacy policy
+  Future<bool> showTermsDialog(BuildContext context) async {
+    return await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Just a minute'),
+              content: Text(
+                'By using this app, you agree to our Terms of Service and Privacy Policy.',
+              ),
+              actions: <Widget>[
+                FilledButton(
+                  child: Text('Agree'),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ).animate(delay: 500.ms).shake(),
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                ),
+              ],
+            ).animate().moveY(
+                  begin: -3,
+                  end: 0,
+                  duration: 500.ms,
+                  curve: Curves.easeInOutCubic,
+                );
+          },
+        ) ??
+        false;
   }
 
   /// Validates the current sign in form
@@ -47,6 +87,10 @@ class _LoginPageState extends State<LoginPage> {
           );
           return;
         }
+        if (state is NewAuthUserDetailsFetched) {
+          context.pushReplacementNamed(AcademiaRouter.register);
+          return;
+        }
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -56,36 +100,21 @@ class _LoginPageState extends State<LoginPage> {
             physics: NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
-                centerTitle: true,
+                pinned: true,
                 floating: true,
                 snap: true,
-                pinned: true,
                 expandedHeight: 250,
                 flexibleSpace: FlexibleSpaceBar(
-                  background: const Image(
-                    fit: BoxFit.cover,
-                    image: AssetImage("assets/images/school-of-athens.jpg"),
-                  ),
-                  centerTitle: true,
-                  title: SizedBox(
-                    height: 40,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/icons/academia.png",
+                  title: Text(
+                    "Welcome to Academia",
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontFamily: GoogleFonts.lora().fontFamily,
                         ),
-                        Text(
-                          "Academia",
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
+                  ).animate().moveY(
+                      duration: 2000.ms,
+                      begin: -10,
+                      end: 0,
+                      curve: Curves.easeInOut),
                 ),
               ),
               SliverPadding(
@@ -97,14 +126,20 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            "Sign in",
-                            style: Theme.of(context).textTheme.titleLarge,
+                          Lottie.asset(
+                            "assets/lotties/identity.json",
+                            repeat: false,
+                            height: 160,
                           ),
-                          const Spacer(),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Bootstrap.question_circle),
+
+                          // Headline
+                          Flexible(
+                            child: Text(
+                              "Lets find you and set up things just the way you like",
+                              style: Theme.of(context).textTheme.titleLarge,
+                            )
+                                .animate()
+                                .moveX(begin: -10, end: 3, duration: 500.ms),
                           ),
                         ],
                       ),
@@ -166,6 +201,20 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
 
+                      // Card
+                      Card(
+                        elevation: 0,
+                        child: CheckboxListTile(
+                          title: Text("Im new to Academia"),
+                          value: _newToAcademia,
+                          onChanged: (val) {
+                            setState(() {
+                              _newToAcademia = val!;
+                            });
+                          },
+                        ),
+                      ),
+
                       // Input buttons
                       BlocBuilder<AuthBloc, AuthState>(
                           builder: (context, state) {
@@ -176,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
                           );
                         }
                         return FilledButton.icon(
-                          onPressed: () {
+                          onPressed: () async {
                             if (!_formState.currentState!.validate()) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -188,12 +237,37 @@ class _LoginPageState extends State<LoginPage> {
                               return;
                             }
 
-                            context.read<AuthBloc>().add(
-                                  AuthenticationRequested(
-                                    admno: _admissionController.text,
-                                    password: _passwordController.text,
+                            final agreed = await showTermsDialog(context);
+
+                            if (!context.mounted) return;
+                            if (!agreed) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    "You must agree to the terms of service and privacy policy",
                                   ),
-                                );
+                                  showCloseIcon: true,
+                                  elevation: 12,
+                                ),
+                              );
+                              return;
+                            }
+
+                            if (!_newToAcademia) {
+                              context.read<AuthBloc>().add(
+                                    AuthenticationRequested(
+                                      admno: _admissionController.text,
+                                      password: _passwordController.text,
+                                    ),
+                                  );
+                            }
+
+                            context
+                                .read<AuthBloc>()
+                                .add(RegistrationEventRequested(
+                                  admno: _admissionController.text,
+                                  password: _passwordController.text,
+                                ));
                           },
                           label: const Text("Continue to Academia"),
                         ).animate().fadeIn(curve: Curves.easeOutBack);

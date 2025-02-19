@@ -36,7 +36,7 @@ class Academia extends StatelessWidget {
             useMaterial3: true,
             fontFamily: GoogleFonts.inter().fontFamily,
           ),
-        ),
+        )
       ),
     );
   }

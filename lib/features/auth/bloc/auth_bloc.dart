@@ -48,5 +48,33 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return emit(AuthenticatedState(user: user));
       });
     });
+
+    // Registration flow
+
+    on<RegistrationEventRequested>((event, emit) async {
+      if (event.password.trim().isEmpty || event.password.trim().length < 6) {
+        return emit(AuthErrorState(error: "Please enter a valid password"));
+      }
+      if (event.admno.trim().isEmpty) {
+        return emit(
+          AuthErrorState(error: "Please enter a valid admission number"),
+        );
+      }
+
+      emit(AuthLoadingState());
+      final result = await _userRepository.registerUser(
+        UserCredentialData(
+            admno: event.admno.trim(),
+            username: '',
+            email: '',
+            password: event.password.trim()),
+      );
+
+      return result.fold((error) {
+        return emit(AuthErrorState(error: error));
+      }, (user) {
+        return emit(NewAuthUserDetailsFetched(userDetails: user));
+      });
+    });
   }
 }

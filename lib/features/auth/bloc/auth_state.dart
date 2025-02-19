@@ -16,3 +16,8 @@ final class AuthenticatedState extends AuthState {
   final UserData user;
   AuthenticatedState({required this.user});
 }
+
+final class NewAuthUserDetailsFetched extends AuthState {
+  final Map<String, String> userDetails;
+  NewAuthUserDetailsFetched({required this.userDetails});
+}
