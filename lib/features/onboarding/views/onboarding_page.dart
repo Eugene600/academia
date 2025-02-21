@@ -13,7 +13,6 @@ class OnboardingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<AuthBloc>().add(AppLaunchDetected());
     return Scaffold(
       body: SafeArea(
         minimum: const EdgeInsets.all(12),

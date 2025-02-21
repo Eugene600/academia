@@ -20,9 +20,10 @@ class UserProfile extends Table {
   DateTimeColumn get modifiedAt =>
       dateTime().withDefault(Constant(DateTime.now()))();
   @JsonKey("admission_number")
-  TextColumn get admissionNumber => text().nullable()();
+  TextColumn get admissionNumber => text()();
   @JsonKey("campus")
-  TextColumn get campus => text().withDefault(const Constant("athi"))();
+  TextColumn get campus =>
+      text().nullable().withDefault(const Constant("athi"))();
   @JsonKey("date_of_birth")
   DateTimeColumn get dateOfBirth => dateTime()();
 

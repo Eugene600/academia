@@ -261,7 +261,7 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                           child: ListTile(
                             leading: const Icon(Bootstrap.phone),
                             title: const Text("Phone"),
-                            subtitle: Text(user.phone),
+                            subtitle: Text(user.phone ?? 'N/A'),
                           ),
                         ),
                         Card(
@@ -286,7 +286,7 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                           child: ListTile(
                             leading: const Icon(Bootstrap.house_heart),
                             title: const Text("Campus"),
-                            subtitle: Text(profile.campus),
+                            subtitle: Text(profile.campus ?? 'athi'),
                           ),
                         ),
                       ],

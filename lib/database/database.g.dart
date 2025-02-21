@@ -43,11 +43,11 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
   static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
   @override
   late final GeneratedColumn<String> phone = GeneratedColumn<String>(
-      'phone', aliasedName, false,
+      'phone', aliasedName, true,
       additionalChecks:
           GeneratedColumn.checkTextLength(minTextLength: 10, maxTextLength: 15),
       type: DriftSqlType.string,
-      requiredDuringInsert: true);
+      requiredDuringInsert: false);
   static const VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
   late final GeneratedColumn<String> email = GeneratedColumn<String>(
@@ -144,8 +144,6 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
     if (data.containsKey('phone')) {
       context.handle(
           _phoneMeta, phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta));
-    } else if (isInserting) {
-      context.missing(_phoneMeta);
     }
     if (data.containsKey('email')) {
       context.handle(
@@ -201,7 +199,7 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
       othernames: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}othernames']),
       phone: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}phone'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}phone']),
       email: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}email']),
       gender: attachedDatabase.typeMapping
@@ -228,7 +226,7 @@ class UserData extends DataClass implements Insertable<UserData> {
   final String username;
   final String firstname;
   final String? othernames;
-  final String phone;
+  final String? phone;
   final String? email;
   final String gender;
   final bool active;
@@ -240,7 +238,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       required this.username,
       required this.firstname,
       this.othernames,
-      required this.phone,
+      this.phone,
       this.email,
       required this.gender,
       required this.active,
@@ -256,7 +254,9 @@ class UserData extends DataClass implements Insertable<UserData> {
     if (!nullToAbsent || othernames != null) {
       map['othernames'] = Variable<String>(othernames);
     }
-    map['phone'] = Variable<String>(phone);
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
     if (!nullToAbsent || email != null) {
       map['email'] = Variable<String>(email);
     }
@@ -276,7 +276,8 @@ class UserData extends DataClass implements Insertable<UserData> {
       othernames: othernames == null && nullToAbsent
           ? const Value.absent()
           : Value(othernames),
-      phone: Value(phone),
+      phone:
+          phone == null && nullToAbsent ? const Value.absent() : Value(phone),
       email:
           email == null && nullToAbsent ? const Value.absent() : Value(email),
       gender: Value(gender),
@@ -295,7 +296,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       username: serializer.fromJson<String>(json['username']),
       firstname: serializer.fromJson<String>(json['firstname']),
       othernames: serializer.fromJson<String?>(json['othernames']),
-      phone: serializer.fromJson<String>(json['phone']),
+      phone: serializer.fromJson<String?>(json['phone']),
       email: serializer.fromJson<String?>(json['email']),
       gender: serializer.fromJson<String>(json['gender']),
       active: serializer.fromJson<bool>(json['active']),
@@ -312,7 +313,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       'username': serializer.toJson<String>(username),
       'firstname': serializer.toJson<String>(firstname),
       'othernames': serializer.toJson<String?>(othernames),
-      'phone': serializer.toJson<String>(phone),
+      'phone': serializer.toJson<String?>(phone),
       'email': serializer.toJson<String?>(email),
       'gender': serializer.toJson<String>(gender),
       'active': serializer.toJson<bool>(active),
@@ -327,7 +328,7 @@ class UserData extends DataClass implements Insertable<UserData> {
           String? username,
           String? firstname,
           Value<String?> othernames = const Value.absent(),
-          String? phone,
+          Value<String?> phone = const Value.absent(),
           Value<String?> email = const Value.absent(),
           String? gender,
           bool? active,
@@ -339,7 +340,7 @@ class UserData extends DataClass implements Insertable<UserData> {
         username: username ?? this.username,
         firstname: firstname ?? this.firstname,
         othernames: othernames.present ? othernames.value : this.othernames,
-        phone: phone ?? this.phone,
+        phone: phone.present ? phone.value : this.phone,
         email: email.present ? email.value : this.email,
         gender: gender ?? this.gender,
         active: active ?? this.active,
@@ -409,7 +410,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
   final Value<String> username;
   final Value<String> firstname;
   final Value<String?> othernames;
-  final Value<String> phone;
+  final Value<String?> phone;
   final Value<String?> email;
   final Value<String> gender;
   final Value<bool> active;
@@ -436,7 +437,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
     required String username,
     required String firstname,
     this.othernames = const Value.absent(),
-    required String phone,
+    this.phone = const Value.absent(),
     this.email = const Value.absent(),
     required String gender,
     this.active = const Value.absent(),
@@ -447,7 +448,6 @@ class UserCompanion extends UpdateCompanion<UserData> {
   })  : id = Value(id),
         username = Value(username),
         firstname = Value(firstname),
-        phone = Value(phone),
         gender = Value(gender),
         createdAt = Value(createdAt),
         modifiedAt = Value(modifiedAt),
@@ -487,7 +487,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
       Value<String>? username,
       Value<String>? firstname,
       Value<String?>? othernames,
-      Value<String>? phone,
+      Value<String?>? phone,
       Value<String?>? email,
       Value<String>? gender,
       Value<bool>? active,
@@ -634,12 +634,12 @@ class $UserProfileTable extends UserProfile
       const VerificationMeta('admissionNumber');
   @override
   late final GeneratedColumn<String> admissionNumber = GeneratedColumn<String>(
-      'admission_number', aliasedName, true,
-      type: DriftSqlType.string, requiredDuringInsert: false);
+      'admission_number', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _campusMeta = const VerificationMeta('campus');
   @override
   late final GeneratedColumn<String> campus = GeneratedColumn<String>(
-      'campus', aliasedName, false,
+      'campus', aliasedName, true,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant("athi"));
@@ -713,6 +713,8 @@ class $UserProfileTable extends UserProfile
           _admissionNumberMeta,
           admissionNumber.isAcceptableOrUnknown(
               data['admission_number']!, _admissionNumberMeta));
+    } else if (isInserting) {
+      context.missing(_admissionNumberMeta);
     }
     if (data.containsKey('campus')) {
       context.handle(_campusMeta,
@@ -750,9 +752,9 @@ class $UserProfileTable extends UserProfile
       modifiedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}modified_at'])!,
       admissionNumber: attachedDatabase.typeMapping.read(
-          DriftSqlType.string, data['${effectivePrefix}admission_number']),
+          DriftSqlType.string, data['${effectivePrefix}admission_number'])!,
       campus: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}campus'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}campus']),
       dateOfBirth: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}date_of_birth'])!,
     );
@@ -772,8 +774,8 @@ class UserProfileData extends DataClass implements Insertable<UserProfileData> {
   final DateTime lastSeen;
   final DateTime createdAt;
   final DateTime modifiedAt;
-  final String? admissionNumber;
-  final String campus;
+  final String admissionNumber;
+  final String? campus;
   final DateTime dateOfBirth;
   const UserProfileData(
       {required this.userId,
@@ -783,8 +785,8 @@ class UserProfileData extends DataClass implements Insertable<UserProfileData> {
       required this.lastSeen,
       required this.createdAt,
       required this.modifiedAt,
-      this.admissionNumber,
-      required this.campus,
+      required this.admissionNumber,
+      this.campus,
       required this.dateOfBirth});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -800,10 +802,10 @@ class UserProfileData extends DataClass implements Insertable<UserProfileData> {
     map['last_seen'] = Variable<DateTime>(lastSeen);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['modified_at'] = Variable<DateTime>(modifiedAt);
-    if (!nullToAbsent || admissionNumber != null) {
-      map['admission_number'] = Variable<String>(admissionNumber);
+    map['admission_number'] = Variable<String>(admissionNumber);
+    if (!nullToAbsent || campus != null) {
+      map['campus'] = Variable<String>(campus);
     }
-    map['campus'] = Variable<String>(campus);
     map['date_of_birth'] = Variable<DateTime>(dateOfBirth);
     return map;
   }
@@ -819,10 +821,9 @@ class UserProfileData extends DataClass implements Insertable<UserProfileData> {
       lastSeen: Value(lastSeen),
       createdAt: Value(createdAt),
       modifiedAt: Value(modifiedAt),
-      admissionNumber: admissionNumber == null && nullToAbsent
-          ? const Value.absent()
-          : Value(admissionNumber),
-      campus: Value(campus),
+      admissionNumber: Value(admissionNumber),
+      campus:
+          campus == null && nullToAbsent ? const Value.absent() : Value(campus),
       dateOfBirth: Value(dateOfBirth),
     );
   }
@@ -839,8 +840,8 @@ class UserProfileData extends DataClass implements Insertable<UserProfileData> {
       lastSeen: serializer.fromJson<DateTime>(json['last_seen']),
       createdAt: serializer.fromJson<DateTime>(json['created_at']),
       modifiedAt: serializer.fromJson<DateTime>(json['modified_at']),
-      admissionNumber: serializer.fromJson<String?>(json['admission_number']),
-      campus: serializer.fromJson<String>(json['campus']),
+      admissionNumber: serializer.fromJson<String>(json['admission_number']),
+      campus: serializer.fromJson<String?>(json['campus']),
       dateOfBirth: serializer.fromJson<DateTime>(json['date_of_birth']),
     );
   }
@@ -855,8 +856,8 @@ class UserProfileData extends DataClass implements Insertable<UserProfileData> {
       'last_seen': serializer.toJson<DateTime>(lastSeen),
       'created_at': serializer.toJson<DateTime>(createdAt),
       'modified_at': serializer.toJson<DateTime>(modifiedAt),
-      'admission_number': serializer.toJson<String?>(admissionNumber),
-      'campus': serializer.toJson<String>(campus),
+      'admission_number': serializer.toJson<String>(admissionNumber),
+      'campus': serializer.toJson<String?>(campus),
       'date_of_birth': serializer.toJson<DateTime>(dateOfBirth),
     };
   }
@@ -869,8 +870,8 @@ class UserProfileData extends DataClass implements Insertable<UserProfileData> {
           DateTime? lastSeen,
           DateTime? createdAt,
           DateTime? modifiedAt,
-          Value<String?> admissionNumber = const Value.absent(),
-          String? campus,
+          String? admissionNumber,
+          Value<String?> campus = const Value.absent(),
           DateTime? dateOfBirth}) =>
       UserProfileData(
         userId: userId ?? this.userId,
@@ -882,10 +883,8 @@ class UserProfileData extends DataClass implements Insertable<UserProfileData> {
         lastSeen: lastSeen ?? this.lastSeen,
         createdAt: createdAt ?? this.createdAt,
         modifiedAt: modifiedAt ?? this.modifiedAt,
-        admissionNumber: admissionNumber.present
-            ? admissionNumber.value
-            : this.admissionNumber,
-        campus: campus ?? this.campus,
+        admissionNumber: admissionNumber ?? this.admissionNumber,
+        campus: campus.present ? campus.value : this.campus,
         dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       );
   UserProfileData copyWithCompanion(UserProfileCompanion data) {
@@ -954,8 +953,8 @@ class UserProfileCompanion extends UpdateCompanion<UserProfileData> {
   final Value<DateTime> lastSeen;
   final Value<DateTime> createdAt;
   final Value<DateTime> modifiedAt;
-  final Value<String?> admissionNumber;
-  final Value<String> campus;
+  final Value<String> admissionNumber;
+  final Value<String?> campus;
   final Value<DateTime> dateOfBirth;
   final Value<int> rowid;
   const UserProfileCompanion({
@@ -979,11 +978,12 @@ class UserProfileCompanion extends UpdateCompanion<UserProfileData> {
     this.lastSeen = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.modifiedAt = const Value.absent(),
-    this.admissionNumber = const Value.absent(),
+    required String admissionNumber,
     this.campus = const Value.absent(),
     required DateTime dateOfBirth,
     this.rowid = const Value.absent(),
   })  : userId = Value(userId),
+        admissionNumber = Value(admissionNumber),
         dateOfBirth = Value(dateOfBirth);
   static Insertable<UserProfileData> custom({
     Expression<String>? userId,
@@ -1021,8 +1021,8 @@ class UserProfileCompanion extends UpdateCompanion<UserProfileData> {
       Value<DateTime>? lastSeen,
       Value<DateTime>? createdAt,
       Value<DateTime>? modifiedAt,
-      Value<String?>? admissionNumber,
-      Value<String>? campus,
+      Value<String>? admissionNumber,
+      Value<String?>? campus,
       Value<DateTime>? dateOfBirth,
       Value<int>? rowid}) {
     return UserProfileCompanion(
@@ -1115,8 +1115,8 @@ class $UserCredentialTable extends UserCredential
   static const VerificationMeta _admnoMeta = const VerificationMeta('admno');
   @override
   late final GeneratedColumn<String> admno = GeneratedColumn<String>(
-      'admno', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      'admno', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _accessTokenMeta =
       const VerificationMeta('accessToken');
   @override
@@ -1127,17 +1127,17 @@ class $UserCredentialTable extends UserCredential
       const VerificationMeta('username');
   @override
   late final GeneratedColumn<String> username = GeneratedColumn<String>(
-      'username', aliasedName, false,
+      'username', aliasedName, true,
       type: DriftSqlType.string,
-      requiredDuringInsert: true,
+      requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES user (username)'));
   static const VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
   late final GeneratedColumn<String> email = GeneratedColumn<String>(
-      'email', aliasedName, false,
+      'email', aliasedName, true,
       type: DriftSqlType.string,
-      requiredDuringInsert: true,
+      requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('REFERENCES user (email)'));
   static const VerificationMeta _passwordMeta =
@@ -1172,8 +1172,6 @@ class $UserCredentialTable extends UserCredential
     if (data.containsKey('admno')) {
       context.handle(
           _admnoMeta, admno.isAcceptableOrUnknown(data['admno']!, _admnoMeta));
-    } else if (isInserting) {
-      context.missing(_admnoMeta);
     }
     if (data.containsKey('access_token')) {
       context.handle(
@@ -1184,14 +1182,10 @@ class $UserCredentialTable extends UserCredential
     if (data.containsKey('username')) {
       context.handle(_usernameMeta,
           username.isAcceptableOrUnknown(data['username']!, _usernameMeta));
-    } else if (isInserting) {
-      context.missing(_usernameMeta);
     }
     if (data.containsKey('email')) {
       context.handle(
           _emailMeta, email.isAcceptableOrUnknown(data['email']!, _emailMeta));
-    } else if (isInserting) {
-      context.missing(_emailMeta);
     }
     if (data.containsKey('password')) {
       context.handle(_passwordMeta,
@@ -1215,13 +1209,13 @@ class $UserCredentialTable extends UserCredential
       userId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}user_id']),
       admno: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}admno'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}admno']),
       accessToken: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}access_token']),
       username: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}username'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}username']),
       email: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}email'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}email']),
       password: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}password'])!,
       lastLogin: attachedDatabase.typeMapping
@@ -1238,18 +1232,18 @@ class $UserCredentialTable extends UserCredential
 class UserCredentialData extends DataClass
     implements Insertable<UserCredentialData> {
   final String? userId;
-  final String admno;
+  final String? admno;
   final String? accessToken;
-  final String username;
-  final String email;
+  final String? username;
+  final String? email;
   final String password;
   final DateTime? lastLogin;
   const UserCredentialData(
       {this.userId,
-      required this.admno,
+      this.admno,
       this.accessToken,
-      required this.username,
-      required this.email,
+      this.username,
+      this.email,
       required this.password,
       this.lastLogin});
   @override
@@ -1258,12 +1252,18 @@ class UserCredentialData extends DataClass
     if (!nullToAbsent || userId != null) {
       map['user_id'] = Variable<String>(userId);
     }
-    map['admno'] = Variable<String>(admno);
+    if (!nullToAbsent || admno != null) {
+      map['admno'] = Variable<String>(admno);
+    }
     if (!nullToAbsent || accessToken != null) {
       map['access_token'] = Variable<String>(accessToken);
     }
-    map['username'] = Variable<String>(username);
-    map['email'] = Variable<String>(email);
+    if (!nullToAbsent || username != null) {
+      map['username'] = Variable<String>(username);
+    }
+    if (!nullToAbsent || email != null) {
+      map['email'] = Variable<String>(email);
+    }
     map['password'] = Variable<String>(password);
     if (!nullToAbsent || lastLogin != null) {
       map['last_login'] = Variable<DateTime>(lastLogin);
@@ -1275,12 +1275,16 @@ class UserCredentialData extends DataClass
     return UserCredentialCompanion(
       userId:
           userId == null && nullToAbsent ? const Value.absent() : Value(userId),
-      admno: Value(admno),
+      admno:
+          admno == null && nullToAbsent ? const Value.absent() : Value(admno),
       accessToken: accessToken == null && nullToAbsent
           ? const Value.absent()
           : Value(accessToken),
-      username: Value(username),
-      email: Value(email),
+      username: username == null && nullToAbsent
+          ? const Value.absent()
+          : Value(username),
+      email:
+          email == null && nullToAbsent ? const Value.absent() : Value(email),
       password: Value(password),
       lastLogin: lastLogin == null && nullToAbsent
           ? const Value.absent()
@@ -1292,11 +1296,11 @@ class UserCredentialData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return UserCredentialData(
-      userId: serializer.fromJson<String?>(json['userId']),
-      admno: serializer.fromJson<String>(json['admission_number']),
+      userId: serializer.fromJson<String?>(json['user_id']),
+      admno: serializer.fromJson<String?>(json['admission_number']),
       accessToken: serializer.fromJson<String?>(json['access_token']),
-      username: serializer.fromJson<String>(json['username']),
-      email: serializer.fromJson<String>(json['email']),
+      username: serializer.fromJson<String?>(json['username']),
+      email: serializer.fromJson<String?>(json['email']),
       password: serializer.fromJson<String>(json['password']),
       lastLogin: serializer.fromJson<DateTime?>(json['last_login']),
     );
@@ -1305,11 +1309,11 @@ class UserCredentialData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'userId': serializer.toJson<String?>(userId),
-      'admission_number': serializer.toJson<String>(admno),
+      'user_id': serializer.toJson<String?>(userId),
+      'admission_number': serializer.toJson<String?>(admno),
       'access_token': serializer.toJson<String?>(accessToken),
-      'username': serializer.toJson<String>(username),
-      'email': serializer.toJson<String>(email),
+      'username': serializer.toJson<String?>(username),
+      'email': serializer.toJson<String?>(email),
       'password': serializer.toJson<String>(password),
       'last_login': serializer.toJson<DateTime?>(lastLogin),
     };
@@ -1317,18 +1321,18 @@ class UserCredentialData extends DataClass
 
   UserCredentialData copyWith(
           {Value<String?> userId = const Value.absent(),
-          String? admno,
+          Value<String?> admno = const Value.absent(),
           Value<String?> accessToken = const Value.absent(),
-          String? username,
-          String? email,
+          Value<String?> username = const Value.absent(),
+          Value<String?> email = const Value.absent(),
           String? password,
           Value<DateTime?> lastLogin = const Value.absent()}) =>
       UserCredentialData(
         userId: userId.present ? userId.value : this.userId,
-        admno: admno ?? this.admno,
+        admno: admno.present ? admno.value : this.admno,
         accessToken: accessToken.present ? accessToken.value : this.accessToken,
-        username: username ?? this.username,
-        email: email ?? this.email,
+        username: username.present ? username.value : this.username,
+        email: email.present ? email.value : this.email,
         password: password ?? this.password,
         lastLogin: lastLogin.present ? lastLogin.value : this.lastLogin,
       );
@@ -1377,10 +1381,10 @@ class UserCredentialData extends DataClass
 
 class UserCredentialCompanion extends UpdateCompanion<UserCredentialData> {
   final Value<String?> userId;
-  final Value<String> admno;
+  final Value<String?> admno;
   final Value<String?> accessToken;
-  final Value<String> username;
-  final Value<String> email;
+  final Value<String?> username;
+  final Value<String?> email;
   final Value<String> password;
   final Value<DateTime?> lastLogin;
   final Value<int> rowid;
@@ -1396,17 +1400,14 @@ class UserCredentialCompanion extends UpdateCompanion<UserCredentialData> {
   });
   UserCredentialCompanion.insert({
     this.userId = const Value.absent(),
-    required String admno,
+    this.admno = const Value.absent(),
     this.accessToken = const Value.absent(),
-    required String username,
-    required String email,
+    this.username = const Value.absent(),
+    this.email = const Value.absent(),
     required String password,
     this.lastLogin = const Value.absent(),
     this.rowid = const Value.absent(),
-  })  : admno = Value(admno),
-        username = Value(username),
-        email = Value(email),
-        password = Value(password);
+  }) : password = Value(password);
   static Insertable<UserCredentialData> custom({
     Expression<String>? userId,
     Expression<String>? admno,
@@ -1431,10 +1432,10 @@ class UserCredentialCompanion extends UpdateCompanion<UserCredentialData> {
 
   UserCredentialCompanion copyWith(
       {Value<String?>? userId,
-      Value<String>? admno,
+      Value<String?>? admno,
       Value<String?>? accessToken,
-      Value<String>? username,
-      Value<String>? email,
+      Value<String?>? username,
+      Value<String?>? email,
       Value<String>? password,
       Value<DateTime?>? lastLogin,
       Value<int>? rowid}) {
@@ -2741,7 +2742,7 @@ typedef $$UserTableCreateCompanionBuilder = UserCompanion Function({
   required String username,
   required String firstname,
   Value<String?> othernames,
-  required String phone,
+  Value<String?> phone,
   Value<String?> email,
   required String gender,
   Value<bool> active,
@@ -2755,7 +2756,7 @@ typedef $$UserTableUpdateCompanionBuilder = UserCompanion Function({
   Value<String> username,
   Value<String> firstname,
   Value<String?> othernames,
-  Value<String> phone,
+  Value<String?> phone,
   Value<String?> email,
   Value<String> gender,
   Value<bool> active,
@@ -3093,7 +3094,7 @@ class $$UserTableTableManager extends RootTableManager<
             Value<String> username = const Value.absent(),
             Value<String> firstname = const Value.absent(),
             Value<String?> othernames = const Value.absent(),
-            Value<String> phone = const Value.absent(),
+            Value<String?> phone = const Value.absent(),
             Value<String?> email = const Value.absent(),
             Value<String> gender = const Value.absent(),
             Value<bool> active = const Value.absent(),
@@ -3121,7 +3122,7 @@ class $$UserTableTableManager extends RootTableManager<
             required String username,
             required String firstname,
             Value<String?> othernames = const Value.absent(),
-            required String phone,
+            Value<String?> phone = const Value.absent(),
             Value<String?> email = const Value.absent(),
             required String gender,
             Value<bool> active = const Value.absent(),
@@ -3161,7 +3162,8 @@ class $$UserTableTableManager extends RootTableManager<
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (userProfileRefs)
-                    await $_getPrefetchedData(
+                    await $_getPrefetchedData<UserData, $UserTable,
+                            UserProfileData>(
                         currentTable: table,
                         referencedTable:
                             $$UserTableReferences._userProfileRefsTable(db),
@@ -3173,7 +3175,7 @@ class $$UserTableTableManager extends RootTableManager<
                             referencedItems.where((e) => e.userId == item.id),
                         typedResults: items),
                   if (courseRefs)
-                    await $_getPrefetchedData(
+                    await $_getPrefetchedData<UserData, $UserTable, CourseData>(
                         currentTable: table,
                         referencedTable:
                             $$UserTableReferences._courseRefsTable(db),
@@ -3184,7 +3186,7 @@ class $$UserTableTableManager extends RootTableManager<
                                 referencedItems.where((e) => e.user == item.id),
                         typedResults: items),
                   if (todoRefs)
-                    await $_getPrefetchedData(
+                    await $_getPrefetchedData<UserData, $UserTable, TodoData>(
                         currentTable: table,
                         referencedTable:
                             $$UserTableReferences._todoRefsTable(db),
@@ -3223,8 +3225,8 @@ typedef $$UserProfileTableCreateCompanionBuilder = UserProfileCompanion
   Value<DateTime> lastSeen,
   Value<DateTime> createdAt,
   Value<DateTime> modifiedAt,
-  Value<String?> admissionNumber,
-  Value<String> campus,
+  required String admissionNumber,
+  Value<String?> campus,
   required DateTime dateOfBirth,
   Value<int> rowid,
 });
@@ -3237,8 +3239,8 @@ typedef $$UserProfileTableUpdateCompanionBuilder = UserProfileCompanion
   Value<DateTime> lastSeen,
   Value<DateTime> createdAt,
   Value<DateTime> modifiedAt,
-  Value<String?> admissionNumber,
-  Value<String> campus,
+  Value<String> admissionNumber,
+  Value<String?> campus,
   Value<DateTime> dateOfBirth,
   Value<int> rowid,
 });
@@ -3467,8 +3469,8 @@ class $$UserProfileTableTableManager extends RootTableManager<
             Value<DateTime> lastSeen = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> modifiedAt = const Value.absent(),
-            Value<String?> admissionNumber = const Value.absent(),
-            Value<String> campus = const Value.absent(),
+            Value<String> admissionNumber = const Value.absent(),
+            Value<String?> campus = const Value.absent(),
             Value<DateTime> dateOfBirth = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -3493,8 +3495,8 @@ class $$UserProfileTableTableManager extends RootTableManager<
             Value<DateTime> lastSeen = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> modifiedAt = const Value.absent(),
-            Value<String?> admissionNumber = const Value.absent(),
-            Value<String> campus = const Value.absent(),
+            required String admissionNumber,
+            Value<String?> campus = const Value.absent(),
             required DateTime dateOfBirth,
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -3570,10 +3572,10 @@ typedef $$UserProfileTableProcessedTableManager = ProcessedTableManager<
 typedef $$UserCredentialTableCreateCompanionBuilder = UserCredentialCompanion
     Function({
   Value<String?> userId,
-  required String admno,
+  Value<String?> admno,
   Value<String?> accessToken,
-  required String username,
-  required String email,
+  Value<String?> username,
+  Value<String?> email,
   required String password,
   Value<DateTime?> lastLogin,
   Value<int> rowid,
@@ -3581,10 +3583,10 @@ typedef $$UserCredentialTableCreateCompanionBuilder = UserCredentialCompanion
 typedef $$UserCredentialTableUpdateCompanionBuilder = UserCredentialCompanion
     Function({
   Value<String?> userId,
-  Value<String> admno,
+  Value<String?> admno,
   Value<String?> accessToken,
-  Value<String> username,
-  Value<String> email,
+  Value<String?> username,
+  Value<String?> email,
   Value<String> password,
   Value<DateTime?> lastLogin,
   Value<int> rowid,
@@ -3612,9 +3614,9 @@ final class $$UserCredentialTableReferences extends BaseReferences<
   static $UserTable _usernameTable(_$AppDatabase db) => db.user.createAlias(
       $_aliasNameGenerator(db.userCredential.username, db.user.username));
 
-  $$UserTableProcessedTableManager get username {
-    final $_column = $_itemColumn<String>('username')!;
-
+  $$UserTableProcessedTableManager? get username {
+    final $_column = $_itemColumn<String>('username');
+    if ($_column == null) return null;
     final manager = $$UserTableTableManager($_db, $_db.user)
         .filter((f) => f.username.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_usernameTable($_db));
@@ -3626,9 +3628,9 @@ final class $$UserCredentialTableReferences extends BaseReferences<
   static $UserTable _emailTable(_$AppDatabase db) => db.user.createAlias(
       $_aliasNameGenerator(db.userCredential.email, db.user.email));
 
-  $$UserTableProcessedTableManager get email {
-    final $_column = $_itemColumn<String>('email')!;
-
+  $$UserTableProcessedTableManager? get email {
+    final $_column = $_itemColumn<String>('email');
+    if ($_column == null) return null;
     final manager = $$UserTableTableManager($_db, $_db.user)
         .filter((f) => f.email.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_emailTable($_db));
@@ -3909,10 +3911,10 @@ class $$UserCredentialTableTableManager extends RootTableManager<
               $$UserCredentialTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<String?> userId = const Value.absent(),
-            Value<String> admno = const Value.absent(),
+            Value<String?> admno = const Value.absent(),
             Value<String?> accessToken = const Value.absent(),
-            Value<String> username = const Value.absent(),
-            Value<String> email = const Value.absent(),
+            Value<String?> username = const Value.absent(),
+            Value<String?> email = const Value.absent(),
             Value<String> password = const Value.absent(),
             Value<DateTime?> lastLogin = const Value.absent(),
             Value<int> rowid = const Value.absent(),
@@ -3929,10 +3931,10 @@ class $$UserCredentialTableTableManager extends RootTableManager<
           ),
           createCompanionCallback: ({
             Value<String?> userId = const Value.absent(),
-            required String admno,
+            Value<String?> admno = const Value.absent(),
             Value<String?> accessToken = const Value.absent(),
-            required String username,
-            required String email,
+            Value<String?> username = const Value.absent(),
+            Value<String?> email = const Value.absent(),
             required String password,
             Value<DateTime?> lastLogin = const Value.absent(),
             Value<int> rowid = const Value.absent(),
@@ -4407,7 +4409,8 @@ class $$CourseTableTableManager extends RootTableManager<
               getPrefetchedDataCallback: (items) async {
                 return [
                   if (todoRefs)
-                    await $_getPrefetchedData(
+                    await $_getPrefetchedData<CourseData, $CourseTable,
+                            TodoData>(
                         currentTable: table,
                         referencedTable:
                             $$CourseTableReferences._todoRefsTable(db),

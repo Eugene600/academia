@@ -2,21 +2,25 @@ import 'package:academia/core/user/repository/user_repository.dart';
 import 'package:academia/database/database.dart';
 import 'package:academia/exports/barrel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 final class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UserRepository _userRepository = UserRepository();
+  final _logger = Logger();
 
   AuthBloc() : super(AuthInitialState()) {
     on<AppLaunchDetected>((event, emit) async {
       emit(AuthLoadingState());
       final result = await _userRepository.fetchUserFromCache();
       return result.fold((error) {
+        _logger.e(error, time: DateTime.now());
         return emit(AuthErrorState(error: error));
       }, (user) {
         if (user == null) {
+          _logger.i("No user retrieved", time: DateTime.now());
           return emit(AuthErrorState(error: "No such user"));
         }
         return emit(AuthenticatedState(user: user));
@@ -43,8 +47,10 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       return result.fold((error) {
+        _logger.e(error, time: DateTime.now());
         return emit(AuthErrorState(error: error));
       }, (user) {
+        _logger.d(user.toJson(), time: DateTime.now());
         return emit(AuthenticatedState(user: user));
       });
     });
@@ -71,9 +77,30 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       return result.fold((error) {
+        _logger.e(error, time: DateTime.now());
         return emit(AuthErrorState(error: error));
       }, (user) {
+        // add user password to the dict
+        user.addAll({'password': event.password});
+        _logger.d(user, time: DateTime.now());
         return emit(NewAuthUserDetailsFetched(userDetails: user));
+      });
+    });
+
+    on<SignupEventRequested>((event, emit) async {
+      emit(AuthLoadingState());
+      final result = await _userRepository.completeRegistration(
+        event.user,
+        event.profile,
+        event.creds,
+      );
+
+      return result.fold((error) {
+        _logger.e(error, time: DateTime.now());
+        return emit(AuthErrorState(error: error));
+      }, (ok) {
+        _logger.i("User registered successfully", time: DateTime.now());
+        emit(AuthenticatedState(user: event.user));
       });
     });
   }

@@ -1,13 +1,16 @@
 import 'package:academia/database/database.dart';
 import 'package:academia/exports/barrel.dart';
 import 'package:dartz/dartz.dart';
+import 'package:drift/drift.dart' as drift;
 import 'package:get_it/get_it.dart';
+import 'package:logger/logger.dart';
 import 'user_local_repository.dart';
 import 'user_remote_repository.dart';
 
 final class UserRepository {
   final UserLocalRepository _userLocalRepository = UserLocalRepository();
   final UserRemoteRepository _userRemoteRepository = UserRemoteRepository();
+  final _logger = Logger();
 
   /// Fetches all users from the local cache
   /// incase of an error it will return a [String] to the left
@@ -48,7 +51,7 @@ final class UserRepository {
     // Register a magnet singleton instance
 
     GetIt.instance.registerSingletonIfAbsent(
-      () => Magnet(credentials.admno, credentials.password),
+      () => Magnet(credentials.admno!, credentials.password),
       instanceName: "magnet",
     );
 
@@ -85,7 +88,7 @@ final class UserRepository {
     // Register a magnet singleton instance
 
     final magnet = GetIt.instance.registerSingletonIfAbsent(
-      () => Magnet(credentials.admno, credentials.password),
+      () => Magnet(credentials.admno!, credentials.password),
       instanceName: "magnet",
     );
 
@@ -104,6 +107,82 @@ final class UserRepository {
         return right(user);
       });
     });
+  }
+
+  Future<Either<String, bool>> completeRegistration(
+    UserData user,
+    UserProfileData profile,
+    UserCredentialData creds,
+  ) async {
+    final userResult = await _userRemoteRepository.registerUser(user);
+    if (userResult.isLeft()) {
+      _logger.e((userResult as Left).value);
+      return left((userResult as Left).value);
+    }
+
+    user = (userResult as Right).value;
+    _logger.i(user.toJson());
+
+    final credsResult = await _userRemoteRepository
+        .registerUserCredentials(creds.copyWith(userId: drift.Value(user.id)));
+    if (credsResult.isLeft()) {
+      _logger.e((credsResult as Left).value);
+      return left((credsResult as Left).value);
+    }
+
+    //creds = (credsResult as Right).value;
+    final credentials =
+        ((credsResult as Right).value as UserCredentialData).copyWith(
+      admno: drift.Value(creds.admno),
+      password: creds.password,
+      email: drift.Value(user.email),
+      username: drift.Value(user.username),
+    );
+
+    final dob = DateTime.now();
+    final profileResult = await _userRemoteRepository.createUserProfile(
+      profile.copyWith(
+        userId: user.id,
+        dateOfBirth: dob.copyWith(
+          year: profile.dateOfBirth.year,
+          month: profile.dateOfBirth.month,
+          day: profile.dateOfBirth.day,
+          isUtc: true,
+        ),
+      ),
+    );
+    if (profileResult.isLeft()) {
+      _logger.e((profileResult as Left).value);
+      return left((profileResult as Left).value);
+    }
+
+    // Add the details to cache
+
+    final userLocal = await _userLocalRepository.addUserToCache(user);
+    if (userLocal.isLeft()) {
+      _logger.e((userLocal as Left).value);
+      return left((userLocal as Left).value);
+    }
+
+    final userprofileLocal = await _userLocalRepository
+        .addUserProfile((profileResult as Right).value);
+    if (userprofileLocal.isLeft()) {
+      _logger.e((userLocal as Left).value);
+      return left((userLocal as Left).value);
+    }
+
+    final usercredsLocal =
+        await _userLocalRepository.addUserCredsToCache(credentials);
+    if (usercredsLocal.isLeft()) {
+      _logger.e((usercredsLocal as Left).value);
+      return left((userLocal as Left).value);
+    }
+
+    _logger.i(
+      "User successfully registered and data added to cache for rapid logins",
+      time: DateTime.now(),
+    );
+    return right(true);
   }
 
   /// Retrieves a user's profile from the cache

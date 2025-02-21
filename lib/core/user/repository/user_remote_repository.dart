@@ -48,4 +48,60 @@ final class UserRemoteRepository with DioErrorHandler {
       return left("Something went terribly wrong please try that later");
     }
   }
+
+  Future<Either<String, UserData>> registerUser(UserData rawUser) async {
+    try {
+      final response = await _client.dio.post(
+        "/v2/users/register",
+        data: rawUser.toJson(),
+      );
+
+      if (response.statusCode == 201) {
+        return right(UserData.fromJson(response.data));
+      }
+      return left(response.data["message"] ?? response.statusMessage);
+    } on DioException catch (de) {
+      return handleDioError(de);
+    } catch (e) {
+      return left("Something went terribly wrong please try that later");
+    }
+  }
+
+  Future<Either<String, UserProfileData>> createUserProfile(
+      UserProfileData profile) async {
+    try {
+      final response = await _client.dio.post(
+        "/v2/users/profile/create",
+        data: profile.toJson(),
+      );
+
+      if (response.statusCode == 201) {
+        return right(UserProfileData.fromJson(response.data));
+      }
+      return left(response.data["message"] ?? response.statusMessage);
+    } on DioException catch (de) {
+      return handleDioError(de);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Either<String, UserCredentialData>> registerUserCredentials(
+      UserCredentialData rawCredentials) async {
+    try {
+      final response = await _client.dio.post(
+        "/v2/credentials/create",
+        data: rawCredentials.toJson(),
+      );
+
+      if (response.statusCode == 201) {
+        return right(UserCredentialData.fromJson(response.data));
+      }
+      return left(response.data["message"] ?? response.statusMessage);
+    } on DioException catch (de) {
+      return handleDioError(de);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
