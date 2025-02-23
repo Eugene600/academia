@@ -16,6 +16,8 @@ class Academia extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /// Initialize messaging and push notification
+
     // Inject the application database
     GetIt.instance.registerSingletonIfAbsent<AppDatabase>(
       () => AppDatabase(),
@@ -25,6 +27,7 @@ class Academia extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => AuthBloc()),
         BlocProvider(create: (_) => ProfileCubit()),
+        BlocProvider(create: (_) => NotificationCubit()),
         BlocProvider(create: (_) => CourseCubit()),
       ],
       child: DynamicColorBuilder(
@@ -36,7 +39,7 @@ class Academia extends StatelessWidget {
             useMaterial3: true,
             fontFamily: GoogleFonts.inter().fontFamily,
           ),
-        )
+        ),
       ),
     );
   }

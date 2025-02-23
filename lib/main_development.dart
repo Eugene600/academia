@@ -1,9 +1,17 @@
 import 'package:academia/app.dart';
 import 'package:academia/exports/barrel.dart';
+import 'package:academia/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Init one signal with verbose logging
   // initialize the controllers
   Get.put(UserController());
   Get.put(SettingsController());

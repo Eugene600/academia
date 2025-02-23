@@ -14,7 +14,7 @@ final class UserRemoteRepository with DioErrorHandler {
   ) async {
     try {
       final response = await _client.dio.post(
-        "/v2/auth/authenticate",
+        "/verisafe/v2/auth/authenticate",
         data: credentials.toJson(),
       );
 
@@ -52,7 +52,7 @@ final class UserRemoteRepository with DioErrorHandler {
   Future<Either<String, UserData>> registerUser(UserData rawUser) async {
     try {
       final response = await _client.dio.post(
-        "/v2/users/register",
+        "/verisafe/v2/users/register",
         data: rawUser.toJson(),
       );
 
@@ -71,7 +71,7 @@ final class UserRemoteRepository with DioErrorHandler {
       UserProfileData profile) async {
     try {
       final response = await _client.dio.post(
-        "/v2/users/profile/create",
+        "/verisafe/v2/users/profile/create",
         data: profile.toJson(),
       );
 
@@ -90,7 +90,7 @@ final class UserRemoteRepository with DioErrorHandler {
       UserCredentialData rawCredentials) async {
     try {
       final response = await _client.dio.post(
-        "/v2/credentials/create",
+        "/verisafe/v2/credentials/create",
         data: rawCredentials.toJson(),
       );
 

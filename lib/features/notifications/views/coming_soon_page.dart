@@ -22,6 +22,13 @@ class _ComingSoonPageState extends State<ComingSoonPage> {
   void initState() {
     super.initState();
     nextTuesday = _getNextTuesday();
+    BlocProvider.of<NotificationCubit>(context)
+        .hasNotificationAccess()
+        .then((granted) {
+      setState(() {
+        notify = granted;
+      });
+    });
   }
 
   DateTime _getNextTuesday() {
@@ -49,7 +56,6 @@ class _ComingSoonPageState extends State<ComingSoonPage> {
                 children: [
                   Lottie.asset(
                     "assets/lotties/coming-soon.json",
-                    repeat: false,
                   ),
                   //
                   BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
@@ -68,7 +74,12 @@ class _ComingSoonPageState extends State<ComingSoonPage> {
                     style: Theme.of(context).textTheme.bodySmall,
                     //fontFamily: GoogleFonts.dynaPuff().fontFamily),
                     textAlign: TextAlign.left,
-                  ).animate().fadeIn(duration: 1000.ms),
+                  ).animate().moveX(
+                        begin: -5,
+                        end: 0,
+                        duration: 250.ms,
+                        curve: Curves.easeInCubic,
+                      ),
 
                   // timer count down
 
@@ -87,12 +98,28 @@ class _ComingSoonPageState extends State<ComingSoonPage> {
                   ),
                   // notify me button
                   SizedBox(height: 16),
-                  Card(
-                    elevation: 0,
-                    child: SwitchListTile(
-                      title: Text("Notify me when feature is up"),
-                      value: notify,
-                      onChanged: (val) {},
+
+                  Visibility(
+                    visible: !notify,
+                    child: Card(
+                      elevation: 0,
+                      child: SwitchListTile(
+                        title: Text("Notify me when feature is up"),
+                        value: notify,
+                        onChanged: (val) async {
+                          final user = (BlocProvider.of<AuthBloc>(context).state
+                                  as AuthenticatedState)
+                              .user;
+                          notify =
+                              await BlocProvider.of<NotificationCubit>(context)
+                                  .requestPermission(user);
+
+                          setState(() {});
+                        },
+                      ).animate(delay: 1000.ms).shake(
+                            curve: Curves.easeIn,
+                            duration: 500.ms,
+                          ),
                     ),
                   ),
                 ],

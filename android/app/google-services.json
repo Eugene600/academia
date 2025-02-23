@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "361650070490",
+    "project_id": "academia-201c2",
+    "storage_bucket": "academia-201c2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:361650070490:android:d1e12b13b7480d8b0456e3",
+        "android_client_info": {
+          "package_name": "com.dita.academia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNelx5rbaxR4EPuHjytQOLim9scaEvz-A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

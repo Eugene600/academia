@@ -92,7 +92,7 @@ class _LoginPageState extends State<LoginPage> {
           return;
         }
         if (state is AuthenticatedState) {
-          return context.pushReplacementNamed(AcademiaRouter.home);
+          return context.pushReplacementNamed(AcademiaRouter.featureComingSoon);
         }
       },
       child: Scaffold(
