@@ -124,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.all(12),
                 sliver: SliverPinnedHeader(
                   child: Column(
-                    spacing: 12,
+                    spacing: 8,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Row(

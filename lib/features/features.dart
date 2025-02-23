@@ -4,3 +4,4 @@ export 'home/home.dart';
 export 'profile/profile.dart';
 export 'courses/courses.dart';
 export 'todo/todo.dart';
+export 'notifications/notifications.dart';

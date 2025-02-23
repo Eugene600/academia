@@ -17,6 +17,7 @@ class AcademiaRouter {
   static const String courseView = "course-view";
   static const String todo = "todo";
   static const String todoView = "todo-view";
+  static const String featureComingSoon = "coming-soon";
 
   static final GoRouter _router = GoRouter(
     initialLocation: "/",
@@ -63,6 +64,13 @@ class AcademiaRouter {
         builder: (context, state) {
           TodoData? todo = state.extra as TodoData?;
           return TodoViewPage(todoData: todo);
+        },
+      ),
+      GoRoute(
+        name: featureComingSoon,
+        path: "/$featureComingSoon",
+        builder: (context, state) {
+          return ComingSoonPage();
         },
       ),
       GoRoute(

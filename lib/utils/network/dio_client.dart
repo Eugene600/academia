@@ -4,9 +4,9 @@ import './auth_interceptor.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class DioClient {
-  //static const String _baseUrl = "http://192.168.100.21:3000";
+  static const String _baseUrl = "http://192.168.100.21:3000";
   //static const String _baseUrl = "http://192.168.17.229:3000";
-  static const String _baseUrl = "http://127.0.0.1:3000";
+  //static const String _baseUrl = "http://127.0.0.1:3000";
 
   DioClient() {
     dio.interceptors.add(

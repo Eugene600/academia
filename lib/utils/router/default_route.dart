@@ -12,11 +12,14 @@ class DefaultRoute extends StatelessWidget {
     context.read<AuthBloc>().add(AppLaunchDetected());
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
+        listener: (context, state) async {
+          await Future.delayed(Duration(seconds: 2));
+
+          if (!context.mounted) return;
           if (state is AuthenticatedState) {
-            GoRouter.of(context).pushReplacementNamed(AcademiaRouter.home);
-          } else if (state is AuthenticatedState) {
-            GoRouter.of(context).pushReplacementNamed(AcademiaRouter.home);
+            GoRouter.of(context).pushReplacementNamed(
+              AcademiaRouter.featureComingSoon,
+            );
           }
         },
         child: const OnboardingPage(),
