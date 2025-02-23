@@ -99,7 +99,6 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _logger.e(error, time: DateTime.now());
         return emit(AuthErrorState(error: error));
       }, (ok) {
-        _logger.i("User registered successfully", time: DateTime.now());
         emit(AuthenticatedState(user: event.user));
       });
     });

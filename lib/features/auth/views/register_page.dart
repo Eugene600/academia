@@ -1,10 +1,12 @@
 import 'package:academia/constants/common.dart';
 import 'package:academia/database/database.dart';
 import 'package:academia/features/features.dart';
+import 'package:academia/utils/router/router.dart';
 import 'package:academia/utils/validator/validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -69,6 +71,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 SnackBar(content: Text(state.error)),
               );
               return;
+            }
+            if (state is AuthenticatedState) {
+              context.pushReplacement(AcademiaRouter.home);
             }
           },
           child: Form(
@@ -181,11 +186,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         SizedBox(height: 8),
 
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
-                              width: 200,
+                              width: 180,
                               child: TextFormField(
                                 enabled: false,
                                 controller: _admissionController,
@@ -212,7 +217,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                             ),
                             SizedBox(
-                              width: 200,
+                              width: 180,
                               child: TextFormField(
                                 controller: _usernameController,
                                 textAlign: TextAlign.center,

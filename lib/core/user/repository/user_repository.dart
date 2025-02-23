@@ -158,7 +158,9 @@ final class UserRepository {
 
     // Add the details to cache
 
-    final userLocal = await _userLocalRepository.addUserToCache(user);
+    final userLocal = await _userLocalRepository.addUserToCache(user.copyWith(
+      phone: drift.Value(''),
+    ));
     if (userLocal.isLeft()) {
       _logger.e((userLocal as Left).value);
       return left((userLocal as Left).value);

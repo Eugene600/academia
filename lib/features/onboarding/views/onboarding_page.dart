@@ -46,21 +46,27 @@ class OnboardingPage extends StatelessWidget {
                             "assets/lotties/loading-bounce.json",
                             height: 80,
                           )
-                        : FilledButton(
-                            onPressed: () async {
-                              if (await Vibration.hasVibrator()) {
-                                Vibration.vibrate(amplitude: 32);
-                              }
-                              if (!context.mounted) return;
-                              GoRouter.of(context).pushReplacementNamed(
-                                AcademiaRouter.auth,
-                              );
-                            },
-                            child: const Text("Get Started"),
-                          )
-                            .animate(delay: 1500.ms)
-                            .shake()
-                            .then(delay: 1000.ms);
+                        : FutureBuilder(
+                            future: Future.delayed(Duration(seconds: 2)),
+                            builder: (context, snapshot) =>
+                                snapshot.connectionState != ConnectionState.done
+                                    ? SizedBox()
+                                    : FilledButton(
+                                        onPressed: () async {
+                                          if (await Vibration.hasVibrator()) {
+                                            Vibration.vibrate(amplitude: 32);
+                                          }
+                                          if (!context.mounted) return;
+                                          GoRouter.of(context)
+                                              .pushReplacementNamed(
+                                            AcademiaRouter.auth,
+                                          );
+                                        },
+                                        child: const Text("Get Started"),
+                                      )
+                                        .animate(delay: 1500.ms)
+                                        .shake()
+                                        .then(delay: 1000.ms));
                   }),
                   const SizedBox(height: 16),
                 ],

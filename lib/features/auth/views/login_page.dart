@@ -88,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
           return;
         }
         if (state is NewAuthUserDetailsFetched) {
-          context.pushReplacementNamed(AcademiaRouter.register);
+          context.pushNamed(AcademiaRouter.register);
           return;
         }
         if (state is AuthenticatedState) {

@@ -44,10 +44,7 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
   @override
   late final GeneratedColumn<String> phone = GeneratedColumn<String>(
       'phone', aliasedName, true,
-      additionalChecks:
-          GeneratedColumn.checkTextLength(minTextLength: 10, maxTextLength: 15),
-      type: DriftSqlType.string,
-      requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
   late final GeneratedColumn<String> email = GeneratedColumn<String>(
