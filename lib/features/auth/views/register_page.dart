@@ -59,6 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthErrorState) {
@@ -68,7 +69,9 @@ class _RegisterPageState extends State<RegisterPage> {
             return;
           }
           if (state is AuthenticatedState) {
-            context.pushReplacementNamed(AcademiaRouter.featureComingSoon);
+            GoRouter.of(context).clearStackAndNavigate(
+              AcademiaRouter.featureComingSoon,
+            );
             return;
           }
         },

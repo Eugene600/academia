@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -92,15 +93,16 @@ class _LoginPageState extends State<LoginPage> {
           return;
         }
         if (state is AuthenticatedState) {
-          return context.pushReplacementNamed(AcademiaRouter.featureComingSoon);
+          return GoRouter.of(context).clearStackAndNavigate(
+            AcademiaRouter.featureComingSoon,
+          );
         }
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
         body: Form(
           key: _formState,
           child: CustomScrollView(
-            physics: NeverScrollableScrollPhysics(),
             slivers: [
               SliverAppBar(
                 pinned: true,
@@ -257,7 +259,7 @@ class _LoginPageState extends State<LoginPage> {
                             }
 
                             if (!_newToAcademia) {
-                              context.read<AuthBloc>().add(
+                              return context.read<AuthBloc>().add(
                                     AuthenticationRequested(
                                       admno: _admissionController.text,
                                       password: _passwordController.text,
@@ -281,12 +283,26 @@ class _LoginPageState extends State<LoginPage> {
               ),
               SliverPadding(
                 padding: const EdgeInsets.all(12),
-                sliver: SliverFillRemaining(
+                sliver: SliverToBoxAdapter(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          final Uri url = Uri.parse(
+                            'https://github.com/IamMuuo/academia/blob/dev/LICENSE',
+                          );
+                          if (!await launchUrl(url)) {
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    "Failed to launch privacy and terms url, we have saved this incident ans will resolve it"),
+                              ),
+                            );
+                            throw ("Failed to launch url");
+                          }
+                        },
                         child: const Text("Privacy and terms of service"),
                       ),
                       const SizedBox(height: 12)

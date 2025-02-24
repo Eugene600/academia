@@ -39,6 +39,11 @@ class Academia extends StatelessWidget {
             useMaterial3: true,
             fontFamily: GoogleFonts.inter().fontFamily,
           ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            colorScheme: darkscheme,
+            fontFamily: GoogleFonts.inter().fontFamily,
+          ),
         ),
       ),
     );

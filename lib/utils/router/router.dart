@@ -4,6 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:academia/features/features.dart';
 
+extension GoRouterExtension on GoRouter {
+  void clearStackAndNavigate(String location) {
+    while (canPop()) {
+      pop();
+    }
+    pushReplacementNamed(location);
+  }
+}
+
 class AcademiaRouter {
   static GoRouter get router => _router;
   static GlobalKey<NavigatorState> get globalNavigatorKey =>
