@@ -1,4 +1,5 @@
 import 'package:academia/database/database.dart';
+import 'package:academia/features/essentials/essentials.dart';
 import 'package:academia/utils/router/default_route.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -41,28 +42,28 @@ class AcademiaRouter {
         branches: [
           StatefulShellBranch(routes: [
             GoRoute(
-              name: featureComingSoon,
-              path: "/$featureComingSoon",
+              name: "dashboard",
+              path: "/dashboard",
               builder: (context, state) {
-                return ComingSoonPage();
+                return Dashboard();
               },
             ),
           ]),
           StatefulShellBranch(
             routes: [
               GoRoute(
-                name: profile,
-                path: "/$profile",
-                builder: (context, state) => const ProfilePage(),
+                name: "courses",
+                path: "/courses",
+                builder: (context, state) => const CoursesPage(),
               ),
             ],
           ),
           StatefulShellBranch(
             routes: [
               GoRoute(
-                name: todo,
-                path: "/$todo",
-                builder: (context, state) => const TodoPage(),
+                name: "essentials",
+                path: "/essentials",
+                builder: (context, state) => EssentialsPage(),
               ),
             ],
           )

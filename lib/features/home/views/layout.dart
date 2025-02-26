@@ -1,12 +1,8 @@
-import 'dart:async';
-
-import 'package:academia/features/essentials/essentials.dart';
-import 'package:academia/features/features.dart';
-import 'package:academia/utils/responsive/responsive.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:vibration/vibration.dart';
 
 class LayoutScaffold extends StatelessWidget {
   const LayoutScaffold({
@@ -21,19 +17,37 @@ class LayoutScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: navigationShell.currentIndex,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Clarity.home_line), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.shop), label: 'Essentials'),
-          BottomNavigationBarItem(icon: Icon(Clarity.user_line), label: 'Profile'),
+      bottomNavigationBar: NavigationBar(
+        elevation: 2,
+        selectedIndex: navigationShell.currentIndex,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        animationDuration: 1000.ms,
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Clarity.home_solid),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Clarity.calendar_solid),
+            label: 'Courses',
+          ),
+          NavigationDestination(
+            icon: Icon(Clarity.tools_solid),
+            label: 'Essentials',
+          ),
         ],
-        onTap: _onTap,
+        onDestinationSelected: _onTap,
       ),
     );
   }
 
-  void _onTap(index) {
+  void _onTap(index) async {
+    if (await Vibration.hasVibrator()) {
+      await Vibration.vibrate(
+        duration: 250,
+        sharpness: 250,
+      );
+    }
     navigationShell.goBranch(
       index,
       // A common pattern when using bottom navigation bars is to support
