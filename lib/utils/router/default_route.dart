@@ -18,7 +18,7 @@ class DefaultRoute extends StatelessWidget {
           if (!context.mounted) return;
           if (state is AuthenticatedState) {
             GoRouter.of(context).pushReplacementNamed(
-              AcademiaRouter.featureComingSoon,
+              AcademiaRouter.profile,
             );
           }
         },

@@ -56,6 +56,7 @@ class _ComingSoonPageState extends State<ComingSoonPage> {
                 children: [
                   Lottie.asset(
                     "assets/lotties/coming-soon.json",
+                    repeat: false,
                   ),
                   //
                   BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {

@@ -34,7 +34,7 @@ class OnboardingPage extends StatelessWidget {
                   Text(
                     "Academia is for you by you, crafted by students, for students",
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontFamily: GoogleFonts.marcellus().fontFamily,
+                          fontFamily: GoogleFonts.lora().fontFamily,
                         ),
                     textAlign: TextAlign.center,
                   ).animate().fadeIn(delay: 1000.ms),
@@ -54,7 +54,10 @@ class OnboardingPage extends StatelessWidget {
                                     : FilledButton(
                                         onPressed: () async {
                                           if (await Vibration.hasVibrator()) {
-                                            Vibration.vibrate(amplitude: 32);
+                                            Vibration.vibrate(
+                                              amplitude: 32,
+                                              duration: 250,
+                                            );
                                           }
                                           if (!context.mounted) return;
                                           GoRouter.of(context)

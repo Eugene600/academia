@@ -17,6 +17,8 @@ class AcademiaRouter {
   static GoRouter get router => _router;
   static GlobalKey<NavigatorState> get globalNavigatorKey =>
       GlobalKey<NavigatorState>();
+  static GlobalKey<NavigatorState> get sectionNavigatorKey =>
+      GlobalKey<NavigatorState>();
 
   static const String register = "register";
   static const String auth = "auth";
@@ -32,6 +34,40 @@ class AcademiaRouter {
     initialLocation: "/",
     navigatorKey: globalNavigatorKey,
     routes: [
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => LayoutScaffold(
+          navigationShell: navigationShell,
+        ),
+        branches: [
+          StatefulShellBranch(routes: [
+            GoRoute(
+              name: featureComingSoon,
+              path: "/$featureComingSoon",
+              builder: (context, state) {
+                return ComingSoonPage();
+              },
+            ),
+          ]),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                name: profile,
+                path: "/$profile",
+                builder: (context, state) => const ProfilePage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                name: todo,
+                path: "/$todo",
+                builder: (context, state) => const TodoPage(),
+              ),
+            ],
+          )
+        ],
+      ),
       GoRoute(
         path: "/",
         name: "/",
@@ -53,33 +89,11 @@ class AcademiaRouter {
         builder: (context, state) => const RegisterPage(),
       ),
       GoRoute(
-        path: "/$home",
-        name: home,
-        builder: (context, state) => const Layout(),
-      ),
-      GoRoute(
-        name: profile,
-        path: "/$profile",
-        builder: (context, state) => const ProfilePage(),
-      ),
-      GoRoute(
-        name: todo,
-        path: "/$todo",
-        builder: (context, state) => const TodoPage(),
-      ),
-      GoRoute(
         name: todoView,
         path: "/$todoView",
         builder: (context, state) {
           TodoData? todo = state.extra as TodoData?;
           return TodoViewPage(todoData: todo);
-        },
-      ),
-      GoRoute(
-        name: featureComingSoon,
-        path: "/$featureComingSoon",
-        builder: (context, state) {
-          return ComingSoonPage();
         },
       ),
       GoRoute(
