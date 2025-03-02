@@ -45,7 +45,7 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                         ),
                         SizedBox(height: 2),
                         Text(
-                          "@ ${user.username.toLowerCase()}",
+                          "@${user.username.toLowerCase()}",
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         Text(
@@ -53,11 +53,25 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         SizedBox(height: 2),
-                        FilledButton.icon(
-                          icon: Icon(Clarity.pencil_solid),
-                          onPressed: () {},
-                          label: Text("Edit profile"),
-                        )
+                        Row(
+                          spacing: 12,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(Clarity.pencil_line),
+                            ),
+                            FilledButton.icon(
+                              icon: Icon(Clarity.id_badge_line),
+                              onPressed: () {},
+                              label: Text("Show digital school ID"),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(Clarity.menu_line),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),

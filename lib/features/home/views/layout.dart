@@ -24,16 +24,20 @@ class LayoutScaffold extends StatelessWidget {
         animationDuration: 1000.ms,
         destinations: const [
           NavigationDestination(
-            icon: Icon(Clarity.home_solid),
+            icon: Icon(Clarity.home_line),
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Icon(Clarity.calendar_solid),
+            icon: Icon(Clarity.calendar_line),
             label: 'Courses',
           ),
           NavigationDestination(
-            icon: Icon(Clarity.tools_solid),
+            icon: Icon(Clarity.tools_line),
             label: 'Essentials',
+          ),
+          NavigationDestination(
+            icon: Icon(Clarity.user_line),
+            label: 'Profile',
           ),
         ],
         onDestinationSelected: _onTap,

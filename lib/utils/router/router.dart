@@ -66,18 +66,20 @@ class AcademiaRouter {
                 builder: (context, state) => EssentialsPage(),
               ),
             ],
-          )
+          ),
+          StatefulShellBranch(routes: [
+            GoRoute(
+              path: "/profile",
+              name: "profile",
+              builder: (context, state) => const ProfilePage(),
+            ),
+          ])
         ],
       ),
       GoRoute(
         path: "/",
         name: "/",
         builder: (context, state) => const DefaultRoute(),
-      ),
-      GoRoute(
-        path: "/profile",
-        name: "profile",
-        builder: (context, state) => const ProfilePage(),
       ),
       GoRoute(
         path: "/$onboarding",
