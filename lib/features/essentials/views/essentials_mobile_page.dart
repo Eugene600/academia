@@ -1,7 +1,6 @@
 import 'package:academia/utils/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -23,13 +22,9 @@ class _EssentialsMobilePageState extends State<EssentialsMobilePage> {
             snap: true,
             floating: true,
             expandedHeight: 250,
-            backgroundColor: Theme.of(context).colorScheme.errorContainer,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 "Essentials",
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontFamily: GoogleFonts.libreBaskerville().fontFamily,
-                    ),
               ),
             ),
             actions: [

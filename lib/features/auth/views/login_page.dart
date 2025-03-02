@@ -93,9 +93,7 @@ class _LoginPageState extends State<LoginPage> {
           return;
         }
         if (state is AuthenticatedState) {
-          return GoRouter.of(context).clearStackAndNavigate(
-            AcademiaRouter.featureComingSoon,
-          );
+          return GoRouter.of(context).clearStackAndNavigate("dashboard");
         }
       },
       child: Scaffold(

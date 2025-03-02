@@ -45,9 +45,6 @@ class _CoursesPageMobileState extends State<CoursesPageMobile> {
               flexibleSpace: FlexibleSpaceBar(
                 title: Text(
                   "Courses",
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontFamily: GoogleFonts.libreBaskerville().fontFamily,
-                      ),
                 ),
               ),
             ),

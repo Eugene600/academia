@@ -69,9 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
             return;
           }
           if (state is AuthenticatedState) {
-            GoRouter.of(context).clearStackAndNavigate(
-              AcademiaRouter.featureComingSoon,
-            );
+            GoRouter.of(context).clearStackAndNavigate("dashboard");
             return;
           }
         },

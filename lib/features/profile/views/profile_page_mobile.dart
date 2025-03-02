@@ -1,15 +1,9 @@
 import 'package:academia/constants/common.dart';
 import 'package:academia/database/database.dart';
 import 'package:academia/features/features.dart';
-import 'package:academia/utils/router/router.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class ProfilePageMobile extends StatefulWidget {
@@ -34,200 +28,202 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
         },
         builder: (context, state) {
           final user = (state as AuthenticatedState).user;
-          return CustomScrollView(
-            slivers: [
-              SliverPinnedHeader(
-                child: Container(
-                  padding: EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
+          return SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                SliverPinnedHeader(
+                  child: Container(
+                    padding: EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                    ),
+                    child: Column(
+                      spacing: 8,
+                      children: [
+                        CircleAvatar(
+                          radius: 60,
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          "@ ${user.username.toLowerCase()}",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        Text(
+                          "${user.email}",
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        SizedBox(height: 2),
+                        FilledButton.icon(
+                          icon: Icon(Clarity.pencil_solid),
+                          onPressed: () {},
+                          label: Text("Edit profile"),
+                        )
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    spacing: 8,
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.all(12),
+                  sliver: MultiSliver(
                     children: [
-                      CircleAvatar(
-                        radius: 60,
-                      ),
-                      SizedBox(height: 2),
                       Text(
-                        "@ ${user.username.toLowerCase()}",
-                        style: Theme.of(context).textTheme.headlineSmall,
-                      ),
-                      Text(
-                        "${user.email}",
+                        "Bio Data",
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      SizedBox(height: 2),
-                      FilledButton.icon(
-                        icon: Icon(Clarity.pencil_solid),
-                        onPressed: () {},
-                        label: Text("Edit profile"),
-                      )
+                      SizedBox(height: 12),
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.zero,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(12),
+                          ),
+                        ),
+                        child: ListTile(
+                          leading: const Icon(Clarity.user_line),
+                          title: Text("${user.firstname} ${user.othernames}"),
+                          subtitle: Text(
+                            "Official name",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.zero,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(),
+                        ),
+                        child: ListTile(
+                          leading: const Icon(Clarity.id_badge_line),
+                          title: Text(user.nationalId),
+                          subtitle: Text(
+                            "National ID",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.zero,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(),
+                        ),
+                        child: ListTile(
+                          leading: Icon(
+                            user.gender == "male"
+                                ? Bootstrap.gender_male
+                                : Bootstrap.gender_female,
+                          ),
+                          title: Text(user.gender.title()),
+                          subtitle: Text(
+                            "Gender",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.zero,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            bottom: Radius.circular(12),
+                          ),
+                        ),
+                        child: ListTile(
+                          leading: Icon(Clarity.host_solid_badged),
+                          title: Text(
+                            user.active ? "Active" : "Inactive",
+                          ),
+                          subtitle: Text(
+                            "Status",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+
+                      // Profile
+
+                      // Preferences
+                      SizedBox(height: 22),
+                      Text(
+                        "Academia Profile",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      SizedBox(height: 12),
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.zero,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            bottom: Radius.circular(12),
+                          ),
+                        ),
+                        child: ListTile(
+                          leading: Icon(Clarity.host_solid_badged),
+                          title: Text(""),
+                          subtitle: Text(
+                            "Status",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+
+                      // Preferences
+                      SizedBox(height: 22),
+                      Text(
+                        "Preferences",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      SizedBox(height: 12),
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.only(bottom: 2),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(12),
+                          ),
+                        ),
+                        child: SwitchListTile.adaptive(
+                          title: Text("Push Notifications"),
+                          value: true,
+                          onChanged: (val) {},
+                        ),
+                      ),
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.only(bottom: 2),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(),
+                        ),
+                        child: SwitchListTile.adaptive(
+                          title: Text("Biometric Lock"),
+                          value: true,
+                          onChanged: (val) {},
+                        ),
+                      ),
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.only(bottom: 2),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            bottom: Radius.circular(12),
+                          ),
+                        ),
+                        child: ListTile(
+                          trailing: Icon(Clarity.logout_line),
+                          title: Text("Logout"),
+                          subtitle: Text(
+                            "Leave the application",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.all(12),
-                sliver: MultiSliver(
-                  children: [
-                    Text(
-                      "Bio Data",
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    SizedBox(height: 12),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.zero,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(12),
-                        ),
-                      ),
-                      child: ListTile(
-                        leading: const Icon(Clarity.user_line),
-                        title: Text("${user.firstname} ${user.othernames}"),
-                        subtitle: Text(
-                          "Official name",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.zero,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(),
-                      ),
-                      child: ListTile(
-                        leading: const Icon(Clarity.id_badge_line),
-                        title: Text(user.nationalId),
-                        subtitle: Text(
-                          "National ID",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.zero,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(),
-                      ),
-                      child: ListTile(
-                        leading: Icon(
-                          user.gender == "male"
-                              ? Bootstrap.gender_male
-                              : Bootstrap.gender_female,
-                        ),
-                        title: Text(user.gender.title()),
-                        subtitle: Text(
-                          "Gender",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.zero,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(12),
-                        ),
-                      ),
-                      child: ListTile(
-                        leading: Icon(Clarity.host_solid_badged),
-                        title: Text(
-                          user.active ? "Active" : "Inactive",
-                        ),
-                        subtitle: Text(
-                          "Status",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ),
-
-                    // Profile
-
-                    // Preferences
-                    SizedBox(height: 22),
-                    Text(
-                      "Academia Profile",
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    SizedBox(height: 12),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.zero,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(12),
-                        ),
-                      ),
-                      child: ListTile(
-                        leading: Icon(Clarity.host_solid_badged),
-                        title: Text(""),
-                        subtitle: Text(
-                          "Status",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ),
-
-                    // Preferences
-                    SizedBox(height: 22),
-                    Text(
-                      "Preferences",
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                    SizedBox(height: 12),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.only(bottom: 2),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(12),
-                        ),
-                      ),
-                      child: SwitchListTile.adaptive(
-                        title: Text("Push Notifications"),
-                        value: true,
-                        onChanged: (val) {},
-                      ),
-                    ),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.only(bottom: 2),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(),
-                      ),
-                      child: SwitchListTile.adaptive(
-                        title: Text("Biometric Lock"),
-                        value: true,
-                        onChanged: (val) {},
-                      ),
-                    ),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.only(bottom: 2),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(12),
-                        ),
-                      ),
-                      child: ListTile(
-                        trailing: Icon(Clarity.logout_line),
-                        title: Text("Logout"),
-                        subtitle: Text(
-                          "Leave the application",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),

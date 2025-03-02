@@ -75,6 +75,11 @@ class AcademiaRouter {
         builder: (context, state) => const DefaultRoute(),
       ),
       GoRoute(
+        path: "/profile",
+        name: "profile",
+        builder: (context, state) => const ProfilePage(),
+      ),
+      GoRoute(
         path: "/$onboarding",
         name: onboarding,
         builder: (context, state) => const OnboardingPage(),
