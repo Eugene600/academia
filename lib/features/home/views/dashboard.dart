@@ -13,7 +13,7 @@ class Dashboard extends StatelessWidget {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 250,
+              expandedHeight: 200,
               flexibleSpace: FlexibleSpaceBar(
                 title: Text("Academia").animate(delay: 250.ms).moveY(
                       curve: Curves.easeInQuint,
@@ -26,7 +26,9 @@ class Dashboard extends StatelessWidget {
             SliverPadding(
               padding: EdgeInsets.all(12),
               sliver: MultiSliver(
-                children: [SizedBox(child: ChapelAttendancePage())],
+                children: [
+                  ChapelAttendancePage(),
+                ],
               ),
             ),
           ],

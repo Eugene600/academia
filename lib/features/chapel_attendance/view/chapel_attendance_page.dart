@@ -1,9 +1,13 @@
 import 'dart:async';
 
 import 'package:academia/features/chapel_attendance/widgets/timer_widget.dart';
+import 'package:academia/utils/validator/validator.dart';
 
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ChapelAttendancePage extends StatefulWidget {
   const ChapelAttendancePage({super.key});
@@ -79,109 +83,118 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
     await controller.dispose();
   }
 
+  void _showAdmissionInput() => showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        final TextEditingController stdAdm = TextEditingController();
+        return Padding(
+          padding: const EdgeInsets.only(
+            left: 16.0,
+            right: 16.0,
+            top: 42.0,
+            bottom: 16.0,
+          ),
+          child: Column(
+            children: [
+              TextFormField(
+                controller: stdAdm,
+                inputFormatters: [
+                  AdmnoDashFormatter(),
+                ],
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  suffixIcon: IconButton(
+                    onPressed: () {},
+                    icon: Icon(Clarity.check_line),
+                  ),
+                  hintText: "xx-xxxx",
+                  label: const Text("Student Admission Number"),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      });
+
   @override
   Widget build(BuildContext context) {
     return Column(
+      spacing: 12,
       children: [
-        TimerWidget(
-          hours: 0,
-          minutes: 1,
-          seconds: 0,
-        ),
-        Text(
-          DateTime.now().toString().substring(
-                0,
-                16,
-              ),
-        ),
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minWidth: 250,
+            maxWidth: 280,
+            maxHeight: 280,
+            minHeight: 250,
+          ),
           child: MobileScanner(
             controller: controller,
             fit: BoxFit.fill,
           ),
         ),
-        TextButton(
-          onPressed: () {
-            showModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  final TextEditingController stdAdm = TextEditingController();
-                  return Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16.0,
-                      right: 16.0,
-                      top: 42.0,
-                      bottom: 16.0,
-                    ),
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: stdAdm,
-                          decoration: InputDecoration(
-                            hintText: "XX-XXXX",
-                            label: const Text("Student Admission Number"),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Align(
-                            alignment: Alignment.bottomRight,
-                            child: FilledButton(
-                              onPressed: () {},
-                              child: Text("Mark Attendance"),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                });
-          },
-          child: Text("Enter Admission Instead"),
+        Container(
+          padding: EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Theme.of(context).primaryColor,
+              width: 2,
+            ),
+          ),
+          child: TimerCountdown(
+            timeTextStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontFamily: GoogleFonts.dynaPuff().fontFamily,
+                ),
+            format: CountDownTimerFormat.daysHoursMinutesSeconds,
+            endTime: DateTime.now().add(Duration(hours: 1)),
+            onEnd: () {},
+          ),
         ),
+        SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
+            spacing: 20,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Column(
                 children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text("75"),
-                    ),
+                  Text(
+                    "75",
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                          fontFamily: GoogleFonts.dynaPuff().fontFamily,
+                        ),
                   ),
-                  Text("No Scanned"),
+                  Text(
+                    "No Scanned",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               ),
-              Spacer(),
+              CircleAvatar(
+                child: IconButton(
+                  tooltip: "Enter Admission number instead",
+                  onPressed: _showAdmissionInput,
+                  icon: Icon(Clarity.id_badge_line),
+                ),
+              ),
               Column(
                 children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.grey,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text("75"),
-                    ),
+                  Text(
+                    "75",
+                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                          fontFamily: GoogleFonts.dynaPuff().fontFamily,
+                        ),
                   ),
-                  Text("Total Scanned"),
+                  Text(
+                    "No Scanned",
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 ],
               )
             ],
