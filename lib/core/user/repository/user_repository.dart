@@ -274,13 +274,13 @@ final class UserRepository {
     UserData user,
   ) async {
     // Fetch from the remote db
-    final remoteResult = await _userRemoteRepository.fetchUserProfile();
+    final remoteResult = await _userRemoteRepository.fetchUserProfile(user.id);
     if (remoteResult.isRight()) {
       final profile = (remoteResult as Right).value;
       await _userLocalRepository.addUserProfile(profile);
       return right(profile);
     }
-
+    _logger.e((remoteResult as Left).value);
     return (left((remoteResult as Left).value));
   }
 }

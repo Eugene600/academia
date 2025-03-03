@@ -1,9 +1,10 @@
 import 'dart:async';
-
-import 'package:academia/features/chapel_attendance/widgets/timer_widget.dart';
+import 'package:academia/database/database.dart';
+import 'package:academia/features/features.dart';
 import 'package:academia/utils/validator/validator.dart';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
@@ -25,7 +26,19 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
   void _handleBarCode(BarcodeCapture event) {
     Map rawData = event.raw as Map;
 
-    var gottenValue = rawData['data'][0]['rawValue'];
+    var admno = rawData['data'][0]['rawValue'];
+
+    final today = DateTime.now();
+    BlocProvider.of<AttendanceBloc>(context).add(
+      AttendanceMarkingRequested(
+        record: AttendanceModelData(
+          studentID: admno,
+          date: DateTime(today.year, today.month, today.day).toLocal(),
+          checkIn: 'present',
+          campus: 'athi river',
+        ),
+      ),
+    );
   }
 
   StreamSubscription<Object?>? _subscription;
@@ -55,6 +68,22 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
         _subscription = null;
         unawaited(controller.stop());
     }
+  }
+
+  DateTime _getNextTuesday() {
+    DateTime now = DateTime.now().copyWith(hour: 0, minute: 0, second: 0);
+    int daysToAdd = (DateTime.tuesday - now.weekday + 7) % 7;
+    daysToAdd = daysToAdd == 0 ? 7 : daysToAdd;
+    final nextTuesday = now.add(Duration(days: daysToAdd));
+
+    return DateTime(
+      nextTuesday.year,
+      nextTuesday.month,
+      nextTuesday.day,
+      10,
+      0,
+      0,
+    );
   }
 
   @override
@@ -94,27 +123,68 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
             top: 42.0,
             bottom: 16.0,
           ),
-          child: Column(
-            children: [
-              TextFormField(
-                controller: stdAdm,
-                inputFormatters: [
-                  AdmnoDashFormatter(),
-                ],
-                textAlign: TextAlign.center,
-                decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Clarity.check_line),
-                  ),
-                  hintText: "xx-xxxx",
-                  label: const Text("Student Admission Number"),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
+          child: BlocListener<AttendanceBloc, AttendanceState>(
+            listener: (context, state) {
+              if (state is AttendanceMarkedState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.message)),
+                );
+                return;
+              }
+            },
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: stdAdm,
+                  inputFormatters: [
+                    AdmnoDashFormatter(),
+                  ],
+                  textAlign: TextAlign.center,
+                  decoration: InputDecoration(
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        final today = DateTime.now();
+                        BlocProvider.of<AttendanceBloc>(context).add(
+                          AttendanceMarkingRequested(
+                            record: AttendanceModelData(
+                              studentID: stdAdm.text,
+                              date: DateTime(today.year, today.month, today.day)
+                                  .toLocal(),
+                              checkIn: 'present',
+                              campus: 'athi river',
+                            ),
+                          ),
+                        );
+                      },
+                      icon: Icon(Clarity.check_line),
+                    ),
+                    hintText: "xx-xxxx",
+                    label: const Text("Student Admission Number"),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
                 ),
-              ),
-            ],
+                BlocBuilder<AttendanceBloc, AttendanceState>(
+                  buildWhen: (statA, stateB) {
+                    if (stateB is AttendanceLoadingState ||
+                        stateB is AttendaceErrorState) {
+                      return true;
+                    }
+                    return false;
+                  },
+                  builder: (context, state) {
+                    if (state is AttendanceLoadingState) {
+                      return Text('Loading.....');
+                    }
+                    if (state is AttendaceErrorState) {
+                      return Text(state.error);
+                    }
+                    return SizedBox();
+                  },
+                ),
+              ],
+            ),
           ),
         );
       });
@@ -151,8 +221,10 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
                   fontFamily: GoogleFonts.dynaPuff().fontFamily,
                 ),
             format: CountDownTimerFormat.daysHoursMinutesSeconds,
-            endTime: DateTime.now().add(Duration(hours: 1)),
-            onEnd: () {},
+            endTime: _getNextTuesday(),
+            onEnd: () {
+              context.goNamed("home");
+            },
           ),
         ),
         SizedBox(height: 12),
@@ -171,7 +243,7 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
                         ),
                   ),
                   Text(
-                    "No Scanned",
+                    "Personally scanned",
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -186,13 +258,13 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
               Column(
                 children: [
                   Text(
-                    "75",
+                    "780",
                     style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                           fontFamily: GoogleFonts.dynaPuff().fontFamily,
                         ),
                   ),
                   Text(
-                    "No Scanned",
+                    "Total Scanned",
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

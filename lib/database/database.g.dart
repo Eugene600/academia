@@ -3,6 +3,278 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
+class $AttendanceModelTable extends AttendanceModel
+    with TableInfo<$AttendanceModelTable, AttendanceModelData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AttendanceModelTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _studentIDMeta =
+      const VerificationMeta('studentID');
+  @override
+  late final GeneratedColumn<String> studentID = GeneratedColumn<String>(
+      'student_i_d', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+      'date', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: Constant(DateTime.now()));
+  static const VerificationMeta _checkInMeta =
+      const VerificationMeta('checkIn');
+  @override
+  late final GeneratedColumn<String> checkIn = GeneratedColumn<String>(
+      'check_in', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: Constant("present"));
+  static const VerificationMeta _campusMeta = const VerificationMeta('campus');
+  @override
+  late final GeneratedColumn<String> campus = GeneratedColumn<String>(
+      'campus', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: Constant("athi river"));
+  @override
+  List<GeneratedColumn> get $columns => [studentID, date, checkIn, campus];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'attendance_model';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<AttendanceModelData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('student_i_d')) {
+      context.handle(
+          _studentIDMeta,
+          studentID.isAcceptableOrUnknown(
+              data['student_i_d']!, _studentIDMeta));
+    } else if (isInserting) {
+      context.missing(_studentIDMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+    }
+    if (data.containsKey('check_in')) {
+      context.handle(_checkInMeta,
+          checkIn.isAcceptableOrUnknown(data['check_in']!, _checkInMeta));
+    }
+    if (data.containsKey('campus')) {
+      context.handle(_campusMeta,
+          campus.isAcceptableOrUnknown(data['campus']!, _campusMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => const {};
+  @override
+  AttendanceModelData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AttendanceModelData(
+      studentID: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}student_i_d'])!,
+      date: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}date'])!,
+      checkIn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}check_in'])!,
+      campus: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}campus'])!,
+    );
+  }
+
+  @override
+  $AttendanceModelTable createAlias(String alias) {
+    return $AttendanceModelTable(attachedDatabase, alias);
+  }
+}
+
+class AttendanceModelData extends DataClass
+    implements Insertable<AttendanceModelData> {
+  final String studentID;
+  final DateTime date;
+  final String checkIn;
+  final String campus;
+  const AttendanceModelData(
+      {required this.studentID,
+      required this.date,
+      required this.checkIn,
+      required this.campus});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['student_i_d'] = Variable<String>(studentID);
+    map['date'] = Variable<DateTime>(date);
+    map['check_in'] = Variable<String>(checkIn);
+    map['campus'] = Variable<String>(campus);
+    return map;
+  }
+
+  AttendanceModelCompanion toCompanion(bool nullToAbsent) {
+    return AttendanceModelCompanion(
+      studentID: Value(studentID),
+      date: Value(date),
+      checkIn: Value(checkIn),
+      campus: Value(campus),
+    );
+  }
+
+  factory AttendanceModelData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AttendanceModelData(
+      studentID: serializer.fromJson<String>(json['studentID']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      checkIn: serializer.fromJson<String>(json['check_in']),
+      campus: serializer.fromJson<String>(json['campus']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'studentID': serializer.toJson<String>(studentID),
+      'date': serializer.toJson<DateTime>(date),
+      'check_in': serializer.toJson<String>(checkIn),
+      'campus': serializer.toJson<String>(campus),
+    };
+  }
+
+  AttendanceModelData copyWith(
+          {String? studentID,
+          DateTime? date,
+          String? checkIn,
+          String? campus}) =>
+      AttendanceModelData(
+        studentID: studentID ?? this.studentID,
+        date: date ?? this.date,
+        checkIn: checkIn ?? this.checkIn,
+        campus: campus ?? this.campus,
+      );
+  AttendanceModelData copyWithCompanion(AttendanceModelCompanion data) {
+    return AttendanceModelData(
+      studentID: data.studentID.present ? data.studentID.value : this.studentID,
+      date: data.date.present ? data.date.value : this.date,
+      checkIn: data.checkIn.present ? data.checkIn.value : this.checkIn,
+      campus: data.campus.present ? data.campus.value : this.campus,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AttendanceModelData(')
+          ..write('studentID: $studentID, ')
+          ..write('date: $date, ')
+          ..write('checkIn: $checkIn, ')
+          ..write('campus: $campus')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(studentID, date, checkIn, campus);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AttendanceModelData &&
+          other.studentID == this.studentID &&
+          other.date == this.date &&
+          other.checkIn == this.checkIn &&
+          other.campus == this.campus);
+}
+
+class AttendanceModelCompanion extends UpdateCompanion<AttendanceModelData> {
+  final Value<String> studentID;
+  final Value<DateTime> date;
+  final Value<String> checkIn;
+  final Value<String> campus;
+  final Value<int> rowid;
+  const AttendanceModelCompanion({
+    this.studentID = const Value.absent(),
+    this.date = const Value.absent(),
+    this.checkIn = const Value.absent(),
+    this.campus = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AttendanceModelCompanion.insert({
+    required String studentID,
+    this.date = const Value.absent(),
+    this.checkIn = const Value.absent(),
+    this.campus = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : studentID = Value(studentID);
+  static Insertable<AttendanceModelData> custom({
+    Expression<String>? studentID,
+    Expression<DateTime>? date,
+    Expression<String>? checkIn,
+    Expression<String>? campus,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (studentID != null) 'student_i_d': studentID,
+      if (date != null) 'date': date,
+      if (checkIn != null) 'check_in': checkIn,
+      if (campus != null) 'campus': campus,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AttendanceModelCompanion copyWith(
+      {Value<String>? studentID,
+      Value<DateTime>? date,
+      Value<String>? checkIn,
+      Value<String>? campus,
+      Value<int>? rowid}) {
+    return AttendanceModelCompanion(
+      studentID: studentID ?? this.studentID,
+      date: date ?? this.date,
+      checkIn: checkIn ?? this.checkIn,
+      campus: campus ?? this.campus,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (studentID.present) {
+      map['student_i_d'] = Variable<String>(studentID.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (checkIn.present) {
+      map['check_in'] = Variable<String>(checkIn.value);
+    }
+    if (campus.present) {
+      map['campus'] = Variable<String>(campus.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AttendanceModelCompanion(')
+          ..write('studentID: $studentID, ')
+          ..write('date: $date, ')
+          ..write('checkIn: $checkIn, ')
+          ..write('campus: $campus, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $UserTable extends User with TableInfo<$UserTable, UserData> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -2768,6 +3040,8 @@ class TodoCompanion extends UpdateCompanion<TodoData> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
+  late final $AttendanceModelTable attendanceModel =
+      $AttendanceModelTable(this);
   late final $UserTable user = $UserTable(this);
   late final $UserProfileTable userProfile = $UserProfileTable(this);
   late final $UserCredentialTable userCredential = $UserCredentialTable(this);
@@ -2778,12 +3052,171 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [user, userProfile, userCredential, course, todo];
+      [attendanceModel, user, userProfile, userCredential, course, todo];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
 }
 
+typedef $$AttendanceModelTableCreateCompanionBuilder = AttendanceModelCompanion
+    Function({
+  required String studentID,
+  Value<DateTime> date,
+  Value<String> checkIn,
+  Value<String> campus,
+  Value<int> rowid,
+});
+typedef $$AttendanceModelTableUpdateCompanionBuilder = AttendanceModelCompanion
+    Function({
+  Value<String> studentID,
+  Value<DateTime> date,
+  Value<String> checkIn,
+  Value<String> campus,
+  Value<int> rowid,
+});
+
+class $$AttendanceModelTableFilterComposer
+    extends Composer<_$AppDatabase, $AttendanceModelTable> {
+  $$AttendanceModelTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get studentID => $composableBuilder(
+      column: $table.studentID, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+      column: $table.date, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get checkIn => $composableBuilder(
+      column: $table.checkIn, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get campus => $composableBuilder(
+      column: $table.campus, builder: (column) => ColumnFilters(column));
+}
+
+class $$AttendanceModelTableOrderingComposer
+    extends Composer<_$AppDatabase, $AttendanceModelTable> {
+  $$AttendanceModelTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get studentID => $composableBuilder(
+      column: $table.studentID, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+      column: $table.date, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get checkIn => $composableBuilder(
+      column: $table.checkIn, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get campus => $composableBuilder(
+      column: $table.campus, builder: (column) => ColumnOrderings(column));
+}
+
+class $$AttendanceModelTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AttendanceModelTable> {
+  $$AttendanceModelTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get studentID =>
+      $composableBuilder(column: $table.studentID, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<String> get checkIn =>
+      $composableBuilder(column: $table.checkIn, builder: (column) => column);
+
+  GeneratedColumn<String> get campus =>
+      $composableBuilder(column: $table.campus, builder: (column) => column);
+}
+
+class $$AttendanceModelTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $AttendanceModelTable,
+    AttendanceModelData,
+    $$AttendanceModelTableFilterComposer,
+    $$AttendanceModelTableOrderingComposer,
+    $$AttendanceModelTableAnnotationComposer,
+    $$AttendanceModelTableCreateCompanionBuilder,
+    $$AttendanceModelTableUpdateCompanionBuilder,
+    (
+      AttendanceModelData,
+      BaseReferences<_$AppDatabase, $AttendanceModelTable, AttendanceModelData>
+    ),
+    AttendanceModelData,
+    PrefetchHooks Function()> {
+  $$AttendanceModelTableTableManager(
+      _$AppDatabase db, $AttendanceModelTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AttendanceModelTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AttendanceModelTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AttendanceModelTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> studentID = const Value.absent(),
+            Value<DateTime> date = const Value.absent(),
+            Value<String> checkIn = const Value.absent(),
+            Value<String> campus = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AttendanceModelCompanion(
+            studentID: studentID,
+            date: date,
+            checkIn: checkIn,
+            campus: campus,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String studentID,
+            Value<DateTime> date = const Value.absent(),
+            Value<String> checkIn = const Value.absent(),
+            Value<String> campus = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              AttendanceModelCompanion.insert(
+            studentID: studentID,
+            date: date,
+            checkIn: checkIn,
+            campus: campus,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$AttendanceModelTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $AttendanceModelTable,
+    AttendanceModelData,
+    $$AttendanceModelTableFilterComposer,
+    $$AttendanceModelTableOrderingComposer,
+    $$AttendanceModelTableAnnotationComposer,
+    $$AttendanceModelTableCreateCompanionBuilder,
+    $$AttendanceModelTableUpdateCompanionBuilder,
+    (
+      AttendanceModelData,
+      BaseReferences<_$AppDatabase, $AttendanceModelTable, AttendanceModelData>
+    ),
+    AttendanceModelData,
+    PrefetchHooks Function()>;
 typedef $$UserTableCreateCompanionBuilder = UserCompanion Function({
   required String id,
   required String username,
@@ -4990,6 +5423,8 @@ typedef $$TodoTableProcessedTableManager = ProcessedTableManager<
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
+  $$AttendanceModelTableTableManager get attendanceModel =>
+      $$AttendanceModelTableTableManager(_db, _db.attendanceModel);
   $$UserTableTableManager get user => $$UserTableTableManager(_db, _db.user);
   $$UserProfileTableTableManager get userProfile =>
       $$UserProfileTableTableManager(_db, _db.userProfile);

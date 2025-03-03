@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:academia/features/courses/models/course.dart';
 import 'package:academia/features/todo/models/todo.dart';
+import 'package:academia/features/chapel_attendance/models/attendance_model.dart';
 import 'package:academia/core/core.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -44,6 +45,7 @@ Future<Directory> _getDatabaseDirectory() async {
 }
 
 @DriftDatabase(tables: [
+  AttendanceModel,
   User,
   UserProfile,
   UserCredential,
