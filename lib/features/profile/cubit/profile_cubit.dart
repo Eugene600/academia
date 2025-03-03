@@ -12,11 +12,30 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(ProfileInitialState());
 
   Future<void> fetchCachedUserProfile(UserData user) async {
+    emit(ProfileLoadingState());
     final result = await _userRepository.fetchUserProfileFromCache(user);
+
     result.fold((error) {
       _logger.e("Error while fetching user profile from cache $error",
           error: error);
       emit(ProfileErrorState(error: error));
+    }, (profile) {
+      _logger.i("User profile fetched successfully");
+      emit(ProfileLoadedState(profile: profile));
+    });
+  }
+
+  Future<void> updateUserProfile(UserProfileData profile) async {
+    emit(ProfileLoadingState());
+    final result = await _userRepository.updateUserProfile(profile);
+    result.fold((error) {
+      _logger.e(
+        "Error while fetching user profile from cache $error",
+        error: error,
+      );
+      emit(ProfileErrorState(error: error));
+
+      emit(ProfileLoadedState(profile: profile));
     }, (profile) {
       _logger.i("User profile fetched successfully");
       emit(ProfileLoadedState(profile: profile));

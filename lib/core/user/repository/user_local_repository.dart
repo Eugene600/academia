@@ -105,10 +105,10 @@ final class UserLocalRepository {
   /// Sets a user's profile to the cache
   Future<Either<String, bool>> addUserProfile(UserProfileData profile) async {
     try {
-      final ok =
-          await _localDb.into(_localDb.userProfile).insertOnConflictUpdate(
-                profile.toCompanion(true),
-              );
+      final ok = await _localDb.update(_localDb.userProfile).replace(
+            profile.toCompanion(true),
+          );
+
       if (ok != 0) {
         return right(true);
       }

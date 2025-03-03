@@ -8,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
-import 'package:lottie/lottie.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:vibration/vibration.dart';
@@ -36,6 +35,24 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
       });
     });
   }
+
+  void _showUpdateProfile() => showBottomSheet(
+        elevation: 10,
+        context: context,
+        builder: (context) => Container(
+          padding: EdgeInsets.all(12),
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.8,
+          child: Column(
+            children: [
+              Text(
+                "Edit your profile",
+                style: Theme.of(context).textTheme.headlineMedium,
+              )
+            ],
+          ),
+        ),
+      );
 
   void _showQrCode() => showModalBottomSheet(
       context: context,
@@ -174,8 +191,10 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                               label: Text("Show digital school ID"),
                             ),
                             IconButton(
-                              onPressed: () {},
-                              icon: Icon(Clarity.menu_line),
+                              onPressed: () {
+                                context.pushNamed("profile-update");
+                              },
+                              icon: Icon(Clarity.pencil_line),
                             ),
                           ],
                         ),
@@ -273,7 +292,7 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                       builder: (context, state) {
                     if (state is! ProfileLoadedState) {
                       return SliverToBoxAdapter(
-                        child: Lottie.asset("assets/loties/"),
+                        child: Text("Fetching your profile"),
                       );
                     }
                     return MultiSliver(
@@ -310,6 +329,7 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                             ),
                           ),
                           child: ListTile(
+                            onTap: _showUpdateProfile,
                             leading: Icon(
                               Clarity.text_line,
                             ),
@@ -432,18 +452,18 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                             duration: 500.ms,
                           ),
                     ),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.only(bottom: 2),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(),
-                      ),
-                      child: SwitchListTile.adaptive(
-                        title: Text("Biometric Lock"),
-                        value: true,
-                        onChanged: (val) {},
-                      ),
-                    ),
+                    //Card(
+                    //  elevation: 0,
+                    //  margin: EdgeInsets.only(bottom: 2),
+                    //  shape: const RoundedRectangleBorder(
+                    //    borderRadius: BorderRadius.vertical(),
+                    //  ),
+                    //  child: SwitchListTile.adaptive(
+                    //    title: Text("Biometric Lock"),
+                    //    value: true,
+                    //    onChanged: (val) {},
+                    //  ),
+                    //),
                     Card(
                       elevation: 0,
                       margin: EdgeInsets.only(bottom: 2),

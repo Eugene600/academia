@@ -49,24 +49,24 @@ class AcademiaRouter {
               },
             ),
           ]),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                name: "courses",
-                path: "/courses",
-                builder: (context, state) => const CoursesPage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                name: "essentials",
-                path: "/essentials",
-                builder: (context, state) => EssentialsPage(),
-              ),
-            ],
-          ),
+          //StatefulShellBranch(
+          //  routes: [
+          //    GoRoute(
+          //      name: "courses",
+          //      path: "/courses",
+          //      builder: (context, state) => const CoursesPage(),
+          //    ),
+          //  ],
+          //),
+          //StatefulShellBranch(
+          //  routes: [
+          //    GoRoute(
+          //      name: "essentials",
+          //      path: "/essentials",
+          //      builder: (context, state) => EssentialsPage(),
+          //    ),
+          //  ],
+          //),
           StatefulShellBranch(routes: [
             GoRoute(
               path: "/profile",
@@ -85,6 +85,11 @@ class AcademiaRouter {
         path: "/",
         name: "/",
         builder: (context, state) => const DefaultRoute(),
+      ),
+      GoRoute(
+        path: "/profile-update",
+        name: "profile-update",
+        builder: (context, state) => const ProfileEditingPage(),
       ),
       GoRoute(
         path: "/$onboarding",

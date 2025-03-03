@@ -46,6 +46,27 @@ final class UserRepository {
     return await _userLocalRepository.fetchUserCredsFromCache(user);
   }
 
+  Future<Either<String, UserProfileData>> updateUserProfile(
+    UserProfileData profile,
+  ) async {
+    final result = await _userRemoteRepository.updateUserProfile(profile);
+    if (result.isLeft()) {
+      return left((result as Left).value);
+    }
+
+    final localResult = await _userLocalRepository.addUserProfile(
+      (result as Right).value,
+    );
+
+    return localResult.fold((error) {
+      _logger.e("failed to update user profile");
+      return left(error);
+    }, (r) {
+      _logger.i("successfully updated user profile");
+      return (result as Right).value;
+    });
+  }
+
   Future<Either<String, String>> logout(UserData user) async {
     final verisafeResult = await _userRemoteRepository.verisafeLogout();
     if (verisafeResult.isLeft()) {

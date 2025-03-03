@@ -105,6 +105,25 @@ final class UserRemoteRepository with DioErrorHandler {
     }
   }
 
+  Future<Either<String, UserProfileData>> updateUserProfile(
+      UserProfileData profile) async {
+    try {
+      final response = await _client.dio.patch(
+        "/verisafe/v2/users//profile/update",
+        data: profile.toJson(),
+      );
+
+      if (response.statusCode == 200) {
+        return right(UserProfileData.fromJson(response.data));
+      }
+      return left(response.data["message"] ?? response.statusMessage);
+    } on DioException catch (de) {
+      return handleDioError(de);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Either<String, UserCredentialData>> registerUserCredentials(
       UserCredentialData rawCredentials) async {
     try {
