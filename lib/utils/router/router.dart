@@ -77,6 +77,11 @@ class AcademiaRouter {
         ],
       ),
       GoRoute(
+        path: "/memberships",
+        name: "memberships",
+        builder: (context, state) => const MembershipPage(),
+      ),
+      GoRoute(
         path: "/",
         name: "/",
         builder: (context, state) => const DefaultRoute(),

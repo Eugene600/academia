@@ -50,7 +50,6 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
         _logger.e(error, time: DateTime.now());
         return emit(AuthErrorState(error: error));
       }, (user) {
-        _logger.d(user.toJson(), time: DateTime.now());
         return emit(AuthenticatedState(user: user));
       });
     });
@@ -83,7 +82,7 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
         // add user password to the dict
         user['profile'] = user['profile']!.split(',').last;
         user.addAll({'password': event.password});
-        _logger.d(user, time: DateTime.now());
+        _logger.d('user fetched');
         return emit(NewAuthUserDetailsFetched(userDetails: user));
       });
     });

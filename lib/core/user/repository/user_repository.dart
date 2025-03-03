@@ -238,9 +238,10 @@ final class UserRepository {
     if (localResult.isRight()) {
       final profile = (localResult as Right).value;
       if (profile == null) {
-        return left(
-          "Failed to fetch your profile from cache please connect to the internet and refresh",
+        _logger.i(
+          "failed to retrieve profile from local cache.. Attempting with remote..",
         );
+        return await refreshUserProfile(user);
       }
       return right((localResult as Right).value);
     }

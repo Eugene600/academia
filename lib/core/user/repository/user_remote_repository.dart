@@ -26,7 +26,6 @@ final class UserRemoteRepository with DioErrorHandler {
     } on DioException catch (de) {
       return handleDioError(de);
     } catch (e) {
-      rethrow;
       return left("Something went terribly wrong please try that later");
     }
   }
