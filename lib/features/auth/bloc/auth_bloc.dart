@@ -68,7 +68,7 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       emit(AuthLoadingState());
-      final result = await _userRepository.registerUser(
+      final result = await _userRepository.fetchUserDetailsFromMagnet(
         UserCredentialData(
             admno: event.admno.trim(),
             username: '',
@@ -81,6 +81,7 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return emit(AuthErrorState(error: error));
       }, (user) {
         // add user password to the dict
+        user['profile'] = user['profile']!.split(',').last;
         user.addAll({'password': event.password});
         _logger.d(user, time: DateTime.now());
         return emit(NewAuthUserDetailsFetched(userDetails: user));

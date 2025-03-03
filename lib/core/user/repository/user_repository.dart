@@ -84,13 +84,32 @@ final class UserRepository {
         await (GetIt.instance.get<Magnet>(instanceName: "magnet").login());
     //Right(Object());
     return magnetResult.fold((error) {
+      if (GetIt.instance.isRegistered<Magnet>(instanceName: "magnet")) {
+        _logger.i("Attempting to unregister magnet instance");
+        GetIt.instance.unregister<Magnet>(instanceName: "magnet");
+      }
+
       return left(error.toString());
     }, (session) async {
+      final detailsResult = await GetIt.instance
+          .get<Magnet>(instanceName: "magnet")
+          .fetchUserDetails();
+
+      if (detailsResult.isLeft()) {
+        return left((detailsResult as Left).value);
+      }
+
       final results =
           await _userRemoteRepository.verisafeAuthentication(credentials);
       return results.fold((error) {
         return left(error);
       }, (user) async {
+        final data = (detailsResult as Right).value as Map<String, String>;
+        user = user.copyWith(
+            picture: drift.Value(
+          base64Decode(data["profile"]!.split(",").last),
+        ));
+
         await addUserToCache(user);
         await addUserCredsToCache(UserCredentialData(
           email: user.email!,
@@ -107,7 +126,7 @@ final class UserRepository {
     // authenticate with verisafe
   }
 
-  Future<Either<String, Map<String, String>>> registerUser(
+  Future<Either<String, Map<String, String>>> fetchUserDetailsFromMagnet(
       UserCredentialData credentials) async {
     // Register a magnet singleton instance
 

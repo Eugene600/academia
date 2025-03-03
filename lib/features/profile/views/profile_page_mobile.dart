@@ -98,6 +98,7 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                       children: [
                         CircleAvatar(
                           radius: 60,
+                          backgroundImage: MemoryImage(user.picture!),
                         ),
                         SizedBox(height: 2),
                         Text(

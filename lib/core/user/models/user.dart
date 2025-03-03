@@ -9,6 +9,8 @@ class User extends Table {
   TextColumn get email => text().nullable().withLength(min: 5, max: 100)();
   TextColumn get gender => text().withLength(min: 1, max: 10)();
   BoolColumn get active => boolean().withDefault(const Constant(true))();
+  @JsonKey("profile_picture")
+  BlobColumn get picture => blob().nullable()();
   @JsonKey("created_at")
   DateTimeColumn get createdAt => dateTime()();
   @JsonKey("modified_at")

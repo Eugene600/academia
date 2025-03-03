@@ -70,6 +70,12 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("active" IN (0, 1))'),
       defaultValue: const Constant(true));
+  static const VerificationMeta _pictureMeta =
+      const VerificationMeta('picture');
+  @override
+  late final GeneratedColumn<Uint8List> picture = GeneratedColumn<Uint8List>(
+      'picture', aliasedName, true,
+      type: DriftSqlType.blob, requiredDuringInsert: false);
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -101,6 +107,7 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
         email,
         gender,
         active,
+        picture,
         createdAt,
         modifiedAt,
         nationalId
@@ -156,6 +163,10 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
       context.handle(_activeMeta,
           active.isAcceptableOrUnknown(data['active']!, _activeMeta));
     }
+    if (data.containsKey('picture')) {
+      context.handle(_pictureMeta,
+          picture.isAcceptableOrUnknown(data['picture']!, _pictureMeta));
+    }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
@@ -203,6 +214,8 @@ class $UserTable extends User with TableInfo<$UserTable, UserData> {
           .read(DriftSqlType.string, data['${effectivePrefix}gender'])!,
       active: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}active'])!,
+      picture: attachedDatabase.typeMapping
+          .read(DriftSqlType.blob, data['${effectivePrefix}picture']),
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       modifiedAt: attachedDatabase.typeMapping
@@ -227,6 +240,7 @@ class UserData extends DataClass implements Insertable<UserData> {
   final String? email;
   final String gender;
   final bool active;
+  final Uint8List? picture;
   final DateTime createdAt;
   final DateTime modifiedAt;
   final String nationalId;
@@ -239,6 +253,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       this.email,
       required this.gender,
       required this.active,
+      this.picture,
       required this.createdAt,
       required this.modifiedAt,
       required this.nationalId});
@@ -259,6 +274,9 @@ class UserData extends DataClass implements Insertable<UserData> {
     }
     map['gender'] = Variable<String>(gender);
     map['active'] = Variable<bool>(active);
+    if (!nullToAbsent || picture != null) {
+      map['picture'] = Variable<Uint8List>(picture);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['modified_at'] = Variable<DateTime>(modifiedAt);
     map['national_id'] = Variable<String>(nationalId);
@@ -279,6 +297,9 @@ class UserData extends DataClass implements Insertable<UserData> {
           email == null && nullToAbsent ? const Value.absent() : Value(email),
       gender: Value(gender),
       active: Value(active),
+      picture: picture == null && nullToAbsent
+          ? const Value.absent()
+          : Value(picture),
       createdAt: Value(createdAt),
       modifiedAt: Value(modifiedAt),
       nationalId: Value(nationalId),
@@ -297,6 +318,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       email: serializer.fromJson<String?>(json['email']),
       gender: serializer.fromJson<String>(json['gender']),
       active: serializer.fromJson<bool>(json['active']),
+      picture: serializer.fromJson<Uint8List?>(json['profile_picture']),
       createdAt: serializer.fromJson<DateTime>(json['created_at']),
       modifiedAt: serializer.fromJson<DateTime>(json['modified_at']),
       nationalId: serializer.fromJson<String>(json['national_id']),
@@ -314,6 +336,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       'email': serializer.toJson<String?>(email),
       'gender': serializer.toJson<String>(gender),
       'active': serializer.toJson<bool>(active),
+      'profile_picture': serializer.toJson<Uint8List?>(picture),
       'created_at': serializer.toJson<DateTime>(createdAt),
       'modified_at': serializer.toJson<DateTime>(modifiedAt),
       'national_id': serializer.toJson<String>(nationalId),
@@ -329,6 +352,7 @@ class UserData extends DataClass implements Insertable<UserData> {
           Value<String?> email = const Value.absent(),
           String? gender,
           bool? active,
+          Value<Uint8List?> picture = const Value.absent(),
           DateTime? createdAt,
           DateTime? modifiedAt,
           String? nationalId}) =>
@@ -341,6 +365,7 @@ class UserData extends DataClass implements Insertable<UserData> {
         email: email.present ? email.value : this.email,
         gender: gender ?? this.gender,
         active: active ?? this.active,
+        picture: picture.present ? picture.value : this.picture,
         createdAt: createdAt ?? this.createdAt,
         modifiedAt: modifiedAt ?? this.modifiedAt,
         nationalId: nationalId ?? this.nationalId,
@@ -356,6 +381,7 @@ class UserData extends DataClass implements Insertable<UserData> {
       email: data.email.present ? data.email.value : this.email,
       gender: data.gender.present ? data.gender.value : this.gender,
       active: data.active.present ? data.active.value : this.active,
+      picture: data.picture.present ? data.picture.value : this.picture,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       modifiedAt:
           data.modifiedAt.present ? data.modifiedAt.value : this.modifiedAt,
@@ -375,6 +401,7 @@ class UserData extends DataClass implements Insertable<UserData> {
           ..write('email: $email, ')
           ..write('gender: $gender, ')
           ..write('active: $active, ')
+          ..write('picture: $picture, ')
           ..write('createdAt: $createdAt, ')
           ..write('modifiedAt: $modifiedAt, ')
           ..write('nationalId: $nationalId')
@@ -383,8 +410,19 @@ class UserData extends DataClass implements Insertable<UserData> {
   }
 
   @override
-  int get hashCode => Object.hash(id, username, firstname, othernames, phone,
-      email, gender, active, createdAt, modifiedAt, nationalId);
+  int get hashCode => Object.hash(
+      id,
+      username,
+      firstname,
+      othernames,
+      phone,
+      email,
+      gender,
+      active,
+      $driftBlobEquality.hash(picture),
+      createdAt,
+      modifiedAt,
+      nationalId);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -397,6 +435,7 @@ class UserData extends DataClass implements Insertable<UserData> {
           other.email == this.email &&
           other.gender == this.gender &&
           other.active == this.active &&
+          $driftBlobEquality.equals(other.picture, this.picture) &&
           other.createdAt == this.createdAt &&
           other.modifiedAt == this.modifiedAt &&
           other.nationalId == this.nationalId);
@@ -411,6 +450,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
   final Value<String?> email;
   final Value<String> gender;
   final Value<bool> active;
+  final Value<Uint8List?> picture;
   final Value<DateTime> createdAt;
   final Value<DateTime> modifiedAt;
   final Value<String> nationalId;
@@ -424,6 +464,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
     this.email = const Value.absent(),
     this.gender = const Value.absent(),
     this.active = const Value.absent(),
+    this.picture = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.modifiedAt = const Value.absent(),
     this.nationalId = const Value.absent(),
@@ -438,6 +479,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
     this.email = const Value.absent(),
     required String gender,
     this.active = const Value.absent(),
+    this.picture = const Value.absent(),
     required DateTime createdAt,
     required DateTime modifiedAt,
     required String nationalId,
@@ -458,6 +500,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
     Expression<String>? email,
     Expression<String>? gender,
     Expression<bool>? active,
+    Expression<Uint8List>? picture,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? modifiedAt,
     Expression<String>? nationalId,
@@ -472,6 +515,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
       if (email != null) 'email': email,
       if (gender != null) 'gender': gender,
       if (active != null) 'active': active,
+      if (picture != null) 'picture': picture,
       if (createdAt != null) 'created_at': createdAt,
       if (modifiedAt != null) 'modified_at': modifiedAt,
       if (nationalId != null) 'national_id': nationalId,
@@ -488,6 +532,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
       Value<String?>? email,
       Value<String>? gender,
       Value<bool>? active,
+      Value<Uint8List?>? picture,
       Value<DateTime>? createdAt,
       Value<DateTime>? modifiedAt,
       Value<String>? nationalId,
@@ -501,6 +546,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
       email: email ?? this.email,
       gender: gender ?? this.gender,
       active: active ?? this.active,
+      picture: picture ?? this.picture,
       createdAt: createdAt ?? this.createdAt,
       modifiedAt: modifiedAt ?? this.modifiedAt,
       nationalId: nationalId ?? this.nationalId,
@@ -535,6 +581,9 @@ class UserCompanion extends UpdateCompanion<UserData> {
     if (active.present) {
       map['active'] = Variable<bool>(active.value);
     }
+    if (picture.present) {
+      map['picture'] = Variable<Uint8List>(picture.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -561,6 +610,7 @@ class UserCompanion extends UpdateCompanion<UserData> {
           ..write('email: $email, ')
           ..write('gender: $gender, ')
           ..write('active: $active, ')
+          ..write('picture: $picture, ')
           ..write('createdAt: $createdAt, ')
           ..write('modifiedAt: $modifiedAt, ')
           ..write('nationalId: $nationalId, ')
@@ -2743,6 +2793,7 @@ typedef $$UserTableCreateCompanionBuilder = UserCompanion Function({
   Value<String?> email,
   required String gender,
   Value<bool> active,
+  Value<Uint8List?> picture,
   required DateTime createdAt,
   required DateTime modifiedAt,
   required String nationalId,
@@ -2757,6 +2808,7 @@ typedef $$UserTableUpdateCompanionBuilder = UserCompanion Function({
   Value<String?> email,
   Value<String> gender,
   Value<bool> active,
+  Value<Uint8List?> picture,
   Value<DateTime> createdAt,
   Value<DateTime> modifiedAt,
   Value<String> nationalId,
@@ -2841,6 +2893,9 @@ class $$UserTableFilterComposer extends Composer<_$AppDatabase, $UserTable> {
 
   ColumnFilters<bool> get active => $composableBuilder(
       column: $table.active, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<Uint8List> get picture => $composableBuilder(
+      column: $table.picture, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
@@ -2947,6 +3002,9 @@ class $$UserTableOrderingComposer extends Composer<_$AppDatabase, $UserTable> {
   ColumnOrderings<bool> get active => $composableBuilder(
       column: $table.active, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<Uint8List> get picture => $composableBuilder(
+      column: $table.picture, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 
@@ -2989,6 +3047,9 @@ class $$UserTableAnnotationComposer
 
   GeneratedColumn<bool> get active =>
       $composableBuilder(column: $table.active, builder: (column) => column);
+
+  GeneratedColumn<Uint8List> get picture =>
+      $composableBuilder(column: $table.picture, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -3095,6 +3156,7 @@ class $$UserTableTableManager extends RootTableManager<
             Value<String?> email = const Value.absent(),
             Value<String> gender = const Value.absent(),
             Value<bool> active = const Value.absent(),
+            Value<Uint8List?> picture = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> modifiedAt = const Value.absent(),
             Value<String> nationalId = const Value.absent(),
@@ -3109,6 +3171,7 @@ class $$UserTableTableManager extends RootTableManager<
             email: email,
             gender: gender,
             active: active,
+            picture: picture,
             createdAt: createdAt,
             modifiedAt: modifiedAt,
             nationalId: nationalId,
@@ -3123,6 +3186,7 @@ class $$UserTableTableManager extends RootTableManager<
             Value<String?> email = const Value.absent(),
             required String gender,
             Value<bool> active = const Value.absent(),
+            Value<Uint8List?> picture = const Value.absent(),
             required DateTime createdAt,
             required DateTime modifiedAt,
             required String nationalId,
@@ -3137,6 +3201,7 @@ class $$UserTableTableManager extends RootTableManager<
             email: email,
             gender: gender,
             active: active,
+            picture: picture,
             createdAt: createdAt,
             modifiedAt: modifiedAt,
             nationalId: nationalId,

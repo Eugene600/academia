@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:academia/constants/common.dart';
 import 'package:academia/database/database.dart';
 import 'package:academia/features/features.dart';
 import 'package:academia/utils/router/router.dart';
 import 'package:academia/utils/validator/validator.dart';
+import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,6 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String password = '';
   bool accepted = false;
   DateTime? dob;
+  Uint8List? imageBytes;
 
   // are required to complete the form
 
@@ -54,6 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
     dob = DateFormat("dd/MM/yyyy").parse(details['dateofbirth']!);
     gender = details['gender'] == 'male' ? Gender.male : Gender.female;
     password = details["password"]!;
+    imageBytes = base64Decode(details['profile']!);
   }
 
   @override
@@ -118,6 +123,22 @@ class _RegisterPageState extends State<RegisterPage> {
                         curve: Curves.easeInOut);
                   }),
                 ),
+                actions: [
+                  IconButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              "Please complete your profile to view more options"),
+                        ),
+                      );
+                    },
+                    icon: CircleAvatar(
+                      radius: 18,
+                      backgroundImage: MemoryImage(imageBytes!),
+                    ),
+                  ),
+                ],
               ),
               BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
                 return SliverPadding(
@@ -168,9 +189,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           }
                           return null;
                         },
-                        autovalidateMode: AutovalidateMode.onUnfocus,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         decoration: InputDecoration(
-                          hintText: "Your school admission number",
+                          hintText: "Your national ID number",
                           label: const Text("National Identification Number"),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(4),
@@ -216,12 +237,18 @@ class _RegisterPageState extends State<RegisterPage> {
                               controller: _usernameController,
                               textAlign: TextAlign.center,
                               validator: (value) {
-                                if ((value?.length ?? 0) < 3) {
-                                  return "Please provide a valid username, more than three chars";
+                                RegExp regExp = RegExp(r'^[a-zA-Z0-9._]+$');
+
+                                if (value == null || value.isEmpty) {
+                                  return "Username cannot be empty";
+                                } else if (!regExp.hasMatch(value)) {
+                                  return "Only letters, numbers, dots, and underscores are allowed";
+                                } else {
+                                  return null; // Username is valid
                                 }
-                                return null;
                               },
-                              autovalidateMode: AutovalidateMode.onUnfocus,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               decoration: InputDecoration(
                                 hintText: "Your username",
                                 label: const Text("Username"),
@@ -376,6 +403,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 context.read<AuthBloc>().add(
                                       SignupEventRequested(
                                         user: UserData(
+                                            picture: imageBytes!,
                                             id: '',
                                             username:
                                                 _usernameController.text.trim(),
