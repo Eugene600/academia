@@ -26,7 +26,6 @@ class Academia extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => AuthBloc()),
-        BlocProvider(create: (_) => ProfileCubit()),
         BlocProvider(create: (_) => NotificationCubit()),
         BlocProvider(create: (_) => CourseCubit()),
       ],

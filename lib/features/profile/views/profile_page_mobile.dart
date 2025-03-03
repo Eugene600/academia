@@ -2,9 +2,12 @@ import 'package:academia/constants/common.dart';
 import 'package:academia/database/database.dart';
 import 'package:academia/features/features.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:vibration/vibration.dart';
 
 class ProfilePageMobile extends StatefulWidget {
   const ProfilePageMobile({super.key});
@@ -15,6 +18,20 @@ class ProfilePageMobile extends StatefulWidget {
 
 class _ProfilePageMobileState extends State<ProfilePageMobile> {
   late UserData user;
+
+  bool notify = false;
+
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<NotificationCubit>(context)
+        .hasNotificationAccess()
+        .then((granted) {
+      setState(() {
+        notify = granted;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -198,11 +215,30 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                             top: Radius.circular(12),
                           ),
                         ),
-                        child: SwitchListTile.adaptive(
-                          title: Text("Push Notifications"),
-                          value: true,
-                          onChanged: (val) {},
-                        ),
+                        child: SwitchListTile(
+                          title: Text("Allow Push Notifications"),
+                          value: notify,
+                          onChanged: (val) async {
+                            if (!val) {
+                              notify = await BlocProvider.of<NotificationCubit>(
+                                      context)
+                                  .revokePermission(user);
+                            } else {
+                              notify = await BlocProvider.of<NotificationCubit>(
+                                      context)
+                                  .requestPermission(user);
+                            }
+
+                            if (await Vibration.hasVibrator()) {
+                              Vibration.vibrate(duration: 32, amplitude: 255);
+                            }
+
+                            setState(() {});
+                          },
+                        ).animate(delay: 1000.ms).scale(
+                              curve: Curves.easeIn,
+                              duration: 500.ms,
+                            ),
                       ),
                       Card(
                         elevation: 0,
