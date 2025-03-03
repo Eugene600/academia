@@ -1,3 +1,4 @@
+import 'package:academia/features/chapel_attendance/view/chapel_attendance_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -25,7 +26,7 @@ class Dashboard extends StatelessWidget {
             SliverPadding(
               padding: EdgeInsets.all(12),
               sliver: MultiSliver(
-                children: [],
+                children: [SizedBox(child: ChapelAttendancePage())],
               ),
             ),
           ],
