@@ -30,6 +30,25 @@ final class UserRemoteRepository with DioErrorHandler {
     }
   }
 
+  /// The function attempts to deauthenticate a users  token
+  Future<Either<String, String>> verisafeLogout() async {
+    try {
+      final response = await _client.dio.get(
+        "/verisafe/v2/auth/logout",
+      );
+
+      if (response.statusCode == 200) {
+        return right(response.data["message"]);
+      }
+
+      return left(response.data["message"] ?? response.statusMessage);
+    } on DioException catch (de) {
+      return handleDioError(de);
+    } catch (e) {
+      return left("Something went terribly wrong please try that later");
+    }
+  }
+
   /// The function attempts to fetch a user's profile from verisafe
   /// In the event of success it retuns the [UserProfileData]
   /// and in case of failure it retuns a string indicating what exactly

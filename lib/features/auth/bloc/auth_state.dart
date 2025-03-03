@@ -21,3 +21,8 @@ final class NewAuthUserDetailsFetched extends AuthState {
   final Map<String, String> userDetails;
   NewAuthUserDetailsFetched({required this.userDetails});
 }
+
+final class UnauthenticatedState extends AuthState {
+  final String? message;
+  UnauthenticatedState({this.message});
+}

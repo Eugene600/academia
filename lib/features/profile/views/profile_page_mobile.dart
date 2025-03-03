@@ -4,7 +4,7 @@ import 'package:academia/features/features.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:vibration/vibration.dart';
@@ -36,7 +36,40 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<AuthBloc, AuthState>(
+        body: BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthLoadingState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                spacing: 12,
+                children: [
+                  CircularProgressIndicator(),
+                  Text("Just a momement"),
+                ],
+              ),
+            ),
+          );
+          return;
+        } else if (state is AuthErrorState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error)),
+          );
+          return;
+        }
+        if (state is UnauthenticatedState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message ?? "Goodbye ${user.firstname}"),
+            ),
+          );
+
+          return context.goNamed("auth");
+        }
+      },
+      child: BlocBuilder<AuthBloc, AuthState>(
         buildWhen: (stateA, stateB) {
           if (stateB is AuthenticatedState) {
             return true;
@@ -48,6 +81,12 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
           return SafeArea(
             child: CustomScrollView(
               slivers: [
+                SliverPinnedHeader(
+                  child: Visibility(
+                    visible: state is AuthLoadingState ? true : false,
+                    child: LinearProgressIndicator(),
+                  ),
+                ),
                 SliverPinnedHeader(
                   child: Container(
                     padding: EdgeInsets.all(12),
@@ -261,6 +300,11 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                           ),
                         ),
                         child: ListTile(
+                          onTap: () {
+                            BlocProvider.of<AuthBloc>(context).add(
+                              LogoutRequested(user: user),
+                            );
+                          },
                           trailing: Icon(Clarity.logout_line),
                           title: Text("Logout"),
                           subtitle: Text(
@@ -277,6 +321,6 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
           );
         },
       ),
-    );
+    ));
   }
 }

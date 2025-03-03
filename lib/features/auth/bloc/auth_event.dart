@@ -24,3 +24,11 @@ final class SignupEventRequested extends AuthEvent {
     required this.creds,
   });
 }
+
+final class LogoutRequested extends AuthEvent {
+  UserData user;
+
+  LogoutRequested({
+    required this.user,
+  });
+}

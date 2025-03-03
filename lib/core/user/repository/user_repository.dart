@@ -46,6 +46,30 @@ final class UserRepository {
     return await _userLocalRepository.fetchUserCredsFromCache(user);
   }
 
+  Future<Either<String, String>> logout(UserData user) async {
+    final verisafeResult = await _userRemoteRepository.verisafeLogout();
+    if (verisafeResult.isLeft()) {
+      _logger.e(
+        "verisafe remote trouble when deauthenticating user",
+        error: (verisafeResult as Left).value,
+      );
+      return left((verisafeResult as Left).value);
+    }
+
+    final localResult = await _userLocalRepository.deleteUserFromCache(user);
+    return localResult.fold((l) {
+      _logger.e("Local cache trouble when deleting", error: l);
+      return left(l);
+    }, (r) {
+      if (GetIt.instance.isRegistered<Magnet>(instanceName: "magnet")) {
+        _logger.i("Attempting to unregister magnet instance");
+        GetIt.instance.unregister<Magnet>(instanceName: "magnet");
+      }
+      _logger.i("successfully deleted user details from cache");
+      return right((verisafeResult as Right).value);
+    });
+  }
+
   Future<Either<String, UserData>> authenticateRemotely(
       UserCredentialData credentials) async {
     // Register a magnet singleton instance

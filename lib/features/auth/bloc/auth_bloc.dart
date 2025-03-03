@@ -102,5 +102,21 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthenticatedState(user: event.user));
       });
     });
+
+    on<LogoutRequested>((event, emit) async {
+      emit(AuthLoadingState());
+
+      final result = await _userRepository.logout(event.user);
+
+      result.fold((error) {
+        _logger.e(error, error: error);
+        emit(AuthErrorState(error: error));
+
+        // To prevent errors since the user logout was unsuccessfull
+        emit(AuthenticatedState(user: event.user));
+      }, (message) {
+        emit(UnauthenticatedState(message: message));
+      });
+    });
   }
 }
