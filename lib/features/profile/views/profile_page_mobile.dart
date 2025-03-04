@@ -329,7 +329,9 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                             ),
                           ),
                           child: ListTile(
-                            onTap: _showUpdateProfile,
+                            onTap: () {
+                              context.pushNamed("profile-update");
+                            },
                             leading: Icon(
                               Clarity.text_line,
                             ),

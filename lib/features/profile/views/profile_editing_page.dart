@@ -15,7 +15,7 @@ class ProfileEditingPage extends StatefulWidget {
 
 class _ProfileEditingPageState extends State<ProfileEditingPage> {
   final formstate = GlobalKey<FormState>();
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,6 +24,14 @@ class _ProfileEditingPageState extends State<ProfileEditingPage> {
           if (state is ProfileErrorState) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error)),
+            );
+            return;
+          }
+          if (state is ProfileLoadedState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Your profile has been successfully updated"),
+              ),
             );
             return;
           }

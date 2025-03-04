@@ -50,20 +50,19 @@ final class UserRepository {
     UserProfileData profile,
   ) async {
     final result = await _userRemoteRepository.updateUserProfile(profile);
-    if (result.isLeft()) {
-      return left((result as Left).value);
-    }
 
-    final localResult = await _userLocalRepository.addUserProfile(
-      (result as Right).value,
-    );
-
-    return localResult.fold((error) {
-      _logger.e("failed to update user profile");
+    return result.fold((error) {
+      _logger.e(error);
       return left(error);
-    }, (r) {
-      _logger.i("successfully updated user profile");
-      return (result as Right).value;
+    }, (profile) async {
+      final localResult = await _userLocalRepository.addUserProfile(profile);
+      return localResult.fold((error) {
+        _logger.e("failed to update user profile $error");
+        return left(error);
+      }, (r) {
+        _logger.i("successfully updated user profile");
+        return right(profile);
+      });
     });
   }
 

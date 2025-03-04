@@ -105,13 +105,16 @@ final class UserLocalRepository {
   /// Sets a user's profile to the cache
   Future<Either<String, bool>> addUserProfile(UserProfileData profile) async {
     try {
-      final ok = await _localDb.update(_localDb.userProfile).replace(
-            profile.toCompanion(true),
-          );
+      await _localDb.delete(_localDb.userProfile).delete(profile);
+      final ok =
+          await _localDb.into(_localDb.userProfile).insertOnConflictUpdate(
+                profile.toCompanion(true),
+              );
 
       if (ok != 0) {
         return right(true);
       }
+
       return left(
         "The specified user profile data was not inserted since it exists and confliced",
       );
@@ -126,7 +129,6 @@ final class UserLocalRepository {
   Future<Either<String, UserProfileData?>> fetchUserProfile(
       UserData user) async {
     try {
-      // final profile =
       final profile = await _localDb.managers.userProfile
           .filter((f) => f.userId.id.equals(user.id))
           .getSingleOrNull(distinct: true);
