@@ -1,3 +1,4 @@
+import 'package:academia/exports/barrel.dart';
 import 'package:academia/features/features.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -22,6 +23,7 @@ class _ComingSoonPageState extends State<ComingSoonPage> {
   void initState() {
     super.initState();
     nextTuesday = _getNextTuesday();
+    //nextTuesday = _getNextTuesday();
     BlocProvider.of<NotificationCubit>(context)
         .hasNotificationAccess()
         .then((granted) {

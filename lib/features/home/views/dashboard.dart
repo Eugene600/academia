@@ -9,8 +9,8 @@ class Dashboard extends StatelessWidget {
 
   bool _isTuesdayBetween8And10AM() {
     //DateTime now = DateTime.now();
-    //return now.weekday == DateTime.tuesday && now.hour >= 8 && now.hour < 10;
-    return true;
+    //return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
+    return false;
   }
 
   @override

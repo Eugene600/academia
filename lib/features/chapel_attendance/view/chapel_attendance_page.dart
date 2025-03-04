@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -71,19 +72,28 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
   }
 
   DateTime _getNextTuesday() {
-    DateTime now = DateTime.now().copyWith(hour: 0, minute: 0, second: 0);
+    DateTime now = DateTime.now();
+    if (now.weekday == DateTime.tuesday && now.hour < 10) {
+      return now.copyWith(hour: 10, minute: 0, second: 0);
+    }
+    now = DateTime.now().copyWith(hour: 0, minute: 0, second: 0);
     int daysToAdd = (DateTime.tuesday - now.weekday + 7) % 7;
     daysToAdd = daysToAdd == 0 ? 7 : daysToAdd;
-    final nextTuesday = now.add(Duration(days: daysToAdd));
+    return now.add(Duration(days: daysToAdd));
 
-    return DateTime(
-      nextTuesday.year,
-      nextTuesday.month,
-      nextTuesday.day,
-      10,
-      0,
-      0,
-    );
+    //DateTime now = DateTime.now().copyWith(hour: 0, minute: 0, second: 0);
+    //int daysToAdd = (DateTime.tuesday - now.weekday + 7) % 7;
+    //daysToAdd = daysToAdd == 0 ? 7 : daysToAdd;
+    //final nextTuesday = now.add(Duration(days: daysToAdd));
+    //
+    //return DateTime(
+    //  nextTuesday.year,
+    //  nextTuesday.month,
+    //  nextTuesday.day,
+    //  10,
+    //  0,
+    //  0,
+    //);
   }
 
   @override
@@ -175,12 +185,47 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
                   },
                   builder: (context, state) {
                     if (state is AttendanceLoadingState) {
-                      return Text('Loading.....');
+                      return Column(
+                        spacing: 12,
+                        children: [
+                          Lottie.asset(
+                            "assets/lotties/search.json",
+                            height: 200,
+                            width: 200,
+                          ),
+                        ],
+                      );
                     }
                     if (state is AttendaceErrorState) {
-                      return Text(state.error);
+                      return Column(
+                        spacing: 12,
+                        children: [
+                          Lottie.asset(
+                            "assets/lotties/cat-error.json",
+                            height: 200,
+                            width: 200,
+                          ),
+                          Text(
+                            state.error,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          )
+                        ],
+                      );
                     }
-                    return SizedBox();
+                    return Column(
+                      spacing: 12,
+                      children: [
+                        Lottie.asset(
+                          "assets/lotties/bunny.json",
+                          height: 200,
+                          width: 200,
+                        ),
+                        Text(
+                          "Please provide a student admission number to continue",
+                          style: Theme.of(context).textTheme.titleLarge,
+                        )
+                      ],
+                    );
                   },
                 ),
               ],
