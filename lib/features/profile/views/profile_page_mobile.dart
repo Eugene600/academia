@@ -36,59 +36,60 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
     });
   }
 
-  void _showUpdateProfile() => showBottomSheet(
-        elevation: 10,
+  void _showQrCode() => showModalBottomSheet(
         context: context,
-        builder: (context) => Container(
-          padding: EdgeInsets.all(12),
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 0.8,
-          child: Column(
-            children: [
-              Text(
-                "Edit your profile",
-                style: Theme.of(context).textTheme.headlineMedium,
-              )
-            ],
-          ),
+        builder: (context) => BlocBuilder<ProfileCubit, ProfileState>(
+          buildWhen: (stateA, stateB) {
+            if (stateB is ProfileLoadedState) return true;
+            return false;
+          },
+          builder: (context, state) => state is ProfileLoadedState
+              ? Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.all(12),
+                  child: Column(
+                    spacing: 12,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 200,
+                        width: 200,
+                        child: PrettyQrView.data(
+                          data: (state).profile.admissionNumber,
+                          errorCorrectLevel: QrErrorCorrectLevel.H,
+                          decoration: const PrettyQrDecoration(
+                            shape: PrettyQrSmoothSymbol(
+                              color: Colors.pink,
+                            ),
+                            image: PrettyQrDecorationImage(
+                              image: AssetImage("assets/icons/academia.png"),
+                            ),
+                          ),
+                        ).animate(delay: 500.ms).fadeIn(
+                              duration: 1000.ms,
+                              curve: Curves.easeInOutSine,
+                            ),
+                      ),
+                      Text(
+                        "With secure love from verisafe 🔑",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                )
+              : Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Column(
+                    children: [
+                      Text(
+                        "Please pull the profile page to refresh",
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                    ],
+                  ),
+                ),
         ),
       );
-
-  void _showQrCode() => showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.all(12),
-            child: Column(
-              spacing: 12,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: PrettyQrView.data(
-                    data: '21-2080',
-                    errorCorrectLevel: QrErrorCorrectLevel.H,
-                    decoration: const PrettyQrDecoration(
-                      shape: PrettyQrSmoothSymbol(
-                        color: Colors.pink,
-                      ),
-                      image: PrettyQrDecorationImage(
-                        image: AssetImage("assets/icons/academia.png"),
-                      ),
-                    ),
-                  ).animate(delay: 500.ms).fadeIn(
-                        duration: 1000.ms,
-                        curve: Curves.easeInOutSine,
-                      ),
-                ),
-                Text(
-                  "With secure love from verisafe 🔑",
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
-          ));
 
   @override
   Widget build(BuildContext context) {
@@ -138,168 +139,84 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
 
           BlocProvider.of<ProfileCubit>(context).fetchCachedUserProfile(user);
           return SafeArea(
-            child: CustomScrollView(
-              slivers: [
-                BlocBuilder<ProfileCubit, ProfileState>(
-                  builder: (context, state) {
-                    bool show = (state is ProfileLoadingState);
-                    return SliverPinnedHeader(
-                        child: Visibility(
-                      visible: show,
-                      child: LinearProgressIndicator(),
-                    ));
-                  },
-                ),
-                SliverPinnedHeader(
-                  child: Container(
+            child: RefreshIndicator(
+              onRefresh: () async {
+                final user = (BlocProvider.of<AuthBloc>(context).state
+                        as AuthenticatedState)
+                    .user;
+                BlocProvider.of<ProfileCubit>(context)
+                    .fetchCachedUserProfile(user);
+              },
+              child: CustomScrollView(
+                slivers: [
+                  BlocBuilder<ProfileCubit, ProfileState>(
+                    builder: (context, state) {
+                      bool show = (state is ProfileLoadingState);
+                      return SliverPinnedHeader(
+                          child: Visibility(
+                        visible: show,
+                        child: LinearProgressIndicator(),
+                      ));
+                    },
+                  ),
+                  SliverPinnedHeader(
+                    child: Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                      ),
+                      child: Column(
+                        spacing: 8,
+                        children: [
+                          CircleAvatar(
+                            radius: 60,
+                            backgroundImage: MemoryImage(
+                              user.picture ?? Uint8List(0),
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            "@${user.username.toLowerCase()}",
+                            style: Theme.of(context).textTheme.headlineSmall,
+                          ),
+                          Text(
+                            "${user.email}",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          SizedBox(height: 2),
+                          Row(
+                            spacing: 12,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                onPressed: _showQrCode,
+                                icon: Icon(Clarity.qr_code_line),
+                              ),
+                              FilledButton.icon(
+                                icon: Icon(Clarity.id_badge_line),
+                                onPressed: () {
+                                  context.pushNamed("memberships");
+                                },
+                                label: Text("Show digital school ID"),
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  context.pushNamed("profile-update");
+                                },
+                                icon: Icon(Clarity.pencil_line),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SliverPadding(
                     padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                    ),
-                    child: Column(
-                      spacing: 8,
+                    sliver: MultiSliver(
                       children: [
-                        CircleAvatar(
-                          radius: 60,
-                          backgroundImage: MemoryImage(
-                            user.picture ?? Uint8List(0),
-                          ),
-                        ),
-                        SizedBox(height: 2),
                         Text(
-                          "@${user.username.toLowerCase()}",
-                          style: Theme.of(context).textTheme.headlineSmall,
-                        ),
-                        Text(
-                          "${user.email}",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        SizedBox(height: 2),
-                        Row(
-                          spacing: 12,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              onPressed: _showQrCode,
-                              icon: Icon(Clarity.qr_code_line),
-                            ),
-                            FilledButton.icon(
-                              icon: Icon(Clarity.id_badge_line),
-                              onPressed: () {
-                                context.pushNamed("memberships");
-                              },
-                              label: Text("Show digital school ID"),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                context.pushNamed("profile-update");
-                              },
-                              icon: Icon(Clarity.pencil_line),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.all(12),
-                  sliver: MultiSliver(
-                    children: [
-                      Text(
-                        "Bio Data",
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      SizedBox(height: 12),
-                      Card(
-                        elevation: 0,
-                        margin: EdgeInsets.zero,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(12),
-                          ),
-                        ),
-                        child: ListTile(
-                          leading: const Icon(Clarity.user_line),
-                          title: Text("${user.firstname} ${user.othernames}"),
-                          subtitle: Text(
-                            "Official name",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                      ),
-                      Card(
-                        elevation: 0,
-                        margin: EdgeInsets.zero,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(),
-                        ),
-                        child: ListTile(
-                          leading: const Icon(Clarity.id_badge_line),
-                          title: Text(user.nationalId),
-                          subtitle: Text(
-                            "National ID",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                      ),
-                      Card(
-                        elevation: 0,
-                        margin: EdgeInsets.zero,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(),
-                        ),
-                        child: ListTile(
-                          leading: Icon(
-                            user.gender == "male"
-                                ? Bootstrap.gender_male
-                                : Bootstrap.gender_female,
-                          ),
-                          title: Text(user.gender.title()),
-                          subtitle: Text(
-                            "Gender",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                      ),
-                      Card(
-                        elevation: 0,
-                        margin: EdgeInsets.zero,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            bottom: Radius.circular(12),
-                          ),
-                        ),
-                        child: ListTile(
-                          leading: Icon(Clarity.host_solid_badged),
-                          title: Text(
-                            user.active ? "Active" : "Inactive",
-                          ),
-                          subtitle: Text(
-                            "Status",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
-                      ),
-
-                      // Profile
-                    ],
-                  ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.all(12),
-                  sliver: BlocBuilder<ProfileCubit, ProfileState>(
-                      builder: (context, state) {
-                    if (state is! ProfileLoadedState) {
-                      return SliverToBoxAdapter(
-                        child: Text("Fetching your profile"),
-                      );
-                    }
-                    return MultiSliver(
-                      children: [
-                        // Academia Profile
-                        Text(
-                          "Academia Profile",
+                          "Bio Data",
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                         SizedBox(height: 12),
@@ -308,14 +225,48 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                           margin: EdgeInsets.zero,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(12),
+                              top: Radius.circular(12),
                             ),
                           ),
                           child: ListTile(
-                            leading: Icon(Clarity.id_badge_line),
-                            title: Text(state.profile.admissionNumber),
+                            leading: const Icon(Clarity.user_line),
+                            title: Text("${user.firstname} ${user.othernames}"),
                             subtitle: Text(
-                              "Admission Number",
+                              "Official name",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ),
+                        ),
+                        Card(
+                          elevation: 0,
+                          margin: EdgeInsets.zero,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(),
+                          ),
+                          child: ListTile(
+                            leading: const Icon(Clarity.id_badge_line),
+                            title: Text(user.nationalId),
+                            subtitle: Text(
+                              "National ID",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ),
+                        ),
+                        Card(
+                          elevation: 0,
+                          margin: EdgeInsets.zero,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(),
+                          ),
+                          child: ListTile(
+                            leading: Icon(
+                              user.gender == "male"
+                                  ? Bootstrap.gender_male
+                                  : Bootstrap.gender_female,
+                            ),
+                            title: Text(user.gender.title()),
+                            subtitle: Text(
+                              "Gender",
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ),
@@ -329,168 +280,227 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                             ),
                           ),
                           child: ListTile(
-                            onTap: () {
-                              context.pushNamed("profile-update");
-                            },
-                            leading: Icon(
-                              Clarity.text_line,
-                            ),
+                            leading: Icon(Clarity.host_solid_badged),
                             title: Text(
-                              state.profile.bio ??
-                                  'Write something for your bio',
+                              user.active ? "Active" : "Inactive",
                             ),
                             subtitle: Text(
-                              "Bio",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                        ),
-                        Card(
-                          elevation: 0,
-                          margin: EdgeInsets.zero,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(12),
-                            ),
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.cake_outlined,
-                            ),
-                            title: Text(DateFormat.yMMMMEEEEd()
-                                .format(state.profile.dateOfBirth)),
-                            subtitle: Text(
-                              "Birthday",
+                              "Status",
                               style: Theme.of(context).textTheme.bodySmall,
                             ),
                           ),
                         ),
 
-                        Card(
-                          elevation: 0,
-                          margin: EdgeInsets.zero,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(12),
-                            ),
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              Clarity.heart_solid,
-                              color: Colors.red,
-                            ),
-                            title: Text(state.profile.vibePoints.toString()),
-                            subtitle: Text(
-                              "Vibe Points",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                        ),
-                        Card(
-                          elevation: 0,
-                          margin: EdgeInsets.zero,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(12),
-                            ),
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              Icons.calendar_today,
-                            ),
-                            title: Text(
-                                DateFormat.yMMMMEEEEd().format(user.createdAt)),
-                            subtitle: Text(
-                              "Date you joined Academia",
-                              style: Theme.of(context).textTheme.bodySmall,
-                            ),
-                          ),
-                        ),
+                        // Profile
                       ],
-                    );
-                  }),
-                ),
-
-                // Actions
-                SliverPadding(
-                  padding: EdgeInsets.all(12),
-                  sliver: MultiSliver(children: [
-                    // Preferences
-                    Text(
-                      "Preferences",
-                      style: Theme.of(context).textTheme.bodySmall,
                     ),
-                    SizedBox(height: 12),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.only(bottom: 2),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(12),
-                        ),
-                      ),
-                      child: SwitchListTile(
-                        title: Text("Allow Push Notifications"),
-                        value: notify,
-                        onChanged: (val) async {
-                          if (!val) {
-                            notify = await BlocProvider.of<NotificationCubit>(
-                                    context)
-                                .revokePermission(user);
-                          } else {
-                            notify = await BlocProvider.of<NotificationCubit>(
-                                    context)
-                                .requestPermission(user);
-                          }
-
-                          if (await Vibration.hasVibrator()) {
-                            Vibration.vibrate(duration: 32, amplitude: 255);
-                          }
-
-                          setState(() {});
-                        },
-                      ).animate(delay: 1000.ms).scale(
-                            curve: Curves.easeIn,
-                            duration: 500.ms,
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.all(12),
+                    sliver: BlocBuilder<ProfileCubit, ProfileState>(
+                        builder: (context, state) {
+                      if (state is! ProfileLoadedState) {
+                        return SliverToBoxAdapter(
+                          child: Text("Fetching your profile"),
+                        );
+                      }
+                      return MultiSliver(
+                        children: [
+                          // Academia Profile
+                          Text(
+                            "Academia Profile",
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
-                    ),
-                    //Card(
-                    //  elevation: 0,
-                    //  margin: EdgeInsets.only(bottom: 2),
-                    //  shape: const RoundedRectangleBorder(
-                    //    borderRadius: BorderRadius.vertical(),
-                    //  ),
-                    //  child: SwitchListTile.adaptive(
-                    //    title: Text("Biometric Lock"),
-                    //    value: true,
-                    //    onChanged: (val) {},
-                    //  ),
-                    //),
-                    Card(
-                      elevation: 0,
-                      margin: EdgeInsets.only(bottom: 2),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          bottom: Radius.circular(12),
+                          SizedBox(height: 12),
+                          Card(
+                            elevation: 0,
+                            margin: EdgeInsets.zero,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(12),
+                              ),
+                            ),
+                            child: ListTile(
+                              leading: Icon(Clarity.id_badge_line),
+                              title: Text(state.profile.admissionNumber),
+                              subtitle: Text(
+                                "Admission Number",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          ),
+                          Card(
+                            elevation: 0,
+                            margin: EdgeInsets.zero,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(12),
+                              ),
+                            ),
+                            child: ListTile(
+                              onTap: () {
+                                context.pushNamed("profile-update");
+                              },
+                              leading: Icon(
+                                Clarity.text_line,
+                              ),
+                              title: Text(
+                                state.profile.bio ??
+                                    'Write something for your bio',
+                              ),
+                              subtitle: Text(
+                                "Bio",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          ),
+                          Card(
+                            elevation: 0,
+                            margin: EdgeInsets.zero,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(12),
+                              ),
+                            ),
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.cake_outlined,
+                              ),
+                              title: Text(DateFormat.yMMMMEEEEd()
+                                  .format(state.profile.dateOfBirth)),
+                              subtitle: Text(
+                                "Birthday",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          ),
+
+                          Card(
+                            elevation: 0,
+                            margin: EdgeInsets.zero,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(12),
+                              ),
+                            ),
+                            child: ListTile(
+                              leading: Icon(
+                                Clarity.heart_solid,
+                                color: Colors.red,
+                              ),
+                              title: Text(state.profile.vibePoints.toString()),
+                              subtitle: Text(
+                                "Vibe Points",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          ),
+                          Card(
+                            elevation: 0,
+                            margin: EdgeInsets.zero,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                bottom: Radius.circular(12),
+                              ),
+                            ),
+                            child: ListTile(
+                              leading: Icon(
+                                Icons.calendar_today,
+                              ),
+                              title: Text(DateFormat.yMMMMEEEEd()
+                                  .format(user.createdAt)),
+                              subtitle: Text(
+                                "Date you joined Academia",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+                  ),
+
+                  // Actions
+                  SliverPadding(
+                    padding: EdgeInsets.all(12),
+                    sliver: MultiSliver(children: [
+                      // Preferences
+                      Text(
+                        "Preferences",
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      SizedBox(height: 12),
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.only(bottom: 2),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(12),
+                          ),
+                        ),
+                        child: SwitchListTile(
+                          title: Text("Allow Push Notifications"),
+                          value: notify,
+                          onChanged: (val) async {
+                            if (!val) {
+                              notify = await BlocProvider.of<NotificationCubit>(
+                                      context)
+                                  .revokePermission(user);
+                            } else {
+                              notify = await BlocProvider.of<NotificationCubit>(
+                                      context)
+                                  .requestPermission(user);
+                            }
+
+                            if (await Vibration.hasVibrator()) {
+                              Vibration.vibrate(duration: 32, amplitude: 255);
+                            }
+
+                            setState(() {});
+                          },
+                        ).animate(delay: 1000.ms).scale(
+                              curve: Curves.easeIn,
+                              duration: 500.ms,
+                            ),
+                      ),
+                      //Card(
+                      //  elevation: 0,
+                      //  margin: EdgeInsets.only(bottom: 2),
+                      //  shape: const RoundedRectangleBorder(
+                      //    borderRadius: BorderRadius.vertical(),
+                      //  ),
+                      //  child: SwitchListTile.adaptive(
+                      //    title: Text("Biometric Lock"),
+                      //    value: true,
+                      //    onChanged: (val) {},
+                      //  ),
+                      //),
+                      Card(
+                        elevation: 0,
+                        margin: EdgeInsets.only(bottom: 2),
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            bottom: Radius.circular(12),
+                          ),
+                        ),
+                        child: ListTile(
+                          onTap: () {
+                            BlocProvider.of<AuthBloc>(context).add(
+                              LogoutRequested(user: user),
+                            );
+                          },
+                          trailing: Icon(Clarity.logout_line),
+                          title: Text("Logout"),
+                          subtitle: Text(
+                            "Leave the application",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ),
                       ),
-                      child: ListTile(
-                        onTap: () {
-                          BlocProvider.of<AuthBloc>(context).add(
-                            LogoutRequested(user: user),
-                          );
-                        },
-                        trailing: Icon(Clarity.logout_line),
-                        title: Text("Logout"),
-                        subtitle: Text(
-                          "Leave the application",
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                    ),
-                  ]),
-                ),
-              ],
+                    ]),
+                  ),
+                ],
+              ),
             ),
           );
         },

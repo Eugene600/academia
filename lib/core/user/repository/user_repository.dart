@@ -172,7 +172,7 @@ final class UserRepository {
     });
   }
 
-  Future<Either<String, bool>> completeRegistration(
+  Future<Either<String, UserData>> completeRegistration(
     UserData user,
     UserProfileData profile,
     UserCredentialData creds,
@@ -183,7 +183,11 @@ final class UserRepository {
       return left((userResult as Left).value);
     }
 
-    user = (userResult as Right).value;
+    final rawUser = user;
+
+    user = ((userResult as Right).value as UserData).copyWith(
+      picture: drift.Value(rawUser.picture),
+    );
     _logger.i(user.toJson());
 
     final credsResult = await _userRemoteRepository
@@ -247,7 +251,7 @@ final class UserRepository {
       "User successfully registered and data added to cache for rapid logins",
       time: DateTime.now(),
     );
-    return right(true);
+    return right(user);
   }
 
   /// Retrieves a user's profile from the cache

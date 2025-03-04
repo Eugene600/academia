@@ -98,8 +98,8 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return result.fold((error) {
         _logger.e(error, time: DateTime.now());
         return emit(AuthErrorState(error: error));
-      }, (ok) {
-        emit(AuthenticatedState(user: event.user));
+      }, (user) {
+        emit(AuthenticatedState(user: user));
       });
     });
 
