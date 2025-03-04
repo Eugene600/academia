@@ -55,7 +55,7 @@ final class UserRemoteRepository with DioErrorHandler {
   /// went wrong
   Future<Either<String, UserProfileData>> fetchUserProfile(String id) async {
     try {
-      final response = await _client.dio.get("verisafe/v2/users/profile/$id");
+      final response = await _client.dio.get("/verisafe/v2/users/profile/$id");
       if (response.statusCode == 200) {
         return right(UserProfileData.fromJson(response.data));
       }
