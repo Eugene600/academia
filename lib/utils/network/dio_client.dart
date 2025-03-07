@@ -1,15 +1,25 @@
+import 'package:academia/config/config.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:get_it/get_it.dart';
 import './auth_interceptor.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class DioClient {
-  //static const String _baseUrl = "http://192.168.100.21:3000";
   static const String _baseUrl = "http://62.169.16.219:8000";
-  //static const String _baseUrl = "http://192.168.22.86:8000";
-  //static const String _baseUrl = "http://127.0.0.1:3000";
+
+  late Dio dio;
 
   DioClient() {
+    final GetIt getIt = GetIt.instance;
+    dio = Dio(
+      BaseOptions(
+        baseUrl: getIt<FlavorConfig>().apiBaseUrl,
+        preserveHeaderCase: true,
+        receiveDataWhenStatusError: true,
+      ),
+    );
+
     dio.interceptors.add(
       PrettyDioLogger(
         error: true,
@@ -26,14 +36,6 @@ class DioClient {
 
     _addAuthInterceptor();
   }
-
-  final Dio dio = Dio(
-    BaseOptions(
-      baseUrl: _baseUrl,
-      preserveHeaderCase: true,
-      receiveDataWhenStatusError: true,
-    ),
-  );
 
   void _addAuthInterceptor() {
     dio.interceptors.add(

@@ -54,8 +54,8 @@ android {
         applicationId = "com.dita.academia"
         minSdk = 29
         targetSdk = 35
-        versionCode = 10
-        versionName = "Tina"
+        versionCode = 12
+        versionName = "Muthaka"
     }
    //
     signingConfigs {
