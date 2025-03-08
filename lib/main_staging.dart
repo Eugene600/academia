@@ -13,5 +13,5 @@ void main(List<String> args) {
     ),
   );
 
-  runApp(const Academia(flavor: "staging"));
+  runApp(const Academia());
 }

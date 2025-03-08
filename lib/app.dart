@@ -1,3 +1,4 @@
+import 'package:academia/config/config.dart';
 import 'package:academia/database/database.dart';
 import 'package:academia/features/features.dart';
 import 'package:academia/utils/router/router.dart';
@@ -8,10 +9,8 @@ import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Academia extends StatelessWidget {
-  final String flavor;
   const Academia({
     super.key,
-    required this.flavor,
   });
 
   @override
@@ -23,6 +22,7 @@ class Academia extends StatelessWidget {
       () => AppDatabase(),
       instanceName: "cacheDB",
     );
+    final flavor = GetIt.instance.get<FlavorConfig>();
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => AuthBloc()),
@@ -33,7 +33,7 @@ class Academia extends StatelessWidget {
       ],
       child: DynamicColorBuilder(
         builder: (lightscheme, darkscheme) => MaterialApp.router(
-          title: flavor,
+          title: flavor.flavor.toString(),
           routerConfig: AcademiaRouter.router,
           theme: ThemeData(
             colorScheme: lightscheme,

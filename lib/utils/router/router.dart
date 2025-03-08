@@ -1,5 +1,4 @@
 import 'package:academia/database/database.dart';
-import 'package:academia/features/essentials/essentials.dart';
 import 'package:academia/utils/router/default_route.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

@@ -5,7 +5,6 @@ import 'package:get_it/get_it.dart';
 
 // Production's entry point
 void main() {
-
   GetIt.instance.registerSingleton<FlavorConfig>(
     FlavorConfig(
       flavor: Flavor.production,
@@ -14,5 +13,5 @@ void main() {
     ),
   );
 
-  runApp(const Academia(flavor: "production"));
+  runApp(const Academia());
 }

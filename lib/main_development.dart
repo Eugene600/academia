@@ -22,8 +22,6 @@ void main() async {
 
   // launch the application
   runApp(
-    const Academia(
-      flavor: 'development',
-    ),
+    const Academia(),
   );
 }
