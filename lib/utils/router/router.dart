@@ -86,6 +86,11 @@ class AcademiaRouter {
         builder: (context, state) => const DefaultRoute(),
       ),
       GoRoute(
+        path: "/in-app-update",
+        name: "in-app-update",
+        builder: (context, state) => const InAppUpdatePage(),
+      ),
+      GoRoute(
         path: "/profile-update",
         name: "profile-update",
         builder: (context, state) => const ProfileEditingPage(),

@@ -9,6 +9,7 @@ class DefaultRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(AppLaunchDetected());
+    context.read<InAppUpdateCubit>().checkForUpdate();
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) async {
