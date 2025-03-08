@@ -48,7 +48,7 @@ class LayoutScaffold extends StatelessWidget {
   void _onTap(index) async {
     if (await Vibration.hasVibrator()) {
       await Vibration.vibrate(
-        duration: 250,
+        duration: 32,
         sharpness: 250,
       );
     }

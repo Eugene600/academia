@@ -55,8 +55,8 @@ class OnboardingPage extends StatelessWidget {
                                         onPressed: () async {
                                           if (await Vibration.hasVibrator()) {
                                             Vibration.vibrate(
-                                              amplitude: 32,
-                                              duration: 250,
+                                              amplitude: 255,
+                                              duration: 32,
                                             );
                                           }
                                           if (!context.mounted) return;

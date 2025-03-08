@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:vibration/vibration.dart';
 
 class ComingSoonPage extends StatefulWidget {
   const ComingSoonPage({super.key});
@@ -110,6 +111,15 @@ class _ComingSoonPageState extends State<ComingSoonPage> {
                         title: Text("Notify me when feature is up"),
                         value: notify,
                         onChanged: (val) async {
+                          if (await Vibration.hasVibrator()) {
+                            await Vibration.vibrate(
+                              duration: 32,
+                              sharpness: 250,
+                            );
+                          }
+
+                          if (!context.mounted) return;
+
                           final user = (BlocProvider.of<AuthBloc>(context).state
                                   as AuthenticatedState)
                               .user;

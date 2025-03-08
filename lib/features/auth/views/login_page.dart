@@ -10,6 +10,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vibration/vibration.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -77,8 +78,15 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is AuthErrorState) {
+          if (await Vibration.hasCustomVibrationsSupport()) {
+            Vibration.vibrate(pattern: [128, 128, 128, 128]);
+          } else {
+            Vibration.vibrate(amplitude: 255, duration: 128);
+          }
+
+          if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.error),
@@ -89,10 +97,24 @@ class _LoginPageState extends State<LoginPage> {
           return;
         }
         if (state is NewAuthUserDetailsFetched) {
+          if (await Vibration.hasCustomVibrationsSupport()) {
+            Vibration.vibrate(pattern: [128, 128, 128, 256]);
+          } else {
+            Vibration.vibrate(amplitude: 255, duration: 128);
+          }
+
+          if (!context.mounted) return;
           context.pushNamed(AcademiaRouter.register);
           return;
         }
         if (state is AuthenticatedState) {
+          if (await Vibration.hasCustomVibrationsSupport()) {
+            Vibration.vibrate(pattern: [128, 128, 128, 128]);
+          } else {
+            Vibration.vibrate(amplitude: 255, duration: 128);
+          }
+
+          if (!context.mounted) return;
           return GoRouter.of(context).clearStackAndNavigate("dashboard");
         }
       },
@@ -287,6 +309,12 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       TextButton(
                         onPressed: () async {
+                          if (await Vibration.hasCustomVibrationsSupport()) {
+                            Vibration.vibrate(pattern: [128, 256]);
+                          } else {
+                            Vibration.vibrate(amplitude: 255, duration: 128);
+                          }
+
                           final Uri url = Uri.parse(
                             'https://github.com/IamMuuo/academia/blob/dev/LICENSE',
                           );

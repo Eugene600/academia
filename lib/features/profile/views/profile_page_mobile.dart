@@ -189,12 +189,30 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconButton(
-                                onPressed: _showQrCode,
+                                onPressed: () async {
+                                  if (await Vibration.hasVibrator()) {
+                                    await Vibration.vibrate(
+                                      duration: 32,
+                                      sharpness: 250,
+                                    );
+                                  }
+                                  if (!context.mounted) return;
+
+                                  _showQrCode();
+                                },
                                 icon: Icon(Clarity.qr_code_line),
                               ),
                               FilledButton.icon(
                                 icon: Icon(Clarity.id_badge_line),
-                                onPressed: () {
+                                onPressed: () async {
+                                  if (await Vibration.hasVibrator()) {
+                                    await Vibration.vibrate(
+                                      duration: 32,
+                                      sharpness: 250,
+                                    );
+                                  }
+                                  if (!context.mounted) return;
+
                                   context.pushNamed("memberships");
                                 },
                                 label: Text("Show digital school ID"),
@@ -442,6 +460,14 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                           title: Text("Allow Push Notifications"),
                           value: notify,
                           onChanged: (val) async {
+                            if (await Vibration.hasVibrator()) {
+                              await Vibration.vibrate(
+                                duration: 32,
+                                sharpness: 250,
+                              );
+                            }
+                            if (!context.mounted) return;
+
                             if (!val) {
                               notify = await BlocProvider.of<NotificationCubit>(
                                       context)
@@ -484,7 +510,15 @@ class _ProfilePageMobileState extends State<ProfilePageMobile> {
                           ),
                         ),
                         child: ListTile(
-                          onTap: () {
+                          onTap: () async {
+                            if (await Vibration.hasVibrator()) {
+                              await Vibration.vibrate(
+                                duration: 32,
+                                sharpness: 250,
+                              );
+                            }
+                            if (!context.mounted) return;
+
                             BlocProvider.of<AuthBloc>(context).add(
                               LogoutRequested(user: user),
                             );

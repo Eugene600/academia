@@ -30,7 +30,6 @@ class NotificationCubit extends Cubit<NotificationState> {
       if (granted) {
         OneSignal.User.addEmail(user.email!);
         OneSignal.User.addAlias(user.id, "id");
-        await OneSignal.login(user.id);
         OneSignal.User.addTags({
           "firstname": user.firstname,
           "othernames": user.othernames,
