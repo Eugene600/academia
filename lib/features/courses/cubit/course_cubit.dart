@@ -12,6 +12,19 @@ class CourseCubit extends Cubit<CourseState> {
     fetchAllCachedCourses();
   }
 
+  Future<void> saveCourse(CourseData course) async {
+    emit(CourseStateLoading());
+    _logger.i("Attempting to save user course to cache");
+    final courses = await _courseRepository.saveCourseToCache(course);
+    courses.fold((error) {
+      _logger.e(error);
+      emit(CourseStateError(error: error));
+    }, (courses) {
+      _logger.i("Course saved successfully");
+      fetchAllCachedCourses();
+    });
+  }
+
   Future<void> fetchAllCachedCourses() async {
     emit(CourseStateLoading());
     _logger.i("Attempting to retrieve user courses from local cache");
@@ -37,5 +50,4 @@ class CourseCubit extends Cubit<CourseState> {
       emit(CourseStateLoaded(courses: courses));
     });
   }
-
 }

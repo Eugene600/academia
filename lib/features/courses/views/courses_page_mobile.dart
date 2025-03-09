@@ -90,6 +90,12 @@ class _CoursesPageMobileState extends State<CoursesPageMobile> {
                               if (!context.mounted) return;
                             }
                           },
+                          tileColor: Color(course.color ??
+                                  Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer
+                                      .value)
+                              .withAlpha(50),
                           title: Text("${course.unit} ${course.section}"),
                           subtitle: Text(
                             course.room,
