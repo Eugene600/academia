@@ -2,6 +2,7 @@ import 'package:academia/features/features.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vibration/vibration.dart';
 
@@ -80,11 +81,13 @@ class _CoursesPageMobileState extends State<CoursesPageMobile> {
                         final course = state.courses.elementAt(index);
                         return ListTile(
                           onTap: () async {
+                            context.push("/courses/course-view", extra: course);
                             if (await Vibration.hasVibrator()) {
                               await Vibration.vibrate(
                                 duration: 32,
                                 sharpness: 250,
                               );
+                              if (!context.mounted) return;
                             }
                           },
                           title: Text("${course.unit} ${course.section}"),

@@ -54,6 +54,16 @@ class AcademiaRouter {
                 name: "courses",
                 path: "/courses",
                 builder: (context, state) => const CoursesPage(),
+                routes: [
+                  GoRoute(
+                    name: courseView,
+                    path: "/$courseView",
+                    builder: (context, state) {
+                      final CourseData course = state.extra as CourseData;
+                      return CourseMobileViewPage(course: course);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -116,14 +126,6 @@ class AcademiaRouter {
         builder: (context, state) {
           TodoData? todo = state.extra as TodoData?;
           return TodoViewPage(todoData: todo);
-        },
-      ),
-      GoRoute(
-        name: courseView,
-        path: "/$courseView",
-        builder: (context, state) {
-          final CourseData course = state.extra as CourseData;
-          return CourseMobileViewPage(course: course);
         },
       ),
     ],
