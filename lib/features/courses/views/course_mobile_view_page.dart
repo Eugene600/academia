@@ -1,6 +1,5 @@
 import 'package:academia/database/database.dart';
 import 'package:academia/features/courses/courses.dart';
-import 'package:drift/drift.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -176,9 +175,9 @@ class _CourseMobileViewPageState extends State<CourseMobileViewPage> {
                             setState(() {
                               this.color = color;
                             });
-                            courseCubit.saveCouse(widget.course.copyWith(
-                              color: Value(color.value),
-                            ));
+                            //courseCubit.saveCouse(widget.course.copyWith(
+                            //  color: Value(color.value),
+                            //));
                           });
                         },
                         leading: CircleAvatar(backgroundColor: color),

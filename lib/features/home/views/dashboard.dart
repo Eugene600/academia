@@ -1,5 +1,4 @@
 import 'package:academia/features/chapel_attendance/view/chapel_attendance_page.dart';
-import 'package:academia/features/notifications/views/coming_soon_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -8,9 +7,9 @@ class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
 
   bool _isTuesdayBetween8And10AM() {
-    //DateTime now = DateTime.now();
-    //return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
-    return false;
+    DateTime now = DateTime.now();
+    return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
+    //return false;
   }
 
   @override
@@ -46,6 +45,10 @@ class Dashboard extends StatelessWidget {
               ),
             ),
           )
-        : ComingSoonPage();
+        : Scaffold(
+            body: Center(
+              child: Text("Home"),
+            ),
+          );
   }
 }

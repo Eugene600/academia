@@ -2,6 +2,7 @@ import 'package:academia/core/user/repository/user_repository.dart';
 import 'package:academia/database/database.dart';
 import 'package:academia/exports/barrel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:logger/logger.dart';
 
 part 'auth_event.dart';
@@ -18,12 +19,30 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return result.fold((error) {
         _logger.e(error, time: DateTime.now());
         return emit(AuthErrorState(error: error));
-      }, (user) {
+      }, (user) async {
         if (user == null) {
           _logger.i("No user retrieved", time: DateTime.now());
           return emit(AuthErrorState(error: "No such user"));
         }
-        return emit(AuthenticatedState(user: user));
+        // query for user creds
+        final credsResult = await _userRepository.fetchUserCredsFromCache(user);
+        credsResult.fold((error) {
+          _logger.e(error);
+          return emit(AuthErrorState(error: error));
+        }, (creds) async {
+          _logger.i("User credentials retrieved");
+
+          magnet = GetIt.instance.registerSingletonIfAbsent(
+            () => Magnet(creds.admno!, creds.password),
+            instanceName: "magnet",
+          );
+
+          _logger.i(
+            "Magnet instance instanciated with cached credentials for user ${creds.admno}",
+          );
+
+          return emit(AuthenticatedState(user: user));
+        });
       });
     });
 

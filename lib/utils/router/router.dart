@@ -48,15 +48,15 @@ class AcademiaRouter {
               },
             ),
           ]),
-          //StatefulShellBranch(
-          //  routes: [
-          //    GoRoute(
-          //      name: "courses",
-          //      path: "/courses",
-          //      builder: (context, state) => const CoursesPage(),
-          //    ),
-          //  ],
-          //),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                name: "courses",
+                path: "/courses",
+                builder: (context, state) => const CoursesPage(),
+              ),
+            ],
+          ),
           //StatefulShellBranch(
           //  routes: [
           //    GoRoute(

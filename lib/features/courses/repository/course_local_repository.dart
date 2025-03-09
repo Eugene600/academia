@@ -13,12 +13,9 @@ final class CourseLocalRepository {
   /// Fetches all cached courses
   /// Incase of an error a message of type [String] is returned
   /// On success, a [List] of [CourseData] is returned
-  Future<Either<String, List<CourseData>>> fetchAllCachedCourses(
-      UserData user) async {
+  Future<Either<String, List<CourseData>>> fetchAllCachedCourses() async {
     try {
-      final courses = await _localDb.managers.course
-          .filter((c) => c.user.id.equals(user.id))
-          .get(distinct: true);
+      final courses = await _localDb.select(_localDb.course).get();
       return right(courses);
     } catch (e) {
       return left("Failed to retrieve users with message ${e.toString()}");

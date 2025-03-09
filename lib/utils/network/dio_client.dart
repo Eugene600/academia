@@ -6,7 +6,6 @@ import './auth_interceptor.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class DioClient {
-  static const String _baseUrl = "http://62.169.16.219:8000";
 
   late Dio dio;
 

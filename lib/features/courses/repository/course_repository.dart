@@ -1,6 +1,5 @@
 import 'package:academia/database/database.dart';
 import 'package:dartz/dartz.dart';
-import 'package:drift/drift.dart';
 
 import 'course_local_repository.dart';
 import 'course_remote_repository.dart';
@@ -13,13 +12,11 @@ final class CourseRepository {
   /// Fetches all cached courses
   /// Incase of an error a message of type [String] is returned
   /// On success, a [List] of [CourseData] is returned
-  Future<Either<String, List<CourseData>>> fetchAllCachedCourses(
-      UserData user) async {
-    return await _localRepository.fetchAllCachedCourses(user);
+  Future<Either<String, List<CourseData>>> fetchAllCachedCourses() async {
+    return await _localRepository.fetchAllCachedCourses();
   }
 
-  Future<Either<String, List<CourseData>>> syncCoursesWithMagnet(
-      UserData user) async {
+  Future<Either<String, List<CourseData>>> syncCoursesWithMagnet() async {
     final result = await _courseRemoteRepository.fetchCoursesFromMagnet();
 
     return result.fold((error) {
@@ -27,9 +24,9 @@ final class CourseRepository {
     }, (courses) async {
       // Cache them to local db
       for (final course in courses) {
-        syncCourseWithWookie(course);
+        //syncCourseWithWookie(course);
         final res = await _localRepository.addCourseToCache(
-          course.copyWith(user: Value(user.id)),
+          course,
         );
         if (res.isLeft()) {
           return left((res as Left).value);

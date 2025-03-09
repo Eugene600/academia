@@ -1,4 +1,4 @@
-import 'package:academia/database/database.dart';
+part of "course_cubit.dart";
 
 /// The base course state
 /// note that the [busy] flag will be inherited by all

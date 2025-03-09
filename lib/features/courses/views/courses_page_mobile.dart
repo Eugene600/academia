@@ -1,11 +1,9 @@
 import 'package:academia/features/features.dart';
-import 'package:academia/utils/router/router.dart';
-import 'package:academia/utils/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:skeletonizer/skeletonizer.dart';
+import 'package:lottie/lottie.dart';
+import 'package:vibration/vibration.dart';
 
 class CoursesPageMobile extends StatefulWidget {
   const CoursesPageMobile({super.key});
@@ -16,13 +14,9 @@ class CoursesPageMobile extends StatefulWidget {
 
 class _CoursesPageMobileState extends State<CoursesPageMobile> {
   late CourseCubit courseCubit = BlocProvider.of<CourseCubit>(context);
-  late AuthBloc authCubit = BlocProvider.of<AuthBloc>(context);
 
   @override
   void initState() {
-    courseCubit.fetchCachedCourses(
-      (authCubit.state as AuthenticatedState).user,
-    );
     super.initState();
   }
 
@@ -31,9 +25,7 @@ class _CoursesPageMobileState extends State<CoursesPageMobile> {
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
-          await courseCubit.syncCourses(
-            (authCubit.state as AuthenticatedState).user,
-          );
+          await courseCubit.refreshCourses();
         },
         child: CustomScrollView(
           slivers: [
@@ -43,68 +35,92 @@ class _CoursesPageMobileState extends State<CoursesPageMobile> {
               floating: true,
               snap: true,
               flexibleSpace: FlexibleSpaceBar(
-                title: Text(
-                  "Courses",
+                background: Image.asset(
+                  "assets/images/read.jpg",
+                  fit: BoxFit.cover,
                 ),
+                title: Text("Courses"),
               ),
             ),
-            BlocBuilder<CourseCubit, CourseState>(builder: (context, state) {
-              if (state is CourseStateLoaded) {
-                if (state.courses.isNotEmpty) {
-                  return SliverPadding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    sliver: SliverList.separated(
+
+            // build
+            SliverPadding(
+              padding: EdgeInsets.all(12),
+              sliver: BlocBuilder<CourseCubit, CourseState>(
+                builder: (context, state) {
+                  if (state is CourseStateError) {
+                    return SliverToBoxAdapter(
+                      child: Center(
+                        child: Text(state.error),
+                      ),
+                    );
+                  }
+
+                  if (state is CourseStateLoaded) {
+                    if (state.courses.isEmpty) {
+                      return SliverToBoxAdapter(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Lottie.asset(
+                              "assets/lotties/cat-error.json",
+                              repeat: !kDebugMode,
+                            ),
+                            Text(
+                              "We couldn't load your courses right now. Try pulling down to refresh, or check your connection and try again.",
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return SliverList.separated(
+                      itemCount: state.courses.length,
                       itemBuilder: (context, index) {
-                        final course = state.courses[index];
+                        final course = state.courses.elementAt(index);
                         return ListTile(
-                          onTap: () => context.pushNamed(
-                            AcademiaRouter.courseView,
-                            extra: course,
-                          ),
-                          leading: CircleAvatar(
-                            backgroundColor: course.color == null
-                                ? null
-                                : Color(course.color!),
-                          ),
+                          onTap: () async {
+                            if (await Vibration.hasVibrator()) {
+                              await Vibration.vibrate(
+                                duration: 32,
+                                sharpness: 250,
+                              );
+                            }
+                          },
                           title: Text("${course.unit} ${course.section}"),
                           subtitle: Text(
-                            "${course.room} *  ${course.period} * ${course.lecturer.capitalize()}",
+                            course.room,
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                         );
                       },
-                      separatorBuilder: (context, index) => const SizedBox(),
-                      itemCount: state.courses.length,
+                      separatorBuilder: (context, index) => Divider(),
+                    );
+                  }
+
+                  if (state is CourseStateLoading) {
+                    return SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          Lottie.asset("assets/lotties/loading-bounce.json"),
+                          Text(
+                            "Hang on tight! Your courses are just around the corner.",
+                            style: Theme.of(context).textTheme.titleLarge,
+                          )
+                        ],
+                      ),
+                    );
+                  }
+
+                  return SliverToBoxAdapter(
+                    child: Text(
+                      (state as CourseStateError).error,
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
                   );
-                }
-
-                return const SliverFillRemaining(
-                  // TODO: erick add an illustration or animation
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text("You have no courses yet, please pull to refresh"),
-                    ],
-                  ),
-                );
-              }
-              return SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                sliver: SliverList.separated(
-                  itemCount: 8,
-                  itemBuilder: (context, index) => const Skeletonizer(
-                    enabled: true,
-                    child: ListTile(
-                      leading: CircleAvatar(),
-                      title: Text("Some Couse"),
-                      subtitle: Text("PLAB * 10:00 - 13:00 * Awesome Lecturer"),
-                    ),
-                  ),
-                  separatorBuilder: (context, index) => const SizedBox(),
-                ),
-              );
-            }),
+                },
+              ),
+            ),
           ],
         ),
       ),
