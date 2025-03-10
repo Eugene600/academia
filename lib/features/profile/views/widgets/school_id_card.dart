@@ -108,7 +108,7 @@ class SchoolIdCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "21-2080",
+                          profile.admissionNumber,
                           style: Theme.of(context)
                               .textTheme
                               .displayMedium

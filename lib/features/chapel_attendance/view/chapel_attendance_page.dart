@@ -23,11 +23,19 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
   final MobileScannerController controller = MobileScannerController(
       // required options for the scanner
       );
+  final TextEditingController stdAdm = TextEditingController();
+  StreamSubscription<Object?>? _subscription;
+  bool isLoading = false;
+  String prevAdm = "";
 
-  void _handleBarCode(BarcodeCapture event) {
+  void _handleBarCode(BarcodeCapture event) async {
     Map rawData = event.raw as Map;
 
     var admno = rawData['data'][0]['rawValue'];
+
+    if (prevAdm == admno) return;
+    stdAdm.text = admno;
+    _showAdmissionInput();
 
     final today = DateTime.now();
     BlocProvider.of<AttendanceBloc>(context).add(
@@ -40,9 +48,10 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
         ),
       ),
     );
+    prevAdm = admno;
+    stdAdm.clear();
   }
 
-  StreamSubscription<Object?>? _subscription;
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // If the controller is not ready, do not try to start or stop it.
@@ -125,7 +134,7 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
   void _showAdmissionInput() => showModalBottomSheet(
       context: context,
       builder: (context) {
-        final TextEditingController stdAdm = TextEditingController();
+        // final TextEditingController stdAdm = TextEditingController();
         return Padding(
           padding: const EdgeInsets.only(
             left: 16.0,
@@ -142,93 +151,96 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
                 return;
               }
             },
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: stdAdm,
-                  inputFormatters: [
-                    AdmnoDashFormatter(),
-                  ],
-                  textAlign: TextAlign.center,
-                  decoration: InputDecoration(
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        final today = DateTime.now();
-                        BlocProvider.of<AttendanceBloc>(context).add(
-                          AttendanceMarkingRequested(
-                            record: AttendanceModelData(
-                              studentID: stdAdm.text,
-                              date: DateTime(today.year, today.month, today.day)
-                                  .toLocal(),
-                              checkIn: 'present',
-                              campus: 'athi river',
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: stdAdm,
+                    inputFormatters: [
+                      AdmnoDashFormatter(),
+                    ],
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          final today = DateTime.now();
+                          BlocProvider.of<AttendanceBloc>(context).add(
+                            AttendanceMarkingRequested(
+                              record: AttendanceModelData(
+                                studentID: stdAdm.text,
+                                date:
+                                    DateTime(today.year, today.month, today.day)
+                                        .toLocal(),
+                                checkIn: 'present',
+                                campus: 'athi river',
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      icon: Icon(Clarity.check_line),
-                    ),
-                    hintText: "xx-xxxx",
-                    label: const Text("Student Admission Number"),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(4),
+                          );
+                        },
+                        icon: Icon(Clarity.check_line),
+                      ),
+                      hintText: "xx-xxxx",
+                      label: const Text("Student Admission Number"),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                     ),
                   ),
-                ),
-                BlocBuilder<AttendanceBloc, AttendanceState>(
-                  buildWhen: (statA, stateB) {
-                    if (stateB is AttendanceLoadingState ||
-                        stateB is AttendaceErrorState) {
-                      return true;
-                    }
-                    return false;
-                  },
-                  builder: (context, state) {
-                    if (state is AttendanceLoadingState) {
+                  BlocBuilder<AttendanceBloc, AttendanceState>(
+                    buildWhen: (statA, stateB) {
+                      if (stateB is AttendanceLoadingState ||
+                          stateB is AttendaceErrorState) {
+                        return true;
+                      }
+                      return false;
+                    },
+                    builder: (context, state) {
+                      if (state is AttendanceLoadingState) {
+                        return Column(
+                          spacing: 12,
+                          children: [
+                            Lottie.asset(
+                              "assets/lotties/search.json",
+                              height: 200,
+                              width: 200,
+                            ),
+                          ],
+                        );
+                      }
+                      if (state is AttendaceErrorState) {
+                        return Column(
+                          spacing: 12,
+                          children: [
+                            Lottie.asset(
+                              "assets/lotties/cat-error.json",
+                              height: 200,
+                              width: 200,
+                            ),
+                            Text(
+                              state.error,
+                              style: Theme.of(context).textTheme.titleLarge,
+                            )
+                          ],
+                        );
+                      }
                       return Column(
                         spacing: 12,
                         children: [
                           Lottie.asset(
-                            "assets/lotties/search.json",
-                            height: 200,
-                            width: 200,
-                          ),
-                        ],
-                      );
-                    }
-                    if (state is AttendaceErrorState) {
-                      return Column(
-                        spacing: 12,
-                        children: [
-                          Lottie.asset(
-                            "assets/lotties/cat-error.json",
+                            "assets/lotties/bunny.json",
                             height: 200,
                             width: 200,
                           ),
                           Text(
-                            state.error,
+                            "Please provide a student admission number to continue",
                             style: Theme.of(context).textTheme.titleLarge,
                           )
                         ],
                       );
-                    }
-                    return Column(
-                      spacing: 12,
-                      children: [
-                        Lottie.asset(
-                          "assets/lotties/bunny.json",
-                          height: 200,
-                          width: 200,
-                        ),
-                        Text(
-                          "Please provide a student admission number to continue",
-                          style: Theme.of(context).textTheme.titleLarge,
-                        )
-                      ],
-                    );
-                  },
-                ),
-              ],
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         );

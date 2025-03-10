@@ -1,15 +1,17 @@
+import 'package:academia/config/config.dart';
 import 'package:academia/features/chapel_attendance/view/chapel_attendance_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:get_it/get_it.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
 
   bool _isTuesdayBetween8And10AM() {
-    DateTime now = DateTime.now();
-    return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
-    //return false;
+    // DateTime now = DateTime.now();
+    // return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
+    return GetIt.instance<FlavorConfig>().isDevelopment;
   }
 
   @override
