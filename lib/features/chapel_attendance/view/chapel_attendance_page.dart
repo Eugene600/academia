@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:academia/database/database.dart';
 import 'package:academia/features/features.dart';
 import 'package:academia/utils/validator/validator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -10,6 +12,8 @@ import 'package:lottie/lottie.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sliver_tools/sliver_tools.dart';
+import 'package:vibration/vibration.dart';
 
 class ChapelAttendancePage extends StatefulWidget {
   const ChapelAttendancePage({super.key});
@@ -24,7 +28,7 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
       // required options for the scanner
       );
 
-  void _handleBarCode(BarcodeCapture event) {
+  void _handleBarCode(BarcodeCapture event) async {
     Map rawData = event.raw as Map;
 
     var admno = rawData['data'][0]['rawValue'];
@@ -40,6 +44,12 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
         ),
       ),
     );
+    if (await Vibration.hasVibrator()) {
+      await Vibration.vibrate(
+        duration: 32,
+        sharpness: 250,
+      );
+    }
   }
 
   StreamSubscription<Object?>? _subscription;
@@ -236,88 +246,104 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      spacing: 12,
-      children: [
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: 250,
-            maxWidth: 280,
-            maxHeight: 280,
-            minHeight: 250,
-          ),
-          child: MobileScanner(
-            controller: controller,
-            fit: BoxFit.fill,
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: Theme.of(context).primaryColor,
-              width: 2,
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 128,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Image.asset(
+                "assets/images/scan.jpg",
+                fit: BoxFit.cover,
+              ),
+              title: Text("Chapel").animate(delay: 250.ms).fadeIn(
+                    curve: Curves.easeInCubic,
+                    duration: 1000.ms,
+                  ),
             ),
-          ),
-          child: TimerCountdown(
-            timeTextStyle: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontFamily: GoogleFonts.dynaPuff().fontFamily,
-                ),
-            format: CountDownTimerFormat.daysHoursMinutesSeconds,
-            endTime: _getNextTuesday(),
-            onEnd: () {
-              context.goNamed("home");
-            },
-          ),
-        ),
-        SizedBox(height: 12),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            spacing: 20,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  Text(
-                    "75",
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          fontFamily: GoogleFonts.dynaPuff().fontFamily,
-                        ),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  context.pushNamed("profile");
+                },
+                icon: BlocBuilder<AuthBloc, AuthState>(
+                  buildWhen: (stateA, stateB) {
+                    if (stateB is AuthenticatedState) return true;
+                    return false;
+                  },
+                  builder: (context, state) => CircleAvatar(
+                    backgroundImage: MemoryImage(
+                      (state as AuthenticatedState).user.picture ??
+                          Uint8List(0),
+                    ),
                   ),
-                  Text(
-                    "Personally scanned",
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              ),
-              CircleAvatar(
-                child: IconButton(
-                  tooltip: "Enter Admission number instead",
-                  onPressed: _showAdmissionInput,
-                  icon: Icon(Clarity.id_badge_line),
                 ),
               ),
-              Column(
-                children: [
-                  Text(
-                    "780",
-                    style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                          fontFamily: GoogleFonts.dynaPuff().fontFamily,
-                        ),
-                  ),
-                  Text(
-                    "Total Scanned",
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
-              )
             ],
           ),
-        )
-      ],
+          SliverPadding(
+            padding: EdgeInsets.all(12),
+            sliver: MultiSliver(
+              //spacing: 12,
+              children: [
+                Text(
+                  "Get started marking chapel attendance. Scan to continue",
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontFamily: GoogleFonts.lora().fontFamily,
+                      ),
+                ).animate(delay: 1000.ms).fadeIn(
+                      curve: Curves.bounceIn,
+                      duration: 1500.ms,
+                    ),
+                SizedBox(height: 16),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: 250,
+                    maxWidth: 280,
+                    maxHeight: 280,
+                    minHeight: 250,
+                  ),
+                  child: MobileScanner(
+                    controller: controller,
+                    fit: BoxFit.fill,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor,
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: TimerCountdown(
+                      timeTextStyle:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                fontFamily: GoogleFonts.dynaPuff().fontFamily,
+                              ),
+                      format: CountDownTimerFormat.daysHoursMinutesSeconds,
+                      endTime: _getNextTuesday(),
+                      onEnd: () {
+                        context.goNamed("home");
+                      },
+                    ),
+                  ),
+                ),
+                SizedBox(height: 12),
+                FilledButton.icon(
+                  label: Text("Try with admission number"),
+                  onPressed: _showAdmissionInput,
+                  icon: Icon(Clarity.id_badge_solid),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
