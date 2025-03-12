@@ -41,6 +41,11 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
             "Magnet instance instanciated with cached credentials for user ${creds.admno}",
           );
 
+          _userRepository.authenticateRemotely(
+            creds,
+            refresh: true,
+          );
+
           return emit(AuthenticatedState(user: user));
         });
       });

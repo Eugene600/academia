@@ -38,7 +38,7 @@ class AuthInterceptor extends Interceptor {
     // TODO: erick Add automatic token refreshing and code retrial
     // if (err.response?.statusCode == 401) {
     //   print("Some really bad error");
-    //   
+    //
     //   return handler
     //       .resolve(await dio.fetch(err.requestOptions)); // Repeat the request.
     // }

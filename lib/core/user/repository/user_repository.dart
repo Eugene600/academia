@@ -91,7 +91,8 @@ final class UserRepository {
   }
 
   Future<Either<String, UserData>> authenticateRemotely(
-      UserCredentialData credentials) async {
+      UserCredentialData credentials,
+      {bool refresh = false}) async {
     // Register a magnet singleton instance
 
     GetIt.instance.registerSingletonIfAbsent(
@@ -99,9 +100,24 @@ final class UserRepository {
       instanceName: "magnet",
     );
 
+    if (refresh) {
+      final verisafeResult = await _userRemoteRepository
+          .verisafeAuthentication(credentials.copyWith(
+        lastLogin: drift.Value(null),
+      ));
+
+      if (verisafeResult.isLeft()) {
+        _logger.e((verisafeResult as Left).value);
+        return left((verisafeResult as Left).value);
+      }
+
+      return right((verisafeResult as Right).value);
+    }
+
     // authenticate with magnet
     final magnetResult =
         await (GetIt.instance.get<Magnet>(instanceName: "magnet").login());
+
     //Right(Object());
     return magnetResult.fold((error) {
       if (GetIt.instance.isRegistered<Magnet>(instanceName: "magnet")) {
