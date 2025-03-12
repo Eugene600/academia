@@ -54,16 +54,6 @@ class AcademiaRouter {
                 name: "courses",
                 path: "/courses",
                 builder: (context, state) => const CoursesPage(),
-                routes: [
-                  GoRoute(
-                    name: courseView,
-                    path: "/$courseView",
-                    builder: (context, state) {
-                      final CourseData course = state.extra as CourseData;
-                      return CourseMobileViewPage(course: course);
-                    },
-                  ),
-                ],
               ),
             ],
           ),
@@ -104,6 +94,14 @@ class AcademiaRouter {
         path: "/profile-update",
         name: "profile-update",
         builder: (context, state) => const ProfileEditingPage(),
+      ),
+      GoRoute(
+        name: courseView,
+        path: "/$courseView",
+        builder: (context, state) {
+          final CourseData course = state.extra as CourseData;
+          return CourseMobileViewPage(course: course);
+        },
       ),
       GoRoute(
         path: "/$onboarding",

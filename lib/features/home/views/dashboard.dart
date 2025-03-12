@@ -1,6 +1,13 @@
-import 'package:academia/features/chapel_attendance/view/chapel_attendance_page.dart';
+import 'dart:typed_data';
+
+import 'package:academia/features/auth/bloc/auth_bloc.dart';
+import 'package:academia/features/home/views/widget/course_dashboard_widget.dart';
+import 'package:academia/features/profile/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class Dashboard extends StatelessWidget {
@@ -14,41 +21,82 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _isTuesdayBetween8And10AM()
-        ? Scaffold(
-            body: SafeArea(
-              child: CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    expandedHeight: 200,
-                    flexibleSpace: FlexibleSpaceBar(
-                      title: Text("Academia").animate(delay: 250.ms).moveY(
-                            curve: Curves.easeInQuint,
-                            duration: 1000.ms,
-                            begin: -20,
-                            end: 0,
-                          ),
+    return Scaffold(
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              leading: IconButton(
+                onPressed: () {},
+                icon: Icon(Clarity.qr_code_line),
+              ),
+              expandedHeight: 200,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Image.asset(
+                  "assets/images/students.jpg",
+                  fit: BoxFit.cover,
+                ),
+                title: Text("Academia").animate(delay: 250.ms).moveY(
+                      curve: Curves.easeInCubic,
+                      duration: 1000.ms,
+                      begin: -20,
+                      end: 0,
+                    ),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    context.goNamed("profile");
+                  },
+                  icon: BlocBuilder<AuthBloc, AuthState>(
+                    buildWhen: (stateA, stateB) {
+                      if (stateB is AuthenticatedState) return true;
+                      return false;
+                    },
+                    builder: (context, state) => CircleAvatar(
+                      backgroundImage: MemoryImage(
+                        (state as AuthenticatedState).user.picture ??
+                            Uint8List(0),
+                      ),
                     ),
                   ),
-                  SliverPadding(
-                    padding: EdgeInsets.all(12),
-                    sliver: MultiSliver(
-                      children: [
-                        Visibility(
-                          visible: _isTuesdayBetween8And10AM(),
-                          child: ChapelAttendancePage(),
-                        ),
-                      ],
-                    ),
+                ),
+              ],
+            ),
+
+            SliverPadding(
+              padding: EdgeInsets.all(12),
+              sliver: CourseDashboardWidget(),
+            ),
+
+            SliverPadding(
+              padding: EdgeInsets.all(12),
+              sliver: SliverPinnedHeader(
+                child: Container(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: Text(
+                    "Explore",
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                ],
+                ),
               ),
             ),
-          )
-        : Scaffold(
-            body: Center(
-              child: Text("Home"),
-            ),
-          );
+
+            // courses
+            //SliverPadding(
+            //  padding: EdgeInsets.all(12),
+            //  sliver: MultiSliver(
+            //    children: [
+            //      Visibility(
+            //        visible: _isTuesdayBetween8And10AM(),
+            //        child: ChapelAttendancePage(),
+            //      ),
+            //    ],
+            //  ),
+            //),
+          ],
+        ),
+      ),
+    );
   }
 }

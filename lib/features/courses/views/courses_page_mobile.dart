@@ -81,7 +81,7 @@ class _CoursesPageMobileState extends State<CoursesPageMobile> {
                         final course = state.courses.elementAt(index);
                         return ListTile(
                           onTap: () async {
-                            context.push("/courses/course-view", extra: course);
+                            context.push("/course-view", extra: course);
                             if (await Vibration.hasVibrator()) {
                               await Vibration.vibrate(
                                 duration: 32,
