@@ -1,4 +1,3 @@
-import 'package:academia/features/auth/bloc/auth_bloc.dart';
 import 'package:academia/features/features.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -108,7 +107,7 @@ class SchoolIdCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "21-2080",
+                          profile.admissionNumber,
                           style: Theme.of(context)
                               .textTheme
                               .displayMedium

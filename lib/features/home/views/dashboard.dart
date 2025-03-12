@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:academia/features/auth/bloc/auth_bloc.dart';
 import 'package:academia/features/home/views/widget/course_dashboard_widget.dart';
 import 'package:flutter/material.dart';
@@ -13,11 +12,14 @@ import 'package:vibration/vibration.dart';
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
 
-  bool _isTuesdayBetween8And10AM() {
+  //bool _isTuesdayBetween8And10AM() {
     //DateTime now = DateTime.now();
     //return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
-    return false;
-  }
+    //return false;
+    // DateTime now = DateTime.now();
+    // return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
+    //return GetIt.instance<FlavorConfig>().isDevelopment;
+  //}
 
   @override
   Widget build(BuildContext context) {
