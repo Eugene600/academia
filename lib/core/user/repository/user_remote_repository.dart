@@ -1,3 +1,4 @@
+import 'package:academia/core/user/models/user_role.dart';
 import 'package:academia/database/database.dart';
 import 'package:academia/utils/network/network.dart';
 import 'package:dartz/dartz.dart';
@@ -134,6 +135,28 @@ final class UserRemoteRepository with DioErrorHandler {
 
       if (response.statusCode == 201) {
         return right(UserCredentialData.fromJson(response.data));
+      }
+      return left(response.data["message"] ?? response.statusMessage);
+    } on DioException catch (de) {
+      return handleDioError(de);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Either<String, List<UserRole>>> fetchUserRoles(String userID) async {
+    try {
+      final response = await _client.dio.get(
+        "/verisafe/v2/roles/roles/$userID",
+      );
+
+      if (response.statusCode == 200) {
+        final rawData = response.data as List<dynamic>;
+        final roles = rawData.map((elem) {
+          return UserRole.fromJson(elem as Map<String, dynamic>);
+        }).toList();
+
+        return right(roles);
       }
       return left(response.data["message"] ?? response.statusMessage);
     } on DioException catch (de) {

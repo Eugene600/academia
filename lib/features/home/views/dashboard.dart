@@ -4,6 +4,7 @@ import 'package:academia/features/home/views/widget/course_dashboard_widget.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get_navigation/src/root/parse_route.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -13,32 +14,47 @@ class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
 
   //bool _isTuesdayBetween8And10AM() {
-    //DateTime now = DateTime.now();
-    //return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
-    //return false;
-    // DateTime now = DateTime.now();
-    // return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
-    //return GetIt.instance<FlavorConfig>().isDevelopment;
+  //DateTime now = DateTime.now();
+  //return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
+  //return false;
+  // DateTime now = DateTime.now();
+  // return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
+  //return GetIt.instance<FlavorConfig>().isDevelopment;
   //}
 
   @override
   Widget build(BuildContext context) {
+    final roleresult = BlocProvider.of<AuthBloc>(context).fetchUserRole(
+      (BlocProvider.of<AuthBloc>(context).state as AuthenticatedState).user.id,
+    );
     return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            leading: IconButton(
-              onPressed: () async {
-                context.pushNamed("chapel-attendance");
-                if (await Vibration.hasVibrator()) {
-                  await Vibration.vibrate(
-                    duration: 32,
-                    sharpness: 250,
-                  );
-                }
-              },
-              icon: Icon(Clarity.qr_code_line),
-            ),
+            leading: FutureBuilder(
+                future: roleresult,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final ok = snapshot.data!.firstWhereOrNull(
+                      (elem) =>
+                          elem.roleName == "admin" || elem.roleName == "usher",
+                    );
+                    if (ok == null) return SizedBox();
+                    return IconButton(
+                      onPressed: () async {
+                        context.pushNamed("chapel-attendance");
+                        if (await Vibration.hasVibrator()) {
+                          await Vibration.vibrate(
+                            duration: 32,
+                            sharpness: 250,
+                          );
+                        }
+                      },
+                      icon: Icon(Clarity.qr_code_line),
+                    );
+                  }
+                  return SizedBox();
+                }),
             expandedHeight: 250,
             flexibleSpace: FlexibleSpaceBar(
               background: Image.asset(

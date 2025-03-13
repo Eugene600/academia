@@ -1,3 +1,4 @@
+import 'package:academia/core/user/models/user_role.dart';
 import 'package:academia/core/user/repository/user_repository.dart';
 import 'package:academia/database/database.dart';
 import 'package:academia/exports/barrel.dart';
@@ -141,6 +142,16 @@ final class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }, (message) {
         emit(UnauthenticatedState(message: message));
       });
+    });
+  }
+
+  Future<List<UserRole>?> fetchUserRole(String userID) async {
+    final userRoleResponse = await _userRepository.fetchUserRole(userID);
+    return userRoleResponse.fold((error) {
+      _logger.e(error);
+      return null;
+    }, (roles) {
+      return roles;
     });
   }
 }

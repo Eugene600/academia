@@ -1,3 +1,4 @@
+import 'package:academia/core/user/models/user_role.dart';
 import 'package:academia/database/database.dart';
 import 'package:academia/exports/barrel.dart';
 import 'package:dartz/dartz.dart';
@@ -11,6 +12,10 @@ final class UserRepository {
   final UserLocalRepository _userLocalRepository = UserLocalRepository();
   final UserRemoteRepository _userRemoteRepository = UserRemoteRepository();
   final _logger = Logger();
+
+  Future<Either<String, List<UserRole>>> fetchUserRole(String userId) async {
+    return await _userRemoteRepository.fetchUserRoles(userId);
+  }
 
   /// Fetches all users from the local cache
   /// incase of an error it will return a [String] to the left
