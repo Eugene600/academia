@@ -55,7 +55,8 @@ class CourseDashboardWidget extends StatelessWidget {
                       child: const Icon(Clarity.certificate_solid_badged),
                     ),
                     title: Text(
-                        "Courses you've registered for will show up here."),
+                      "You have no courses for today. Please consider visiting the library",
+                    ),
                   ),
                 );
               }

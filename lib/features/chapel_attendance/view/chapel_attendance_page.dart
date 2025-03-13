@@ -145,7 +145,8 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
       context: context,
       builder: (context) {
         // final TextEditingController stdAdm = TextEditingController();
-        return Padding(
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.8,
           padding: const EdgeInsets.only(
             left: 16.0,
             right: 16.0,
@@ -308,11 +309,11 @@ class _ChapelAttendancePageState extends State<ChapelAttendancePage>
                       duration: 1500.ms,
                     ),
                 SizedBox(height: 16),
-                ConstrainedBox(
+                Container(
                   constraints: BoxConstraints(
                     minWidth: 250,
-                    maxWidth: 280,
-                    maxHeight: 280,
+                    maxWidth: MediaQuery.of(context).size.width,
+                    maxHeight: MediaQuery.of(context).size.width,
                     minHeight: 250,
                   ),
                   child: MobileScanner(
