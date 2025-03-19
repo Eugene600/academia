@@ -43,12 +43,12 @@ class _CourseMobileViewPageState extends State<CourseMobileViewPage> {
             ),
 
             // actions
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Bootstrap.trash),
-              ),
-            ],
+            //actions: [
+            //  IconButton(
+            //    onPressed: () {},
+            //    icon: const Icon(Bootstrap.trash),
+            //  ),
+            //],
           ),
           SliverPadding(
             padding: const EdgeInsets.all(12),

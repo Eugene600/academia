@@ -1,3 +1,4 @@
+import 'package:academia/constants/common.dart';
 import 'package:academia/features/features.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -79,27 +80,35 @@ class _CoursesPageMobileState extends State<CoursesPageMobile> {
                       itemCount: state.courses.length,
                       itemBuilder: (context, index) {
                         final course = state.courses.elementAt(index);
-                        return ListTile(
-                          onTap: () async {
-                            context.push("/course-view", extra: course);
-                            if (await Vibration.hasVibrator()) {
-                              await Vibration.vibrate(
-                                duration: 32,
-                                sharpness: 250,
-                              );
-                              if (!context.mounted) return;
-                            }
-                          },
-                          tileColor: Color(course.color ??
-                                  Theme.of(context)
-                                      .colorScheme
-                                      .primaryContainer
-                                      .value)
-                              .withAlpha(50),
-                          title: Text("${course.unit} ${course.section}"),
-                          subtitle: Text(
-                            course.room,
-                            style: Theme.of(context).textTheme.bodySmall,
+                        return Card(
+                          child: ListTile(
+                            onTap: () async {
+                              context.push("/course-view", extra: course);
+                              if (await Vibration.hasVibrator()) {
+                                await Vibration.vibrate(
+                                  duration: 32,
+                                  sharpness: 250,
+                                );
+                                if (!context.mounted) return;
+                              }
+                            },
+                            leading: CircleAvatar(
+                              backgroundColor: Color(
+                                course.color ??
+                                    Theme.of(context).colorScheme.primary.value,
+                              ).withAlpha(100),
+                            ),
+                            tileColor: Color(course.color ??
+                                    Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
+                                        .value)
+                                .withAlpha(50),
+                            title: Text("${course.unit} ${course.section}"),
+                            subtitle: Text(
+                              "${course.weekDay.title()} • ${course.room} •  ${course.period}",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ),
                         );
                       },

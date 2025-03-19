@@ -101,6 +101,11 @@ class AcademiaRouter {
         builder: (context, state) => const ProfileEditingPage(),
       ),
       GoRoute(
+        path: "/fees",
+        name: "fees",
+        builder: (context, state) => const FeesPage(),
+      ),
+      GoRoute(
         name: courseView,
         path: "/$courseView",
         builder: (context, state) {
