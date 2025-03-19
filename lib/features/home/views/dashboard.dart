@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:academia/features/auth/bloc/auth_bloc.dart';
 import 'package:academia/features/features.dart';
 import 'package:academia/features/home/views/widget/course_dashboard_widget.dart';
 import 'package:flutter/material.dart';
@@ -95,25 +94,25 @@ class Dashboard extends StatelessWidget {
             sliver: CourseDashboardWidget(),
           ),
 
-          //SliverPadding(
-          //  padding: EdgeInsets.all(12),
-          //  sliver: SliverPinnedHeader(
-          //    child: Container(
-          //      color: Theme.of(context).colorScheme.surface,
-          //      child: Text(
-          //        "Explore",
-          //        style: Theme.of(context).textTheme.titleLarge,
-          //      ),
-          //    ),
-          //  ),
-          //),
+          SliverPadding(
+            padding: EdgeInsets.all(12),
+            sliver: SliverPinnedHeader(
+              child: Container(
+                color: Theme.of(context).colorScheme.surface,
+                child: Text(
+                  "Quick Essentials",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+            ),
+          ),
           //
-          //SliverPadding(
-          //  padding: EdgeInsets.all(12),
-          //  sliver: MultiSliver(children: [
-          //    FeesHomeCard(),
-          //  ]),
-          //)
+          SliverPadding(
+            padding: EdgeInsets.all(12),
+            sliver: MultiSliver(children: [
+              FeesHomeCard(),
+            ]),
+          )
           // courses
           //SliverPadding(
           //  padding: EdgeInsets.all(12),
