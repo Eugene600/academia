@@ -76,7 +76,7 @@ class _CoursesPageMobileState extends State<CoursesPageMobile> {
                         ),
                       );
                     }
-                    return SliverList.separated(
+                    return SliverList.builder(
                       itemCount: state.courses.length,
                       itemBuilder: (context, index) {
                         final course = state.courses.elementAt(index);
@@ -112,7 +112,6 @@ class _CoursesPageMobileState extends State<CoursesPageMobile> {
                           ),
                         );
                       },
-                      separatorBuilder: (context, index) => Divider(),
                     );
                   }
 
