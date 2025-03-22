@@ -1,5 +1,4 @@
 import 'package:academia/controllers/controllers.dart';
-import 'package:academia/pages/util_pages/webview_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
@@ -149,16 +148,7 @@ class _EventCardState extends State<EventCard> {
                 Visibility(
                   visible: widget.event.url != null,
                   child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => WebviewPage(
-                            title: "More about Event",
-                            url: widget.event.url!,
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: () {},
                     child: const Text("More"),
                   ),
                 )

@@ -23,26 +23,26 @@ final List<Map<String, dynamic>> allTools = [
     },
     "description": "Having trouble tracking your finaces? We're here for you"
   },
-  {
-    "id": 3,
-    "name": "Elearning",
-    "image": "assets/images/sketchbook-coworkers-discussing-something-1.png",
-    "action": "Visit Elearning",
-    "ontap": () {
-      Platform.isIOS || Platform.isAndroid
-          ? Get.to(const WebviewPage(
-              title: "Elearning", url: "https://elearning.daystar.ac.ke"))
-          : Get.rawSnackbar(
-              title: "Missing Feature",
-              message:
-                  "Current platform does not support this feature please try it on android",
-              backgroundColor: Colors.red,
-              snackPosition: SnackPosition.BOTTOM,
-            );
-    },
-    "description":
-        "Psst! Elearning is here for you. Keep track of your assignments and notes!",
-  },
+  //{
+  //  "id": 3,
+  //  "name": "Elearning",
+  //  "image": "assets/images/sketchbook-coworkers-discussing-something-1.png",
+  //  "action": "Visit Elearning",
+  //  "ontap": () {
+  //    Platform.isIOS || Platform.isAndroid
+  //        ? Get.to(const WebviewPage(
+  //            title: "Elearning", url: "https://elearning.daystar.ac.ke"))
+  //        : Get.rawSnackbar(
+  //            title: "Missing Feature",
+  //            message:
+  //                "Current platform does not support this feature please try it on android",
+  //            backgroundColor: Colors.red,
+  //            snackPosition: SnackPosition.BOTTOM,
+  //          );
+  //  },
+  //  "description":
+  //      "Psst! Elearning is here for you. Keep track of your assignments and notes!",
+  //},
   {
     "id": 4,
     "name": "Exam Timetable",

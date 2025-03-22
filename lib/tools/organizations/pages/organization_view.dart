@@ -66,12 +66,7 @@ class OrganizationView extends StatelessWidget {
             visible: !(organization.organizationPage == null),
             sliver: SliverToBoxAdapter(
               child: ListTile(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => WebviewPage(
-                          title: "Organization",
-                          url: organization.organizationPage!)));
-                },
+                onTap: () {},
                 title: const Text("Visit organization's site"),
                 leading: const Icon(Ionicons.link_outline),
               ),
