@@ -8,3 +8,4 @@ export 'notifications/notifications.dart';
 export 'chapel_attendance/chapel_attendance.dart';
 export 'in_app_update/in_app_update.dart';
 export 'fees/fees.dart';
+export 'performance_reports/performance_reports.dart';

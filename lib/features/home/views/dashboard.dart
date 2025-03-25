@@ -110,21 +110,35 @@ class Dashboard extends StatelessWidget {
           SliverPadding(
             padding: EdgeInsets.all(12),
             sliver: MultiSliver(children: [
+              //Row(
+              //  mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //  children: [
+              //    PerformanceReportHomeTile(
+              //      metricType: PerformanceMetricType.audit,
+              //      title: "Audit",
+              //      bgColor: Colors.deepPurple,
+              //      icon: Icon(Clarity.heart_broken_solid),
+              //    ),
+              //    PerformanceReportHomeTile(
+              //      icon: Icon(Clarity.accessibility_1_solid),
+              //      metricType: PerformanceMetricType.transcript,
+              //      title: "Transcript",
+              //      bgColor: Colors.deepOrange,
+              //    ),
+              //  ],
+              //),
+              //SizedBox(height: 8),
               FeesHomeCard(),
+              SizedBox(height: 8),
             ]),
-          )
+          ),
           // courses
-          //SliverPadding(
-          //  padding: EdgeInsets.all(12),
-          //  sliver: MultiSliver(
-          //    children: [
-          //      Visibility(
-          //        visible: _isTuesdayBetween8And10AM(),
-          //        child: ChapelAttendancePage(),
-          //      ),
-          //    ],
-          //  ),
-          //),
+          SliverToBoxAdapter(
+            child: Text(
+              "© ${DateTime.now().year} Academia All Rights Reserved",
+              textAlign: TextAlign.center,
+            ),
+          ),
         ],
       ),
     );

@@ -106,6 +106,13 @@ class AcademiaRouter {
         builder: (context, state) => const FeesPage(),
       ),
       GoRoute(
+        path: "/performance-metric-view",
+        name: "performance-metric-view",
+        builder: (context, state) => PerformanceReportView(
+          metricType: state.extra as PerformanceMetricType,
+        ),
+      ),
+      GoRoute(
         name: courseView,
         path: "/$courseView",
         builder: (context, state) {

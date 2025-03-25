@@ -1,0 +1,4 @@
+enum PerformanceMetricType {
+audit,
+transcript,
+}
