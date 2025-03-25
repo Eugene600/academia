@@ -11,6 +11,7 @@ import 'package:lottie/lottie.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vibration/vibration.dart';
+import 'dart:io';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -135,6 +136,8 @@ class _LoginPageState extends State<LoginPage> {
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                           fontFamily: GoogleFonts.lora().fontFamily,
                         ),
+                    textAlign:
+                        Platform.isIOS ? TextAlign.center : TextAlign.left,
                   ).animate().moveY(
                       duration: 2000.ms,
                       begin: -10,
