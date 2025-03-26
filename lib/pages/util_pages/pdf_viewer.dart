@@ -78,25 +78,7 @@ class _PdfViewerState extends State<PdfViewer> {
                         ),
                       )
                     : Stack(
-                        children: [
-                          PDFView(
-                            fitPolicy: FitPolicy.BOTH,
-                            pdfData: snapshot.data,
-                            pageFling: true,
-                            defaultPage: currentPage,
-                            onPageChanged: (page, total) {
-                              setState(() {
-                                currentPage = page!;
-                              });
-                            },
-                            onRender: (pages) {
-                              setState(() {});
-                            },
-                            onError: (error) {
-                              debugPrint("Error");
-                            },
-                          ),
-                        ],
+                        children: [],
                       )
                 : const Center(
                     child: Column(

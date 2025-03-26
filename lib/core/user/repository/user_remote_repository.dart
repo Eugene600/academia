@@ -94,6 +94,7 @@ final class UserRemoteRepository with DioErrorHandler {
         "/verisafe/v2/users/profile/create",
         data: profile.toJson(),
       );
+      
 
       if (response.statusCode == 201) {
         return right(UserProfileData.fromJson(response.data));

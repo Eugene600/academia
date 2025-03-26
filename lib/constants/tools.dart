@@ -89,35 +89,4 @@ final List<Map<String, dynamic>> allTools = [
     "description":
         "Generate quiz questions from your notes and study materials with our AI tool."
   },
-  {
-    "id": 8,
-    "name": "Student Audit",
-    "action": "Get student Audit",
-    "image":
-        "assets/images/sketchbook-school-backpack-with-school-supplies-1.png",
-    "ontap": () {
-      Get.to(
-        const StudentPerformancePage(
-          parameter: StudentPerfomanceParameter.audit,
-        ),
-      );
-    },
-    "description": "Need your student audit? Get it here"
-  },
-  {
-    "id": 9,
-    "name": "Transcript",
-    "action": "Show my transcript",
-    "image":
-        "assets/images/sketchbook-young-businesswoman-giving-a-presentation-1.png",
-    "ontap": () {
-      Get.to(
-        const StudentPerformancePage(
-          parameter: StudentPerfomanceParameter.transcript,
-        ),
-      );
-    },
-    "description":
-        "Worried of your entire student progression? Fetch your transcript here"
-  }
 ];

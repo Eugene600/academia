@@ -1,6 +1,5 @@
 export 'leaderboard/leaderboard.dart';
 export 'anki/anki.dart';
-export 'student_performance/student_performance.dart';
 export 'events/events.dart';
 export 'fees/fees.dart';
 export 'gpa_calculator/gpacalculator.dart';

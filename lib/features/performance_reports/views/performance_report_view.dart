@@ -2,8 +2,8 @@ import 'package:academia/exports/barrel.dart';
 import 'package:academia/features/features.dart';
 import 'package:dartz/dartz.dart' as dartz;
 import 'package:get_it/get_it.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:logger/logger.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class PerformanceReportView extends StatefulWidget {
   const PerformanceReportView({
@@ -18,9 +18,6 @@ class PerformanceReportView extends StatefulWidget {
 
 class _PerformanceReportViewState extends State<PerformanceReportView> {
   final _logger = Logger();
-  bool _isLoading = true;
-
-  late PDFViewController _controller;
 
   late Future<dartz.Either<String, List<Uint8List>>> reportResponse;
 
@@ -54,7 +51,6 @@ class _PerformanceReportViewState extends State<PerformanceReportView> {
         final transcripts = <Uint8List>[];
         for (var rawTranscript in rawAudits) {
           transcripts.add(base64Decode(rawTranscript));
-          Clipboard.setData(ClipboardData(text: rawTranscript));
         }
         return dartz.right(transcripts);
       });
@@ -98,21 +94,6 @@ class _PerformanceReportViewState extends State<PerformanceReportView> {
                   ? "Student Audit"
                   : "Student Transcript",
             ),
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Clarity.archive_line),
-              ),
-            ],
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              padding: EdgeInsets.all(4),
-              color: Theme.of(context).colorScheme.tertiaryContainer,
-              child: Row(
-                children: [],
-              ),
-            ),
           ),
           SliverFillRemaining(
             child: FutureBuilder(
@@ -151,20 +132,7 @@ class _PerformanceReportViewState extends State<PerformanceReportView> {
                     ),
                   );
                 }, (data) {
-                  return GestureDetector(
-                    child: PDFView(
-                      onViewCreated: (controller) {
-                        _controller = controller;
-                      },
-                      fitEachPage: true,
-                      enableSwipe:
-                          true, // Disable built-in swipe to handle it manually
-                      swipeHorizontal: true,
-                      autoSpacing: false,
-                      pageFling: true,
-                      pdfData: data.first, // Your PDF data
-                    ),
-                  );
+                  return SfPdfViewer.memory(data.first);
                 });
               },
             ),

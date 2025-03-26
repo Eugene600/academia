@@ -15,7 +15,6 @@ export '../controllers/controllers.dart';
 // Academia themes
 export '../themes/theme.dart';
 
-
 // dart core
 export 'dart:convert';
 export 'dart:io';
@@ -27,7 +26,6 @@ export 'package:flutter/services.dart';
 
 // third party packages
 export 'package:magnet/magnet.dart';
-export 'package:flutter_pdfview/flutter_pdfview.dart';
 export 'package:cached_network_image/cached_network_image.dart';
 export 'package:ionicons/ionicons.dart';
 export 'package:percent_indicator/percent_indicator.dart';

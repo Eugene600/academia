@@ -12,7 +12,7 @@ class PerformanceReportHomeTile extends StatelessWidget {
     required this.icon,
     this.bgColor,
   });
-  final Icon icon;
+  final Widget icon;
   final PerformanceMetricType metricType;
   final String title;
   final MaterialColor? bgColor;

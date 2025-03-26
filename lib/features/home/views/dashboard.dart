@@ -113,8 +113,11 @@ class Dashboard extends StatelessWidget {
               PerformanceReportHomeTile(
                 metricType: PerformanceMetricType.audit,
                 title: "Audit",
-                bgColor: Colors.deepOrange,
-                icon: Icon(Clarity.heart_broken_solid),
+                bgColor: Colors.orange,
+                icon: Text(
+                  "❤️‍🩹",
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               ),
               SizedBox(height: 8),
               FeesHomeCard(),
