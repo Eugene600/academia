@@ -110,24 +110,13 @@ class Dashboard extends StatelessWidget {
           SliverPadding(
             padding: EdgeInsets.all(12),
             sliver: MultiSliver(children: [
-              //Row(
-              //  mainAxisAlignment: MainAxisAlignment.spaceAround,
-              //  children: [
-              //    PerformanceReportHomeTile(
-              //      metricType: PerformanceMetricType.audit,
-              //      title: "Audit",
-              //      bgColor: Colors.deepPurple,
-              //      icon: Icon(Clarity.heart_broken_solid),
-              //    ),
-              //    PerformanceReportHomeTile(
-              //      icon: Icon(Clarity.accessibility_1_solid),
-              //      metricType: PerformanceMetricType.transcript,
-              //      title: "Transcript",
-              //      bgColor: Colors.deepOrange,
-              //    ),
-              //  ],
-              //),
-              //SizedBox(height: 8),
+              PerformanceReportHomeTile(
+                metricType: PerformanceMetricType.audit,
+                title: "Audit",
+                bgColor: Colors.deepOrange,
+                icon: Icon(Clarity.heart_broken_solid),
+              ),
+              SizedBox(height: 8),
               FeesHomeCard(),
               SizedBox(height: 8),
             ]),

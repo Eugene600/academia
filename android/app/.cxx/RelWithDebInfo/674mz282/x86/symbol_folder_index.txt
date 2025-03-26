@@ -1,1 +1,0 @@
-/home/erick/Projects/apps/academia/build/app/intermediates/cxx/RelWithDebInfo/674mz282/obj/x86

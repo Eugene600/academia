@@ -1,2 +1,0 @@
-/home/erick/Projects/apps/academia/android/app/.cxx/Debug/122r5g24/x86/CMakeFiles/edit_cache.dir
-/home/erick/Projects/apps/academia/android/app/.cxx/Debug/122r5g24/x86/CMakeFiles/rebuild_cache.dir

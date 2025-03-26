@@ -20,7 +20,7 @@ class PerformanceReportHomeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.46,
+      //width: MediaQuery.of(context).size.width * 0.46,
       decoration: BoxDecoration(
         border: Border.all(
           width: 1,
