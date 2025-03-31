@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:academia/core/user/models/user_role.dart';
 import 'package:academia/features/features.dart';
 import 'package:academia/features/home/views/widget/course_dashboard_widget.dart';
 import 'package:flutter/material.dart';
@@ -10,23 +11,25 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:vibration/vibration.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
-  //bool _isTuesdayBetween8And10AM() {
-  //DateTime now = DateTime.now();
-  //return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
-  //return false;
-  // DateTime now = DateTime.now();
-  // return now.weekday == DateTime.tuesday && now.hour >= 7 && now.hour < 10;
-  //return GetIt.instance<FlavorConfig>().isDevelopment;
-  //}
+  @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  late Future<List<UserRole>?> roleresult;
+  @override
+  void initState() {
+    super.initState();
+    roleresult = BlocProvider.of<AuthBloc>(context).fetchUserRole(
+      (BlocProvider.of<AuthBloc>(context).state as AuthenticatedState).user.id,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final roleresult = BlocProvider.of<AuthBloc>(context).fetchUserRole(
-      (BlocProvider.of<AuthBloc>(context).state as AuthenticatedState).user.id,
-    );
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -69,6 +72,23 @@ class Dashboard extends StatelessWidget {
                   ),
             ),
             actions: [
+              CircleAvatar(
+                backgroundColor: Colors.deepOrange,
+                child: IconButton(
+                  onPressed: () async {
+                    if (await Vibration.hasVibrator()) {
+                      await Vibration.vibrate(
+                        duration: 32,
+                        sharpness: 250,
+                      );
+                    }
+                    if (!context.mounted) return;
+
+                    context.pushNamed("memberships");
+                  },
+                  icon: Icon(Clarity.id_badge_line),
+                ),
+              ).animate().shake(duration: 2000.ms),
               IconButton(
                 onPressed: () {
                   context.goNamed("profile");

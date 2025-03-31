@@ -31,10 +31,10 @@ class LayoutScaffold extends StatelessWidget {
             icon: Icon(Clarity.certificate_line),
             label: 'Courses',
           ),
-          //NavigationDestination(
-          //  icon: Icon(Clarity.tools_line),
-          //  label: 'Essentials',
-          //),
+          NavigationDestination(
+            icon: Icon(Clarity.tools_line),
+            label: 'Essentials',
+          ),
           NavigationDestination(
             icon: Icon(Clarity.user_line),
             label: 'Profile',

@@ -45,7 +45,7 @@ class PerformanceReportHomeTile extends StatelessWidget {
           }
         },
         tileColor:
-            bgColor?[100] ?? Theme.of(context).colorScheme.primaryContainer,
+            bgColor?[500] ?? Theme.of(context).colorScheme.primaryContainer,
         leading: icon,
         title: Text(title),
       ),

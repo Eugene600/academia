@@ -1,8 +1,10 @@
-import 'package:academia/utils/router/router.dart';
+import 'package:academia/features/features.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:vibration/vibration.dart';
 
 class EssentialsMobilePage extends StatefulWidget {
   const EssentialsMobilePage({super.key});
@@ -27,142 +29,218 @@ class _EssentialsMobilePageState extends State<EssentialsMobilePage> {
                 "Essentials",
               ),
             ),
-            actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Bootstrap.qr_code_scan),
-              ),
-            ],
           ),
           SliverPadding(
             padding: const EdgeInsets.all(12),
             sliver: MultiSliver(
               children: [
                 Card(
+                  margin: EdgeInsets.only(bottom: 2),
                   elevation: 0,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .tertiaryContainer
+                      .withAlpha(100),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                  ),
+                  child: ListTile(
+                    onTap: () async {
+                      context.pushNamed(
+                        "fees",
+                      );
+                      if (await Vibration.hasVibrator()) {
+                        await Vibration.vibrate(
+                          duration: 32,
+                          sharpness: 250,
+                        );
+                      }
+                    },
+                    leading: Icon(Clarity.coin_bag_line),
+                    title: Text("School Fees"),
+                    subtitle: Text("Keep track of your finances"),
+                  ),
+                ),
+
+                Card(
+                  margin: EdgeInsets.only(bottom: 2),
+                  elevation: 0,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .tertiaryContainer
+                      .withAlpha(100),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  child: ListTile(
+                    onTap: () async {
+                      context.pushNamed(
+                        "performance-metric-view",
+                        extra: PerformanceMetricType.audit,
+                      );
+                      if (await Vibration.hasVibrator()) {
+                        await Vibration.vibrate(
+                          duration: 32,
+                          sharpness: 250,
+                        );
+                      }
+                    },
+                    leading: const Icon(Clarity.heart_broken_line),
+                    title: Text("Student Audit"),
+                    subtitle: Text("Get to know how well you're fairing"),
+                  ),
+                ),
+
+                Card(
+                  elevation: 0,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .tertiaryContainer
+                      .withAlpha(100),
                   margin: const EdgeInsets.only(bottom: 2),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(12),
+                      bottom: Radius.circular(12),
                     ),
                   ),
                   child: ListTile(
-                    onTap: () {
-                      context.pushNamed(AcademiaRouter.todo);
+                    onTap: () async {
+                      final Uri url =
+                          Uri.parse('https://elearning.daystar.ac.ke/');
+                      if (!await launchUrl(url)) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                            "We ran into an issue. This event has been recorded",
+                          )),
+                        );
+                      }
                     },
-                    leading: const Icon(Bootstrap.bell),
-                    title: const Text("Todos & Assigments"),
-                    subtitle:
-                        const Text("Keep track of your assignments and todos"),
+                    leading: const Icon(Clarity.pinboard_line),
+                    title: const Text("Elearning"),
+                    subtitle: const Text("Never miss an assignment or CAT"),
                   ),
                 ),
-                const Card(
-                  elevation: 0,
-                  margin: EdgeInsets.only(bottom: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.zero,
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: Icon(Bootstrap.clock),
-                    title: Text("Exam timetable"),
-                    subtitle: Text("Psst.. Never miss an exam"),
-                  ),
-                ),
-                const Card(
-                  elevation: 0,
-                  margin: EdgeInsets.only(bottom: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.zero,
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: Icon(Bootstrap.filetype_pdf),
-                    title: Text("Past Revision Papers"),
-                    subtitle: Text("You want them? You get them.."),
-                  ),
-                ),
-
-                const Card(
-                  elevation: 0,
-                  margin: EdgeInsets.only(bottom: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.zero,
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: Icon(Bootstrap.file_ppt),
-                    title: Text("Ask Me"),
-                    subtitle: Text("Boring notes? We'll help you revise"),
-                  ),
-                ),
-                const Card(
-                  elevation: 0,
-                  margin: EdgeInsets.only(bottom: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(12),
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: Icon(Bootstrap.play),
-                    title: Text("Flash Cards"),
-                    subtitle: Text(
-                      "Curious if you really understood? Try our flashcards",
-                    ),
-                  ),
-                ),
-
-                //Page Break for student performance
-                const SizedBox(height: 18),
-                const Card(
-                  margin: EdgeInsets.only(bottom: 2),
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(12),
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: Icon(Bootstrap.bell),
-                    title: Text("Student Audit"),
-                    subtitle: Text("Keep track of your assignments and todos"),
-                  ),
-                ),
-                const Card(
-                  elevation: 0,
-                  margin: EdgeInsets.only(bottom: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.zero,
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: Icon(Bootstrap.activity),
-                    title: Text("GPA Calculator"),
-                    subtitle: Text("Watch out for those grades!"),
-                  ),
-                ),
-
-                const Card(
-                  elevation: 0,
-                  margin: EdgeInsets.only(bottom: 2),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(12),
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: Icon(Bootstrap.play),
-                    title: Text("Flash Cards"),
-                    subtitle: Text(
-                      "Curious if you really understood? Try our flashcards",
-                    ),
-                  ),
-                ),
+                //Card(
+                //  elevation: 0,
+                //  color: Theme.of(context)
+                //      .colorScheme
+                //      .tertiaryContainer
+                //      .withAlpha(100),
+                //  margin: EdgeInsets.only(bottom: 2),
+                //  shape: RoundedRectangleBorder(
+                //    borderRadius: BorderRadius.vertical(
+                //      top: Radius.zero,
+                //    ),
+                //  ),
+                //  child: ListTile(
+                //    leading: Icon(Bootstrap.clock),
+                //    title: Text("Exam timetable"),
+                //    subtitle: Text("Psst.. Never miss an exam"),
+                //  ),
+                //),
+                //Card(
+                //  elevation: 0,
+                //  color: Theme.of(context)
+                //      .colorScheme
+                //      .tertiaryContainer
+                //      .withAlpha(100),
+                //  margin: EdgeInsets.only(bottom: 2),
+                //  shape: RoundedRectangleBorder(
+                //    borderRadius: BorderRadius.vertical(
+                //      top: Radius.zero,
+                //    ),
+                //  ),
+                //  child: ListTile(
+                //    leading: Icon(Bootstrap.filetype_pdf),
+                //    title: Text("Past Revision Papers"),
+                //    subtitle: Text("You want them? You get them.."),
+                //  ),
+                //),
+                //
+                //Card(
+                //  elevation: 0,
+                //  color: Theme.of(context)
+                //      .colorScheme
+                //      .tertiaryContainer
+                //      .withAlpha(100),
+                //  margin: EdgeInsets.only(bottom: 2),
+                //  shape: RoundedRectangleBorder(
+                //    borderRadius: BorderRadius.vertical(
+                //      bottom: Radius.zero,
+                //    ),
+                //  ),
+                //  child: ListTile(
+                //    leading: Icon(Bootstrap.file_ppt),
+                //    title: Text("Ask Me"),
+                //    subtitle: Text("Boring notes? We'll help you revise"),
+                //  ),
+                //),
+                //Card(
+                //  elevation: 0,
+                //  color: Theme.of(context)
+                //      .colorScheme
+                //      .tertiaryContainer
+                //      .withAlpha(100),
+                //  margin: EdgeInsets.only(bottom: 2),
+                //  shape: RoundedRectangleBorder(
+                //    borderRadius: BorderRadius.vertical(
+                //      bottom: Radius.circular(12),
+                //    ),
+                //  ),
+                //  child: ListTile(
+                //    leading: Icon(Bootstrap.play),
+                //    title: Text("Flash Cards"),
+                //    subtitle: Text(
+                //      "Curious if you really understood? Try our flashcards",
+                //    ),
+                //  ),
+                //),
+                //
+                ////Page Break for student performance
+                //const SizedBox(height: 18),
+                //Card(
+                //  elevation: 0,
+                //  color: Theme.of(context)
+                //      .colorScheme
+                //      .tertiaryContainer
+                //      .withAlpha(100),
+                //  margin: EdgeInsets.only(bottom: 2),
+                //  shape: RoundedRectangleBorder(
+                //    borderRadius: BorderRadius.vertical(
+                //      bottom: Radius.zero,
+                //    ),
+                //  ),
+                //  child: ListTile(
+                //    leading: Icon(Bootstrap.activity),
+                //    title: Text("GPA Calculator"),
+                //    subtitle: Text("Watch out for those grades!"),
+                //  ),
+                //),
+                //
+                //Card(
+                //  elevation: 0,
+                //  color: Theme.of(context)
+                //      .colorScheme
+                //      .tertiaryContainer
+                //      .withAlpha(100),
+                //  margin: EdgeInsets.only(bottom: 2),
+                //  shape: RoundedRectangleBorder(
+                //    borderRadius: BorderRadius.vertical(
+                //      bottom: Radius.circular(12),
+                //    ),
+                //  ),
+                //  child: ListTile(
+                //    leading: Icon(Bootstrap.play),
+                //    title: Text("Flash Cards"),
+                //    subtitle: Text(
+                //      "Curious if you really understood? Try our flashcards",
+                //    ),
+                //  ),
+                //),
               ],
             ),
           )
