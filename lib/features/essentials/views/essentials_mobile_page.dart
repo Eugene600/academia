@@ -25,6 +25,10 @@ class _EssentialsMobilePageState extends State<EssentialsMobilePage> {
             floating: true,
             expandedHeight: 250,
             flexibleSpace: FlexibleSpaceBar(
+              background: Image.asset(
+                "assets/icons/academia_ghibli.png",
+                fit: BoxFit.cover,
+              ),
               title: Text(
                 "Essentials",
               ),
