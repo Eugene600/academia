@@ -20,12 +20,23 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   late Future<List<UserRole>?> roleresult;
+  late Future<bool> notify;
   @override
   void initState() {
     super.initState();
     roleresult = BlocProvider.of<AuthBloc>(context).fetchUserRole(
       (BlocProvider.of<AuthBloc>(context).state as AuthenticatedState).user.id,
     );
+
+    BlocProvider.of<NotificationCubit>(context)
+        .hasNotificationAccess()
+        .then((val) {
+      if (!context.mounted || val) return;
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => EnableNotificationsBanner(),
+      );
+    });
   }
 
   @override
@@ -73,7 +84,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             actions: [
               CircleAvatar(
-                backgroundColor: Colors.deepOrange,
+                backgroundColor: Colors.black,
                 child: IconButton(
                   onPressed: () async {
                     if (await Vibration.hasVibrator()) {
@@ -86,7 +97,10 @@ class _DashboardState extends State<Dashboard> {
 
                     context.pushNamed("memberships");
                   },
-                  icon: Icon(Clarity.id_badge_line),
+                  icon: Icon(
+                    Clarity.id_badge_line,
+                    color: Colors.white,
+                  ),
                 ),
               ).animate().shake(duration: 2000.ms),
               IconButton(

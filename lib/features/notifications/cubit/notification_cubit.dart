@@ -29,7 +29,7 @@ class NotificationCubit extends Cubit<NotificationState> {
       final granted = await OneSignal.Notifications.requestPermission(true);
       if (granted) {
         OneSignal.User.addEmail(user.email!);
-        OneSignal.User.addAlias(user.id, "id");
+        OneSignal.User.addAlias("id", user.id);
         OneSignal.User.addTags({
           "firstname": user.firstname,
           "othernames": user.othernames,
@@ -43,11 +43,8 @@ class NotificationCubit extends Cubit<NotificationState> {
 
   Future<bool> revokePermission(UserData user) async {
     try {
-      final granted = await OneSignal.Notifications.requestPermission(false);
-      if (granted) {
-        return false;
-      }
-      return hasNotificationAccess();
+      openAppSettings();
+      return await hasNotificationAccess();
     } catch (e) {
       return await hasNotificationAccess();
     }
