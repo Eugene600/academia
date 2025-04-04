@@ -132,6 +132,16 @@ class AcademiaRouter {
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
+        path: "/gpa-calculator",
+        name: "gpa-calculator",
+        builder: (context, state) => const GpaCalculatorPage(),
+      ),
+      GoRoute(
+        path: "/exam-timetable",
+        name: "exam-timetable",
+        builder: (context, state) => const ExamTimeTablePage(),
+      ),
+      GoRoute(
         path: "/$register",
         name: register,
         builder: (context, state) => const RegisterPage(),

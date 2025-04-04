@@ -205,46 +205,64 @@ class _EssentialsMobilePageState extends State<EssentialsMobilePage> {
                 //),
                 //
                 ////Page Break for student performance
-                //const SizedBox(height: 18),
-                //Card(
-                //  elevation: 0,
-                //  color: Theme.of(context)
-                //      .colorScheme
-                //      .tertiaryContainer
-                //      .withAlpha(100),
-                //  margin: EdgeInsets.only(bottom: 2),
-                //  shape: RoundedRectangleBorder(
-                //    borderRadius: BorderRadius.vertical(
-                //      bottom: Radius.zero,
-                //    ),
-                //  ),
-                //  child: ListTile(
-                //    leading: Icon(Bootstrap.activity),
-                //    title: Text("GPA Calculator"),
-                //    subtitle: Text("Watch out for those grades!"),
-                //  ),
-                //),
+                const SizedBox(height: 18),
+                // Card(
+                //   elevation: 0,
+                //   color: Theme.of(context)
+                //       .colorScheme
+                //       .tertiaryContainer
+                //       .withAlpha(100),
+                //   margin: EdgeInsets.only(bottom: 2),
+                //   shape: RoundedRectangleBorder(
+                //     borderRadius: BorderRadius.all(
+                //       Radius.circular(12),
+                //     ),
+                //   ),
+                //   child: ListTile(
+                //     onTap: () async {
+                //       context.pushNamed("gpa-calculator");
+                //       if (await Vibration.hasVibrator()) {
+                //         await Vibration.vibrate(
+                //           duration: 32,
+                //           sharpness: 250,
+                //         );
+                //       }
+                //     },
+                //     leading: Icon(Bootstrap.activity),
+                //     title: Text("GPA Calculator"),
+                //     subtitle: Text("Watch out for those grades!"),
+                //   ),
+                // ),
                 //
-                //Card(
-                //  elevation: 0,
-                //  color: Theme.of(context)
-                //      .colorScheme
-                //      .tertiaryContainer
-                //      .withAlpha(100),
-                //  margin: EdgeInsets.only(bottom: 2),
-                //  shape: RoundedRectangleBorder(
-                //    borderRadius: BorderRadius.vertical(
-                //      bottom: Radius.circular(12),
-                //    ),
-                //  ),
-                //  child: ListTile(
-                //    leading: Icon(Bootstrap.play),
-                //    title: Text("Flash Cards"),
-                //    subtitle: Text(
-                //      "Curious if you really understood? Try our flashcards",
-                //    ),
-                //  ),
-                //),
+                Card(
+                  elevation: 0,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .tertiaryContainer
+                      .withAlpha(100),
+                  margin: EdgeInsets.only(bottom: 2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(12),
+                    ),
+                  ),
+                  child: ListTile(
+                    onTap: () async {
+                      context.pushNamed("exam-timetable");
+                      if (await Vibration.hasVibrator()) {
+                        await Vibration.vibrate(
+                          duration: 32,
+                          sharpness: 250,
+                        );
+                      }
+                    },
+                    leading: Icon(Clarity.bug_line),
+                    title: Text("Exam TimeTable"),
+                    subtitle: Text(
+                      "Tick Tock The clock",
+                    ),
+                  ),
+                ),
               ],
             ),
           )

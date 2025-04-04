@@ -30,7 +30,8 @@ class Academia extends StatelessWidget {
         BlocProvider(create: (_) => CourseCubit()),
         BlocProvider(create: (_) => ProfileCubit()),
         BlocProvider(create: (_) => AttendanceBloc()),
-        BlocProvider(create: (_) => InAppUpdateCubit())
+        BlocProvider(create: (_) => InAppUpdateCubit()),
+        BlocProvider(create: (_) => ExamBloc())
       ],
       child: DynamicColorBuilder(
         builder: (lightscheme, darkscheme) => MaterialApp.router(

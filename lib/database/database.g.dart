@@ -3037,6 +3037,406 @@ class TodoCompanion extends UpdateCompanion<TodoData> {
   }
 }
 
+class $ExamModelTable extends ExamModel
+    with TableInfo<$ExamModelTable, ExamModelData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ExamModelTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _courseCodeMeta =
+      const VerificationMeta('courseCode');
+  @override
+  late final GeneratedColumn<String> courseCode = GeneratedColumn<String>(
+      'course_code', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 6, maxTextLength: 10),
+      type: DriftSqlType.string,
+      requiredDuringInsert: true);
+  static const VerificationMeta _dayMeta = const VerificationMeta('day');
+  @override
+  late final GeneratedColumn<String> day = GeneratedColumn<String>(
+      'day', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 10, maxTextLength: 20),
+      type: DriftSqlType.string,
+      requiredDuringInsert: true);
+  static const VerificationMeta _timeMeta = const VerificationMeta('time');
+  @override
+  late final GeneratedColumn<String> time = GeneratedColumn<String>(
+      'time', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 10, maxTextLength: 20),
+      type: DriftSqlType.string,
+      requiredDuringInsert: true);
+  static const VerificationMeta _venueMeta = const VerificationMeta('venue');
+  @override
+  late final GeneratedColumn<String> venue = GeneratedColumn<String>(
+      'venue', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 100),
+      type: DriftSqlType.string,
+      requiredDuringInsert: true);
+  static const VerificationMeta _campusMeta = const VerificationMeta('campus');
+  @override
+  late final GeneratedColumn<String> campus = GeneratedColumn<String>(
+      'campus', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _hoursMeta = const VerificationMeta('hours');
+  @override
+  late final GeneratedColumn<String> hours = GeneratedColumn<String>(
+      'hours', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _invigilatorMeta =
+      const VerificationMeta('invigilator');
+  @override
+  late final GeneratedColumn<String> invigilator = GeneratedColumn<String>(
+      'invigilator', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [courseCode, day, time, venue, campus, hours, invigilator];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'exam_model';
+  @override
+  VerificationContext validateIntegrity(Insertable<ExamModelData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('course_code')) {
+      context.handle(
+          _courseCodeMeta,
+          courseCode.isAcceptableOrUnknown(
+              data['course_code']!, _courseCodeMeta));
+    } else if (isInserting) {
+      context.missing(_courseCodeMeta);
+    }
+    if (data.containsKey('day')) {
+      context.handle(
+          _dayMeta, day.isAcceptableOrUnknown(data['day']!, _dayMeta));
+    } else if (isInserting) {
+      context.missing(_dayMeta);
+    }
+    if (data.containsKey('time')) {
+      context.handle(
+          _timeMeta, time.isAcceptableOrUnknown(data['time']!, _timeMeta));
+    } else if (isInserting) {
+      context.missing(_timeMeta);
+    }
+    if (data.containsKey('venue')) {
+      context.handle(
+          _venueMeta, venue.isAcceptableOrUnknown(data['venue']!, _venueMeta));
+    } else if (isInserting) {
+      context.missing(_venueMeta);
+    }
+    if (data.containsKey('campus')) {
+      context.handle(_campusMeta,
+          campus.isAcceptableOrUnknown(data['campus']!, _campusMeta));
+    }
+    if (data.containsKey('hours')) {
+      context.handle(
+          _hoursMeta, hours.isAcceptableOrUnknown(data['hours']!, _hoursMeta));
+    } else if (isInserting) {
+      context.missing(_hoursMeta);
+    }
+    if (data.containsKey('invigilator')) {
+      context.handle(
+          _invigilatorMeta,
+          invigilator.isAcceptableOrUnknown(
+              data['invigilator']!, _invigilatorMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {courseCode};
+  @override
+  ExamModelData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExamModelData(
+      courseCode: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}course_code'])!,
+      day: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}day'])!,
+      time: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}time'])!,
+      venue: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}venue'])!,
+      campus: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}campus']),
+      hours: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}hours'])!,
+      invigilator: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}invigilator']),
+    );
+  }
+
+  @override
+  $ExamModelTable createAlias(String alias) {
+    return $ExamModelTable(attachedDatabase, alias);
+  }
+}
+
+class ExamModelData extends DataClass implements Insertable<ExamModelData> {
+  final String courseCode;
+  final String day;
+  final String time;
+  final String venue;
+  final String? campus;
+  final String hours;
+  final String? invigilator;
+  const ExamModelData(
+      {required this.courseCode,
+      required this.day,
+      required this.time,
+      required this.venue,
+      this.campus,
+      required this.hours,
+      this.invigilator});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['course_code'] = Variable<String>(courseCode);
+    map['day'] = Variable<String>(day);
+    map['time'] = Variable<String>(time);
+    map['venue'] = Variable<String>(venue);
+    if (!nullToAbsent || campus != null) {
+      map['campus'] = Variable<String>(campus);
+    }
+    map['hours'] = Variable<String>(hours);
+    if (!nullToAbsent || invigilator != null) {
+      map['invigilator'] = Variable<String>(invigilator);
+    }
+    return map;
+  }
+
+  ExamModelCompanion toCompanion(bool nullToAbsent) {
+    return ExamModelCompanion(
+      courseCode: Value(courseCode),
+      day: Value(day),
+      time: Value(time),
+      venue: Value(venue),
+      campus:
+          campus == null && nullToAbsent ? const Value.absent() : Value(campus),
+      hours: Value(hours),
+      invigilator: invigilator == null && nullToAbsent
+          ? const Value.absent()
+          : Value(invigilator),
+    );
+  }
+
+  factory ExamModelData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExamModelData(
+      courseCode: serializer.fromJson<String>(json['course_code']),
+      day: serializer.fromJson<String>(json['day']),
+      time: serializer.fromJson<String>(json['time']),
+      venue: serializer.fromJson<String>(json['venue']),
+      campus: serializer.fromJson<String?>(json['campus']),
+      hours: serializer.fromJson<String>(json['hrs']),
+      invigilator: serializer.fromJson<String?>(json['invigilator']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'course_code': serializer.toJson<String>(courseCode),
+      'day': serializer.toJson<String>(day),
+      'time': serializer.toJson<String>(time),
+      'venue': serializer.toJson<String>(venue),
+      'campus': serializer.toJson<String?>(campus),
+      'hrs': serializer.toJson<String>(hours),
+      'invigilator': serializer.toJson<String?>(invigilator),
+    };
+  }
+
+  ExamModelData copyWith(
+          {String? courseCode,
+          String? day,
+          String? time,
+          String? venue,
+          Value<String?> campus = const Value.absent(),
+          String? hours,
+          Value<String?> invigilator = const Value.absent()}) =>
+      ExamModelData(
+        courseCode: courseCode ?? this.courseCode,
+        day: day ?? this.day,
+        time: time ?? this.time,
+        venue: venue ?? this.venue,
+        campus: campus.present ? campus.value : this.campus,
+        hours: hours ?? this.hours,
+        invigilator: invigilator.present ? invigilator.value : this.invigilator,
+      );
+  ExamModelData copyWithCompanion(ExamModelCompanion data) {
+    return ExamModelData(
+      courseCode:
+          data.courseCode.present ? data.courseCode.value : this.courseCode,
+      day: data.day.present ? data.day.value : this.day,
+      time: data.time.present ? data.time.value : this.time,
+      venue: data.venue.present ? data.venue.value : this.venue,
+      campus: data.campus.present ? data.campus.value : this.campus,
+      hours: data.hours.present ? data.hours.value : this.hours,
+      invigilator:
+          data.invigilator.present ? data.invigilator.value : this.invigilator,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExamModelData(')
+          ..write('courseCode: $courseCode, ')
+          ..write('day: $day, ')
+          ..write('time: $time, ')
+          ..write('venue: $venue, ')
+          ..write('campus: $campus, ')
+          ..write('hours: $hours, ')
+          ..write('invigilator: $invigilator')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(courseCode, day, time, venue, campus, hours, invigilator);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExamModelData &&
+          other.courseCode == this.courseCode &&
+          other.day == this.day &&
+          other.time == this.time &&
+          other.venue == this.venue &&
+          other.campus == this.campus &&
+          other.hours == this.hours &&
+          other.invigilator == this.invigilator);
+}
+
+class ExamModelCompanion extends UpdateCompanion<ExamModelData> {
+  final Value<String> courseCode;
+  final Value<String> day;
+  final Value<String> time;
+  final Value<String> venue;
+  final Value<String?> campus;
+  final Value<String> hours;
+  final Value<String?> invigilator;
+  final Value<int> rowid;
+  const ExamModelCompanion({
+    this.courseCode = const Value.absent(),
+    this.day = const Value.absent(),
+    this.time = const Value.absent(),
+    this.venue = const Value.absent(),
+    this.campus = const Value.absent(),
+    this.hours = const Value.absent(),
+    this.invigilator = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ExamModelCompanion.insert({
+    required String courseCode,
+    required String day,
+    required String time,
+    required String venue,
+    this.campus = const Value.absent(),
+    required String hours,
+    this.invigilator = const Value.absent(),
+    this.rowid = const Value.absent(),
+  })  : courseCode = Value(courseCode),
+        day = Value(day),
+        time = Value(time),
+        venue = Value(venue),
+        hours = Value(hours);
+  static Insertable<ExamModelData> custom({
+    Expression<String>? courseCode,
+    Expression<String>? day,
+    Expression<String>? time,
+    Expression<String>? venue,
+    Expression<String>? campus,
+    Expression<String>? hours,
+    Expression<String>? invigilator,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (courseCode != null) 'course_code': courseCode,
+      if (day != null) 'day': day,
+      if (time != null) 'time': time,
+      if (venue != null) 'venue': venue,
+      if (campus != null) 'campus': campus,
+      if (hours != null) 'hours': hours,
+      if (invigilator != null) 'invigilator': invigilator,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ExamModelCompanion copyWith(
+      {Value<String>? courseCode,
+      Value<String>? day,
+      Value<String>? time,
+      Value<String>? venue,
+      Value<String?>? campus,
+      Value<String>? hours,
+      Value<String?>? invigilator,
+      Value<int>? rowid}) {
+    return ExamModelCompanion(
+      courseCode: courseCode ?? this.courseCode,
+      day: day ?? this.day,
+      time: time ?? this.time,
+      venue: venue ?? this.venue,
+      campus: campus ?? this.campus,
+      hours: hours ?? this.hours,
+      invigilator: invigilator ?? this.invigilator,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (courseCode.present) {
+      map['course_code'] = Variable<String>(courseCode.value);
+    }
+    if (day.present) {
+      map['day'] = Variable<String>(day.value);
+    }
+    if (time.present) {
+      map['time'] = Variable<String>(time.value);
+    }
+    if (venue.present) {
+      map['venue'] = Variable<String>(venue.value);
+    }
+    if (campus.present) {
+      map['campus'] = Variable<String>(campus.value);
+    }
+    if (hours.present) {
+      map['hours'] = Variable<String>(hours.value);
+    }
+    if (invigilator.present) {
+      map['invigilator'] = Variable<String>(invigilator.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExamModelCompanion(')
+          ..write('courseCode: $courseCode, ')
+          ..write('day: $day, ')
+          ..write('time: $time, ')
+          ..write('venue: $venue, ')
+          ..write('campus: $campus, ')
+          ..write('hours: $hours, ')
+          ..write('invigilator: $invigilator, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3047,12 +3447,20 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $UserCredentialTable userCredential = $UserCredentialTable(this);
   late final $CourseTable course = $CourseTable(this);
   late final $TodoTable todo = $TodoTable(this);
+  late final $ExamModelTable examModel = $ExamModelTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [attendanceModel, user, userProfile, userCredential, course, todo];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        attendanceModel,
+        user,
+        userProfile,
+        userCredential,
+        course,
+        todo,
+        examModel
+      ];
   @override
   DriftDatabaseOptions get options =>
       const DriftDatabaseOptions(storeDateTimeAsText: true);
@@ -5419,6 +5827,207 @@ typedef $$TodoTableProcessedTableManager = ProcessedTableManager<
     (TodoData, $$TodoTableReferences),
     TodoData,
     PrefetchHooks Function({bool userId, bool unit})>;
+typedef $$ExamModelTableCreateCompanionBuilder = ExamModelCompanion Function({
+  required String courseCode,
+  required String day,
+  required String time,
+  required String venue,
+  Value<String?> campus,
+  required String hours,
+  Value<String?> invigilator,
+  Value<int> rowid,
+});
+typedef $$ExamModelTableUpdateCompanionBuilder = ExamModelCompanion Function({
+  Value<String> courseCode,
+  Value<String> day,
+  Value<String> time,
+  Value<String> venue,
+  Value<String?> campus,
+  Value<String> hours,
+  Value<String?> invigilator,
+  Value<int> rowid,
+});
+
+class $$ExamModelTableFilterComposer
+    extends Composer<_$AppDatabase, $ExamModelTable> {
+  $$ExamModelTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get courseCode => $composableBuilder(
+      column: $table.courseCode, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get day => $composableBuilder(
+      column: $table.day, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get time => $composableBuilder(
+      column: $table.time, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get venue => $composableBuilder(
+      column: $table.venue, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get campus => $composableBuilder(
+      column: $table.campus, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get hours => $composableBuilder(
+      column: $table.hours, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get invigilator => $composableBuilder(
+      column: $table.invigilator, builder: (column) => ColumnFilters(column));
+}
+
+class $$ExamModelTableOrderingComposer
+    extends Composer<_$AppDatabase, $ExamModelTable> {
+  $$ExamModelTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get courseCode => $composableBuilder(
+      column: $table.courseCode, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get day => $composableBuilder(
+      column: $table.day, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get time => $composableBuilder(
+      column: $table.time, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get venue => $composableBuilder(
+      column: $table.venue, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get campus => $composableBuilder(
+      column: $table.campus, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get hours => $composableBuilder(
+      column: $table.hours, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get invigilator => $composableBuilder(
+      column: $table.invigilator, builder: (column) => ColumnOrderings(column));
+}
+
+class $$ExamModelTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ExamModelTable> {
+  $$ExamModelTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get courseCode => $composableBuilder(
+      column: $table.courseCode, builder: (column) => column);
+
+  GeneratedColumn<String> get day =>
+      $composableBuilder(column: $table.day, builder: (column) => column);
+
+  GeneratedColumn<String> get time =>
+      $composableBuilder(column: $table.time, builder: (column) => column);
+
+  GeneratedColumn<String> get venue =>
+      $composableBuilder(column: $table.venue, builder: (column) => column);
+
+  GeneratedColumn<String> get campus =>
+      $composableBuilder(column: $table.campus, builder: (column) => column);
+
+  GeneratedColumn<String> get hours =>
+      $composableBuilder(column: $table.hours, builder: (column) => column);
+
+  GeneratedColumn<String> get invigilator => $composableBuilder(
+      column: $table.invigilator, builder: (column) => column);
+}
+
+class $$ExamModelTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ExamModelTable,
+    ExamModelData,
+    $$ExamModelTableFilterComposer,
+    $$ExamModelTableOrderingComposer,
+    $$ExamModelTableAnnotationComposer,
+    $$ExamModelTableCreateCompanionBuilder,
+    $$ExamModelTableUpdateCompanionBuilder,
+    (
+      ExamModelData,
+      BaseReferences<_$AppDatabase, $ExamModelTable, ExamModelData>
+    ),
+    ExamModelData,
+    PrefetchHooks Function()> {
+  $$ExamModelTableTableManager(_$AppDatabase db, $ExamModelTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ExamModelTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ExamModelTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ExamModelTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> courseCode = const Value.absent(),
+            Value<String> day = const Value.absent(),
+            Value<String> time = const Value.absent(),
+            Value<String> venue = const Value.absent(),
+            Value<String?> campus = const Value.absent(),
+            Value<String> hours = const Value.absent(),
+            Value<String?> invigilator = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ExamModelCompanion(
+            courseCode: courseCode,
+            day: day,
+            time: time,
+            venue: venue,
+            campus: campus,
+            hours: hours,
+            invigilator: invigilator,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String courseCode,
+            required String day,
+            required String time,
+            required String venue,
+            Value<String?> campus = const Value.absent(),
+            required String hours,
+            Value<String?> invigilator = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ExamModelCompanion.insert(
+            courseCode: courseCode,
+            day: day,
+            time: time,
+            venue: venue,
+            campus: campus,
+            hours: hours,
+            invigilator: invigilator,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ExamModelTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ExamModelTable,
+    ExamModelData,
+    $$ExamModelTableFilterComposer,
+    $$ExamModelTableOrderingComposer,
+    $$ExamModelTableAnnotationComposer,
+    $$ExamModelTableCreateCompanionBuilder,
+    $$ExamModelTableUpdateCompanionBuilder,
+    (
+      ExamModelData,
+      BaseReferences<_$AppDatabase, $ExamModelTable, ExamModelData>
+    ),
+    ExamModelData,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5433,4 +6042,6 @@ class $AppDatabaseManager {
   $$CourseTableTableManager get course =>
       $$CourseTableTableManager(_db, _db.course);
   $$TodoTableTableManager get todo => $$TodoTableTableManager(_db, _db.todo);
+  $$ExamModelTableTableManager get examModel =>
+      $$ExamModelTableTableManager(_db, _db.examModel);
 }

@@ -1,3 +1,4 @@
+import 'package:academia/database/database.dart';
 import 'package:academia/exports/barrel.dart';
 
 class ExamCountDownWidget extends StatefulWidget {
@@ -9,7 +10,7 @@ class ExamCountDownWidget extends StatefulWidget {
   });
   final DateTime endtime;
   final int examCount;
-  final Exam? exam;
+  final ExamModelData? exam;
 
   @override
   State<ExamCountDownWidget> createState() => _ExamCountDownWidgetState();

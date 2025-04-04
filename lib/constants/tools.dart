@@ -44,17 +44,6 @@ final List<Map<String, dynamic>> allTools = [
   //      "Psst! Elearning is here for you. Keep track of your assignments and notes!",
   //},
   {
-    "id": 4,
-    "name": "Exam Timetable",
-    "action": "Show exam timetable",
-    "image": "assets/images/sketchbook-man-analyzing-business-data.png",
-    "ontap": () {
-      Get.to(const ExamTimeTablePage());
-    },
-    "description":
-        "Exams around the corner? Don't panic we've got you covered with the timetable",
-  },
-  {
     "id": 5,
     "name": "Task Manager",
     "action": "Manage your tasks",
