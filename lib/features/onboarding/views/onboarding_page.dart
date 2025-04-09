@@ -16,21 +16,21 @@ class OnboardingPage extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         minimum: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            const Spacer(),
-            Lottie.asset(
-              "assets/lotties/onboarding.json",
-              repeat: false,
-              height: 250,
-            ),
-            //const Spacer(),
-            Expanded(
-              child: Column(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+              Lottie.asset(
+                "assets/lotties/onboarding.json",
+                repeat: false,
+                height: 250,
+              ),
+              //const Spacer(),
+              Column(
                 spacing: 12,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Spacer(),
+                  // const Spacer(),
                   Text(
                     "Academia is for you by you, crafted by students, for students",
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -74,8 +74,8 @@ class OnboardingPage extends StatelessWidget {
                   const SizedBox(height: 16),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

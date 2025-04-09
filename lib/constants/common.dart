@@ -137,3 +137,24 @@ extension WeekdayToString on DateTime {
     }
   }
 }
+
+
+DateTime convertExamDateToDateTime(String input) {
+  // Split the input string by space to separate the weekday and the date
+  var parts = input.split(" ");
+
+  // Extract the date part (e.g., "19/12/24")
+  var dateStr = parts[1];
+  
+  // Split the date by "/" to get day, month, and year
+  var dateComponents = dateStr.split("/");
+  var day = int.parse(dateComponents[0]);
+  var month = int.parse(dateComponents[1]);
+  var year = int.parse(dateComponents[2]);
+
+  // Adjust the year if necessary (assuming 21st century, e.g., 2024 for 24)
+  year = 2000 + year; // Converts 24 to 2024
+
+  // Create a DateTime object with the parsed day, month, and year
+  return DateTime(year, month, day);
+}

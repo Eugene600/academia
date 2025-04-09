@@ -22,7 +22,7 @@ final class ExamBloc extends Bloc<ExamEvent, ExamState> {
       res.fold((error) {
         emit(ExamStateError(error: error));
       }, (exams) {
-        print(exams);
+        _exams.clear();
         _exams.addAll(exams);
         emit(ExamStateLoaded(userExams: _exams, fetchedExams: []));
       });

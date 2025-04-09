@@ -1,18 +1,19 @@
 import 'package:academia/database/database.dart';
-import 'package:academia/exports/barrel.dart';
-import 'package:academia/features/features.dart';
+import 'package:academia/features/exam_timetable/exam_timetable.dart';
+import 'package:intl/intl.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:academia/constants/common.dart';
 
 class ExamCard extends StatelessWidget {
   const ExamCard({
     super.key,
     required this.exam,
-    this.ispast = false,
     this.hideDelete = false,
   });
   final ExamModelData exam;
-  final bool ispast;
   final bool hideDelete;
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class ExamCard extends StatelessWidget {
           //     : Theme.of(context).colorScheme.primaryContainer,
         ),
         child: ExpansionTile(
-          initiallyExpanded: true,
+          initiallyExpanded: DateTime.now().isBefore(exam.examDate),
           title: Text(exam.courseCode.toString()),
           trailing: hideDelete
               ? TextButton(
@@ -45,9 +46,9 @@ class ExamCard extends StatelessWidget {
                 ),
           children: [
             ListTile(
-              enabled: !ispast,
+              enabled: exam.examDate.isAfter(DateTime.now()),
               title: Text(
-                exam.day,
+                DateFormat.yMMMMEEEEd().format(exam.examDate),
               ),
               leading: CircleAvatar(
                 child: Text(exam.hours),
@@ -67,7 +68,7 @@ class ExamCard extends StatelessWidget {
                       const Icon(Ionicons.time),
                       const SizedBox(width: 2),
                       Text(
-                        exam.time,
+                        DateFormat.Hm().format(exam.examDate),
                       ),
                     ],
                   ),

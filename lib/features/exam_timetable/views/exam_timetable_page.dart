@@ -3,11 +3,13 @@ import 'package:academia/database/database.dart';
 import 'package:academia/features/features.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+
+import '../widgets/exam_card.dart';
+import '../widgets/count_down_widget.dart';
 
 class ExamTimeTablePage extends StatefulWidget {
   const ExamTimeTablePage({super.key});
@@ -18,8 +20,6 @@ class ExamTimeTablePage extends StatefulWidget {
 
 class _ExamTimeTablePageState extends State<ExamTimeTablePage> {
   final _searchController = TextEditingController();
-  bool _isSearching = false;
-  bool _searchComplete = false;
 
   late UserData user;
 
@@ -104,9 +104,94 @@ class _ExamTimeTablePageState extends State<ExamTimeTablePage> {
                             )
                           : MultiSliver(
                               children: [
-                                SliverPinnedHeader(
-                                  child: ExamCountDownWidget(
-                                      endtime: DateTime.now(), examCount: 6),
+                                SliverToBoxAdapter(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Card(
+                                        color: Colors.teal,
+                                        child: Container(
+                                          padding: EdgeInsets.all(12),
+                                          child: Column(
+                                            spacing: 12,
+                                            children: [
+                                              Icon(Clarity.indent_line),
+                                              Text(
+                                                state.userExams.length
+                                                    .toString(),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineMedium,
+                                              ),
+                                              Text("Total Exams")
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Card(
+                                        color: Colors.orange,
+                                        child: Container(
+                                          padding: EdgeInsets.all(12),
+                                          child: Column(
+                                            spacing: 12,
+                                            children: [
+                                              Icon(Clarity.calendar_line),
+                                              Text(
+                                                state.userExams
+                                                    .where((exam) =>
+                                                        exam.examDate.year ==
+                                                            DateTime.now()
+                                                                .year &&
+                                                        exam.examDate.month ==
+                                                            DateTime.now()
+                                                                .month &&
+                                                        exam.examDate.day ==
+                                                            DateTime.now().day)
+                                                    .length
+                                                    .toString(),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineMedium,
+                                              ),
+                                              Text("Exams today")
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Card(
+                                        color: Colors.cyan,
+                                        child: Container(
+                                          padding: EdgeInsets.all(12),
+                                          child: Column(
+                                            spacing: 12,
+                                            children: [
+                                              Icon(Clarity.checkbox_list_line),
+                                              Text(
+                                                state.userExams
+                                                    .where((exam) =>
+                                                        exam.examDate.isBefore(
+                                                            DateTime.now()))
+                                                    .length
+                                                    .toString(),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headlineMedium,
+                                              ),
+                                              Text("Exams Done")
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SliverPadding(
+                                  padding: EdgeInsets.all(12),
+                                  sliver: SliverPinnedHeader(
+                                    child: ExamCountDownWidget(
+                                      exams: state.userExams,
+                                    ),
+                                  ),
                                 ),
                                 SliverList.separated(
                                     itemCount: state.userExams.length,
@@ -232,10 +317,5 @@ class _ExamTimeTablePageState extends State<ExamTimeTablePage> {
         ),
       ),
     );
-  }
-
-  DateTime getExamDate(ExamModelData exam) {
-    final formatter = DateFormat('EEEE dd/MM/yy');
-    return formatter.parse(exam.day.title());
   }
 }

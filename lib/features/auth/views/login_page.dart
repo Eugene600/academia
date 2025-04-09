@@ -120,10 +120,10 @@ class _LoginPageState extends State<LoginPage> {
         }
       },
       child: Scaffold(
-        resizeToAvoidBottomInset: true,
         body: Form(
           key: _formState,
           child: CustomScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             slivers: [
               SliverAppBar(
                 pinned: true,
@@ -148,34 +148,43 @@ class _LoginPageState extends State<LoginPage> {
               SliverPadding(
                 padding: const EdgeInsets.all(12),
                 sliver: SliverPinnedHeader(
-                  child: Column(
-                    spacing: 8,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  child: Container(
+                    color: Theme.of(context).colorScheme.surface,
+                    child: Column(
+                      spacing: 8,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            Lottie.asset(
+                              "assets/lotties/identity.json",
+                              repeat: false,
+                              height: 160,
+                            ),
+
+                            // Headline
+                            Flexible(
+                              child: Text(
+                                "Lets find you and set up things just the way you like",
+                                style: Theme.of(context).textTheme.titleLarge,
+                              )
+                                  .animate()
+                                  .moveX(begin: -10, end: 3, duration: 500.ms),
+                            ),
+                          ],
+                        ),
+                        const Text(
+                          "Use your school admission number and school portal password to continue to Academia.",
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SliverPadding(
+                  padding: EdgeInsets.all(12),
+                  sliver: MultiSliver(
                     children: [
-                      Row(
-                        children: [
-                          Lottie.asset(
-                            "assets/lotties/identity.json",
-                            repeat: false,
-                            height: 160,
-                          ),
-
-                          // Headline
-                          Flexible(
-                            child: Text(
-                              "Lets find you and set up things just the way you like",
-                              style: Theme.of(context).textTheme.titleLarge,
-                            )
-                                .animate()
-                                .moveX(begin: -10, end: 3, duration: 500.ms),
-                          ),
-                        ],
-                      ),
-
-                      const Text(
-                        "Use your school admission number and school portal password to continue to Academia.",
-                      ),
-
                       TextFormField(
                         controller: _admissionController,
                         textAlign: TextAlign.center,
@@ -301,9 +310,7 @@ class _LoginPageState extends State<LoginPage> {
                         ).animate().fadeIn(curve: Curves.easeOutBack);
                       }),
                     ],
-                  ),
-                ),
-              ),
+                  )),
               SliverPadding(
                 padding: const EdgeInsets.all(12),
                 sliver: SliverToBoxAdapter(
