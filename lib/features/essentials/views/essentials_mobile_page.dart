@@ -165,24 +165,35 @@ class _EssentialsMobilePageState extends State<EssentialsMobilePage> {
                 //  ),
                 //),
                 //
-                //Card(
-                //  elevation: 0,
-                //  color: Theme.of(context)
-                //      .colorScheme
-                //      .tertiaryContainer
-                //      .withAlpha(100),
-                //  margin: EdgeInsets.only(bottom: 2),
-                //  shape: RoundedRectangleBorder(
-                //    borderRadius: BorderRadius.vertical(
-                //      bottom: Radius.zero,
-                //    ),
-                //  ),
-                //  child: ListTile(
-                //    leading: Icon(Bootstrap.file_ppt),
-                //    title: Text("Ask Me"),
-                //    subtitle: Text("Boring notes? We'll help you revise"),
-                //  ),
-                //),
+                Card(
+                  elevation: 0,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .tertiaryContainer
+                      .withAlpha(100),
+                  margin: EdgeInsets.only(bottom: 2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.zero,
+                    ),
+                  ),
+                  child: ListTile(
+                    onTap: () async {
+                      context.pushNamed(
+                        "ask-me",
+                      );
+                      if (await Vibration.hasVibrator()) {
+                        await Vibration.vibrate(
+                          duration: 32,
+                          sharpness: 250,
+                        );
+                      }
+                    },
+                    leading: Icon(Bootstrap.file_ppt),
+                    title: Text("Ask Me"),
+                    subtitle: Text("Boring notes? We'll help you revise"),
+                  ),
+                ),
                 //Card(
                 //  elevation: 0,
                 //  color: Theme.of(context)

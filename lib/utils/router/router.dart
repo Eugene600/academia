@@ -154,6 +154,11 @@ class AcademiaRouter {
           return TodoViewPage(todoData: todo);
         },
       ),
+      GoRoute(
+        path: "/ask-me",
+        name: "ask-me",
+        builder: (context, state) => const AskMeHome(),
+      ),
     ],
   );
 }
