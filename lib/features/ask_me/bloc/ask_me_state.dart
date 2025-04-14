@@ -18,7 +18,6 @@ final class QuestionsStateLoaded extends AskMeState {
   QuestionsStateLoaded({required this.questions, required this.timeLimit});
 }
 
-
 final class QuestionInProgress extends AskMeState {
   final List<Question> allQuestions;
   final Question currentQuestion;
@@ -27,7 +26,7 @@ final class QuestionInProgress extends AskMeState {
   final int total;
   final int timeLimit;
   final int remainingSeconds;
-
+  final int? selectedOptionIndex;
 
   QuestionInProgress({
     required this.allQuestions,
@@ -37,6 +36,33 @@ final class QuestionInProgress extends AskMeState {
     required this.total,
     required this.timeLimit,
     required this.remainingSeconds,
+    this.selectedOptionIndex,
+  });
+}
+
+final class AnswerResultState extends AskMeState {
+  final List<Question> allQuestions;
+  final Question currentQuestion;
+  final int questionIndex;
+  final int score;
+  final int total;
+  final int timeLimit;
+  final int remainingSeconds;
+  final String selectedAnswer;
+  final int? selectedOptionIndex;
+  final bool isCorrect;
+
+  AnswerResultState({
+    required this.allQuestions,
+    required this.currentQuestion,
+    required this.questionIndex,
+    required this.score,
+    required this.total,
+    required this.timeLimit,
+    required this.remainingSeconds,
+    required this.selectedAnswer,
+    this.selectedOptionIndex,
+    required this.isCorrect,
   });
 }
 

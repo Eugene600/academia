@@ -30,14 +30,15 @@ class AskMeHome extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          final parentContext = context;
           showModalBottomSheet(
-            context: context,
+            context: parentContext,
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
             isScrollControlled: true,
             
-            builder: (_) => const AskMeFormSheet(),
+            builder: (_) => AskMeFormSheet(parentContext: parentContext),
           );
         },
         child: Icon(Icons.add),

@@ -4,12 +4,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 class AskMeFormSheet extends StatefulWidget {
-  const AskMeFormSheet({super.key});
+  final BuildContext parentContext;
+  const AskMeFormSheet({super.key, required this.parentContext});
 
   @override
   State<AskMeFormSheet> createState() => _AskMeFormSheetState();
@@ -19,7 +19,8 @@ class _AskMeFormSheetState extends State<AskMeFormSheet> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
-  String? _selectedFile;
+  File? _selectedFile;
+  String? _fileName;
   bool _isMultipleChoice = true;
 
   void _pickFile() async {
@@ -55,7 +56,8 @@ class _AskMeFormSheetState extends State<AskMeFormSheet> {
         final copiedFile = await originalFile.copy(newPath);
 
         setState(() {
-          _selectedFile = copiedFile.path.split('/').last;
+          _selectedFile = copiedFile;
+          _fileName = copiedFile.path.split('/').last;
         });
       } else {
         // User cancelled the picker
@@ -65,14 +67,14 @@ class _AskMeFormSheetState extends State<AskMeFormSheet> {
 
         if (!context.mounted) return;
 
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(widget.parentContext).showSnackBar(
           const SnackBar(content: Text("No file selected")),
         );
       }
     } catch (e) {
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(widget.parentContext).showSnackBar(
         SnackBar(content: Text("Error: ${e.toString()}")),
       );
     }
@@ -92,9 +94,8 @@ class _AskMeFormSheetState extends State<AskMeFormSheet> {
           multiChoice: multiChoice,
           timeLimit: timeLimit));
 
-      context.pop();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(widget.parentContext).showSnackBar(
         const SnackBar(content: Text("Please complete all fields")),
       );
     }
@@ -102,18 +103,18 @@ class _AskMeFormSheetState extends State<AskMeFormSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
     var theme = Theme.of(context);
 
     return BlocConsumer<AskMeBloc, AskMeState>(
       listener: (context, state) {
+        print("Current AskMeBloc State: $state");
         if (state is AskMeErrorState) {
+          print("Error: ${state.error}");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error)),
           );
-        } else if (state is QuestionsStateLoaded) {
-          //Navigate to question screen
-          //will add later
+        } else if (state is QuestionInProgress) {
+          context.pushNamed("ask-me-questions");
         }
       },
       builder: (context, state) {
@@ -158,7 +159,7 @@ class _AskMeFormSheetState extends State<AskMeFormSheet> {
                       label: const Text("Upload file")),
                 ),
                 const SizedBox(height: 5),
-                if (_selectedFile != null) Text("$_selectedFile"),
+                if (_selectedFile != null) Text("$_fileName"),
                 const SizedBox(height: 10),
                 Row(
                   children: [
@@ -208,10 +209,7 @@ class _AskMeFormSheetState extends State<AskMeFormSheet> {
                 ),
                 const SizedBox(height: 10),
                 isLoading
-                    ? Lottie.asset(
-                        "assets/lotties/loading.json",
-                        height: 45,
-                      )
+                    ? CircularProgressIndicator()
                     : OutlinedButton.icon(
                         onPressed: () => _submit(),
                         label: Text("Generate Questions",

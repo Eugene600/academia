@@ -3,7 +3,7 @@ part of 'ask_me_bloc.dart';
 sealed class AskMeEvent {}
 
 class GenerateQuestions extends AskMeEvent {
-  final String file;
+  final File file;
   final String title;
   final String userId;
   final bool multiChoice;
@@ -24,6 +24,8 @@ class SubmitAnswer extends AskMeEvent {
   SubmitAnswer({required this.answer});
 }
 
+class NextQuestion extends AskMeEvent{}
+
 class StartTimer extends AskMeEvent{}
 
 class TimerTick extends AskMeEvent {
@@ -33,6 +35,12 @@ class TimerTick extends AskMeEvent {
 }
 
 class TimerComplete extends AskMeEvent{}
+
+class SelectOption extends AskMeEvent {
+  final int selectedIndex;
+
+  SelectOption({required this.selectedIndex});
+}
 
 
 class CompleteQuestions extends AskMeEvent {}

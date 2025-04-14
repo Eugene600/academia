@@ -158,6 +158,13 @@ class AcademiaRouter {
         path: "/ask-me",
         name: "ask-me",
         builder: (context, state) => const AskMeHome(),
+        routes: [
+          GoRoute(
+            path: "/ask-me-questions",
+            name: "ask-me-questions",
+            builder: (context, state) => const QuestionScreen(),
+          ),
+        ],
       ),
     ],
   );

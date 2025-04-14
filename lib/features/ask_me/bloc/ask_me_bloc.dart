@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:academia/features/ask_me/models/multiple_choice_question.dart';
 import 'package:academia/features/ask_me/models/question.dart';
@@ -59,6 +60,7 @@ class AskMeBloc extends Bloc<AskMeEvent, AskMeState> {
             total: _questions.length,
             timeLimit: event.timeLimit,
             remainingSeconds: _remainingSeconds,
+            selectedOptionIndex: null,
           ));
           add(StartTimer());
         },
@@ -83,13 +85,15 @@ class AskMeBloc extends Bloc<AskMeEvent, AskMeState> {
       if (state is QuestionInProgress) {
         final currentState = state as QuestionInProgress;
         emit(QuestionInProgress(
-            allQuestions: currentState.allQuestions,
-            currentQuestion: currentState.currentQuestion,
-            questionIndex: currentState.questionIndex,
-            score: currentState.score,
-            total: currentState.total,
-            timeLimit: currentState.timeLimit,
-            remainingSeconds: currentState.remainingSeconds));
+          allQuestions: currentState.allQuestions,
+          currentQuestion: currentState.currentQuestion,
+          questionIndex: currentState.questionIndex,
+          score: currentState.score,
+          total: currentState.total,
+          timeLimit: currentState.timeLimit,
+          remainingSeconds: event.remainingTime,
+          selectedOptionIndex: currentState.selectedOptionIndex,
+        ));
       }
     });
 
@@ -105,6 +109,24 @@ class AskMeBloc extends Bloc<AskMeEvent, AskMeState> {
 
       if (isCorrect) _score++;
 
+      emit(AnswerResultState(
+        allQuestions: _questions,
+        currentQuestion: currentQuestion,
+        questionIndex: _currentIndex,
+        score: _score,
+        total: _questions.length,
+        timeLimit: _timeLimit,
+        remainingSeconds: _remainingSeconds,
+        selectedAnswer: event.answer,
+        isCorrect: isCorrect,
+        selectedOptionIndex:
+            _questions[_currentIndex].choices.indexOf(event.answer),
+      ));
+    });
+
+    on<NextQuestion>((event, emit) {
+      final currentQuestion = _questions[_currentIndex];
+
       _currentIndex++;
 
       if (_currentIndex >= _questions.length) {
@@ -118,6 +140,23 @@ class AskMeBloc extends Bloc<AskMeEvent, AskMeState> {
           total: _questions.length,
           timeLimit: _timeLimit,
           remainingSeconds: _remainingSeconds,
+          selectedOptionIndex: null,
+        ));
+      }
+    });
+
+    on<SelectOption>((event, emit) {
+      if (state is QuestionInProgress) {
+        final current = state as QuestionInProgress;
+        emit(QuestionInProgress(
+          allQuestions: current.allQuestions,
+          currentQuestion: current.currentQuestion,
+          questionIndex: current.questionIndex,
+          score: current.score,
+          total: current.total,
+          timeLimit: current.timeLimit,
+          remainingSeconds: current.remainingSeconds,
+          selectedOptionIndex: event.selectedIndex,
         ));
       }
     });
