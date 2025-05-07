@@ -1,82 +1,124 @@
-import 'package:academia/features/features.dart';
+import 'package:academia/features/ask_me/bloc/ask_me_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
-class QuestionScreen extends StatelessWidget {
+class QuestionScreen extends StatefulWidget {
   const QuestionScreen({super.key});
 
   @override
+  State<QuestionScreen> createState() => _QuestionScreenState();
+}
+
+class _QuestionScreenState extends State<QuestionScreen> {
+  int? selectedIndex;
+  bool isAnswered = false;
+  @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    return Scaffold(
-      body: BlocConsumer<AskMeBloc, AskMeState>(
-        listener: (context, state) {
-          if (state is QuestionsComplete) {
-            //Navigate to scores section
-            //will add later
-          } else if (state is AskMeErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error)),
-            );
-          } else if (state is QuestionInProgress) {
-            // resetAnswer();
-          }
-        },
-        builder: (context, state) {
-          if (state is QuestionInProgress) {
-            final minutes = state.remainingSeconds ~/ 60;
-            final seconds = state.remainingSeconds % 60;
-            final timeFormatted =
-                "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
 
-            return CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  leading: IconButton(
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (_) {
-                              return AlertDialog(
-                                title: const Text("Confirm Exit"),
-                                content: const Text(
-                                    "Are you sure you want to quit?"),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => context.pop(),
-                                    child: const Text("Cancel"),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      context.pop(); // Dismiss dialog
-                                      context
-                                          .read<AskMeBloc>()
-                                          .add(CompleteQuestions());
-                                    },
-                                    child: const Text("Quit"),
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                      icon: Icon(Icons.arrow_back)),
-                  centerTitle: true,
-                  title: Text(
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            leading: IconButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (_) {
+                        return AlertDialog(
+                          title: const Text("Confirm Exit"),
+                          content: const Text("Are you sure you want to quit?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () => context.pop(),
+                              child: const Text("Cancel"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                context.pop(); // Dismiss dialog
+                                context.pop();
+                                context
+                                    .read<AskMeBloc>()
+                                    .add(CompleteQuestions());
+                              },
+                              child: const Text("Quit"),
+                            ),
+                          ],
+                        );
+                      });
+                },
+                icon: Icon(Icons.arrow_back)),
+            centerTitle: true,
+            title: BlocBuilder<AskMeBloc, AskMeState>(
+              buildWhen: (previous, current) {
+                if (previous is QuestionState && current is QuestionState) {
+                  return previous.questionIndex != current.questionIndex;
+                }
+                return previous.runtimeType != current.runtimeType;
+              },
+              builder: (context, state) {
+                if (state is QuestionState) {
+                  return Text(
                     "${state.questionIndex + 1} of ${state.total}",
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  actions: [
-                    Text(
-                      timeFormatted,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                  ],
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SizedBox(
+                    style: theme.textTheme.titleLarge,
+                  );
+                }
+                return Text("Quiz", style: theme.textTheme.titleLarge);
+              },
+            ),
+            actions: [
+              BlocBuilder<AskMeBloc, AskMeState>(
+                buildWhen: (previous, current) {
+                  if (previous is QuestionState && current is QuestionState) {
+                    return previous.remainingTime != current.remainingTime;
+                  }
+                  return previous.runtimeType != current.runtimeType;
+                },
+                builder: (context, state) {
+                  if (state is QuestionState && state.remainingTime > 0) {
+                    final minutes = state.remainingTime ~/ 60;
+                    final seconds = state.remainingTime % 60;
+                    final timeFormatted =
+                        "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: Text(
+                        timeFormatted,
+                        style: theme.textTheme.titleLarge,
+                      ),
+                    );
+                  }
+                  return const SizedBox();
+                },
+              ),
+            ],
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(16.0),
+            sliver: MultiSliver(
+              children: [
+                BlocConsumer<AskMeBloc, AskMeState>(
+                    listenWhen: (previous, current) {
+                  if (previous is QuestionState && current is QuestionState) {
+                    return previous.questionIndex != current.questionIndex;
+                  }
+                  return false;
+                }, listener: (context, state) {
+                  setState(() {
+                    selectedIndex = null;
+                    isAnswered = false;
+                  });
+                }, buildWhen: (previous, current) {
+                  if (previous is QuestionState && current is QuestionState) {
+                      return previous.questionIndex != current.questionIndex;
+                    }
+                    return previous.runtimeType != current.runtimeType;
+                }, builder: (context, state) {
+                  if (state is QuestionState) {
+                    return SizedBox(
                       height: MediaQuery.of(context).size.height * 0.8,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -122,14 +164,10 @@ class QuestionScreen extends StatelessWidget {
                                   children: List.generate(
                                     state.currentQuestion.choices.length,
                                     (index) {
-                                      final isSelected =
-                                          state.selectedOptionIndex == index;
-                                      final isCorrect =
-                                          state is AnswerResultState &&
-                                              state.currentQuestion
-                                                      .choices[index] ==
-                                                  state.currentQuestion
-                                                      .correctAnswer;
+                                      final isSelected = selectedIndex == index;
+                                      final isCorrect = state
+                                              .currentQuestion.choices[index] ==
+                                          state.currentQuestion.correctAnswer;
 
                                       return Container(
                                         margin: const EdgeInsets.symmetric(
@@ -147,13 +185,17 @@ class QuestionScreen extends StatelessWidget {
                                         ),
                                         child: ListTile(
                                           onTap: () {
-                                            context.read<AskMeBloc>().add(SelectOption(selectedIndex: index));
+                                            setState(() {
+                                              selectedIndex = index;
+                                            });
                                           },
                                           leading: Radio<int>(
                                             value: index,
-                                            groupValue: state.selectedOptionIndex,
+                                            groupValue: selectedIndex,
                                             onChanged: (value) {
-                                              context.read<AskMeBloc>().add(SelectOption(selectedIndex: value!));
+                                              setState(() {
+                                                selectedIndex = value;
+                                              });
                                             },
                                           ),
                                           title: Text(
@@ -162,7 +204,7 @@ class QuestionScreen extends StatelessWidget {
                                             style:
                                                 const TextStyle(fontSize: 14),
                                           ),
-                                          trailing: state is AnswerResultState
+                                          trailing: isAnswered
                                               ? Icon(
                                                   isCorrect
                                                       ? Icons.check
@@ -177,7 +219,7 @@ class QuestionScreen extends StatelessWidget {
                                     },
                                   ),
                                 ),
-                                if (state is AnswerResultState)
+                                if (isAnswered)
                                   Padding(
                                     padding: const EdgeInsets.only(top: 10.0),
                                     child: Align(
@@ -198,12 +240,15 @@ class QuestionScreen extends StatelessWidget {
                           const SizedBox(height: 20),
                           FilledButton(
                             onPressed: () {
-                              if (state is AnswerResultState) {
+                              if (isAnswered) {
                                 context.read<AskMeBloc>().add(NextQuestion());
-                              } else if (state.selectedOptionIndex != null) {
+                              } else if (selectedIndex != null) {
+                                setState(() {
+                                  isAnswered = true;
+                                });
                                 context.read<AskMeBloc>().add(SubmitAnswer(
                                     answer: state.currentQuestion
-                                        .choices[state.selectedOptionIndex!]));
+                                        .choices[selectedIndex!]));
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -212,32 +257,20 @@ class QuestionScreen extends StatelessWidget {
                                 );
                               }
                             },
-                            child: Text(
-                                state is AnswerResultState ? "Next" : "Submit"),
+                            child: Text(isAnswered ? "Next" : "Submit"),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                ),
+                    );
+                  }
+                  return SizedBox(
+                    child: Text("State is $state"),
+                  );
+                }),
               ],
-            );
-          } else if (state is AskMeLoadingState) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return Center(
-              child: Column(
-                children: [
-                  Text("Unexpected Error Occurred"),
-                  FilledButton(
-                      onPressed: () => context.pop(), child: Text("Exit"))
-                ],
-              ),
-            );
-          }
-        },
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -52,15 +52,12 @@ class AskMeBloc extends Bloc<AskMeEvent, AskMeState> {
           _timeLimit = event.timeLimit;
           _remainingSeconds = _timeLimit * 60;
 
-          emit(QuestionInProgress(
+          emit(QuestionState(
             allQuestions: _questions,
             currentQuestion: _questions.first,
             questionIndex: _currentIndex,
-            score: _score,
             total: _questions.length,
-            timeLimit: event.timeLimit,
-            remainingSeconds: _remainingSeconds,
-            selectedOptionIndex: null,
+            remainingTime: _remainingSeconds,
           ));
           add(StartTimer());
         },
@@ -82,24 +79,23 @@ class AskMeBloc extends Bloc<AskMeEvent, AskMeState> {
     });
 
     on<TimerTick>((event, emit) {
-      if (state is QuestionInProgress) {
-        final currentState = state as QuestionInProgress;
-        emit(QuestionInProgress(
-          allQuestions: currentState.allQuestions,
-          currentQuestion: currentState.currentQuestion,
-          questionIndex: currentState.questionIndex,
-          score: currentState.score,
-          total: currentState.total,
-          timeLimit: currentState.timeLimit,
-          remainingSeconds: event.remainingTime,
-          selectedOptionIndex: currentState.selectedOptionIndex,
+      if (state is QuestionState) {
+        final current = state as QuestionState;
+
+        emit(QuestionState(
+          allQuestions: current.allQuestions,
+          currentQuestion: current.currentQuestion,
+          questionIndex: current.questionIndex,
+          total: current.total,
+          remainingTime: event.remainingTime,
         ));
       }
     });
 
     on<TimerComplete>((event, emit) {
       _cancelTimer();
-      emit(QuestionsComplete(score: _score, total: _questions.length));
+      emit(QuestionsComplete(
+          score: _score, total: _questions.length)); // to be removed later
     });
 
     on<SubmitAnswer>((event, emit) {
@@ -108,57 +104,23 @@ class AskMeBloc extends Bloc<AskMeEvent, AskMeState> {
       final isCorrect = currentQuestion.correctAnswer == event.answer;
 
       if (isCorrect) _score++;
-
-      emit(AnswerResultState(
-        allQuestions: _questions,
-        currentQuestion: currentQuestion,
-        questionIndex: _currentIndex,
-        score: _score,
-        total: _questions.length,
-        timeLimit: _timeLimit,
-        remainingSeconds: _remainingSeconds,
-        selectedAnswer: event.answer,
-        isCorrect: isCorrect,
-        selectedOptionIndex:
-            _questions[_currentIndex].choices.indexOf(event.answer),
-      ));
     });
 
     on<NextQuestion>((event, emit) {
-      final currentQuestion = _questions[_currentIndex];
-
-      _currentIndex++;
-
       if (_currentIndex >= _questions.length) {
         emit(QuestionsComplete(score: _score, total: _questions.length));
-      } else {
-        emit(QuestionInProgress(
-          allQuestions: _questions,
-          currentQuestion: currentQuestion,
-          questionIndex: _currentIndex,
-          score: _score,
-          total: _questions.length,
-          timeLimit: _timeLimit,
-          remainingSeconds: _remainingSeconds,
-          selectedOptionIndex: null,
-        ));
       }
-    });
 
-    on<SelectOption>((event, emit) {
-      if (state is QuestionInProgress) {
-        final current = state as QuestionInProgress;
-        emit(QuestionInProgress(
-          allQuestions: current.allQuestions,
-          currentQuestion: current.currentQuestion,
-          questionIndex: current.questionIndex,
-          score: current.score,
-          total: current.total,
-          timeLimit: current.timeLimit,
-          remainingSeconds: current.remainingSeconds,
-          selectedOptionIndex: event.selectedIndex,
-        ));
-      }
+      _currentIndex++;
+      final nextQuestion = _questions[_currentIndex];
+
+      emit(QuestionState(
+        allQuestions: _questions,
+        currentQuestion: nextQuestion,
+        questionIndex: _currentIndex,
+        total: _questions.length,
+        remainingTime: _remainingSeconds,
+      ));
     });
 
     on<CompleteQuestions>((event, emit) {

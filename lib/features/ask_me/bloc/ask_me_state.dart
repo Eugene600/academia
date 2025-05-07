@@ -11,59 +11,42 @@ final class AskMeErrorState extends AskMeState {
   AskMeErrorState({required this.error});
 }
 
-final class QuestionsStateLoaded extends AskMeState {
-  final List<Question> questions;
-  final int timeLimit;
-
-  QuestionsStateLoaded({required this.questions, required this.timeLimit});
-}
-
-final class QuestionInProgress extends AskMeState {
+final class QuestionState extends AskMeState {
   final List<Question> allQuestions;
   final Question currentQuestion;
   final int questionIndex;
-  final int score;
   final int total;
-  final int timeLimit;
-  final int remainingSeconds;
-  final int? selectedOptionIndex;
+  final int remainingTime;
 
-  QuestionInProgress({
+  QuestionState({
     required this.allQuestions,
     required this.currentQuestion,
     required this.questionIndex,
-    required this.score,
     required this.total,
-    required this.timeLimit,
-    required this.remainingSeconds,
-    this.selectedOptionIndex,
+    required this.remainingTime,
   });
 }
 
-final class AnswerResultState extends AskMeState {
-  final List<Question> allQuestions;
-  final Question currentQuestion;
-  final int questionIndex;
-  final int score;
-  final int total;
-  final int timeLimit;
-  final int remainingSeconds;
-  final String selectedAnswer;
-  final int? selectedOptionIndex;
-  final bool isCorrect;
+// final class AnswerResultState extends QuestionState {
+//   AnswerResultState({
+//     required List<Question> allQuestions,
+//     required Question currentQuestion,
+//     required int questionIndex,
+//     required int total,
+//     required int remainingTime,
+//   }) : super(
+//           allQuestions: allQuestions,
+//           currentQuestion: currentQuestion,
+//           questionIndex: questionIndex,
+//           total: total,
+//           remainingTime: remainingTime,
+//         );
+// }
 
-  AnswerResultState({
-    required this.allQuestions,
-    required this.currentQuestion,
-    required this.questionIndex,
-    required this.score,
-    required this.total,
-    required this.timeLimit,
-    required this.remainingSeconds,
-    required this.selectedAnswer,
-    this.selectedOptionIndex,
-    required this.isCorrect,
-  });
+final class TimerState extends AskMeState{
+  final int remainingTime;
+
+  TimerState({required this.remainingTime});
 }
 
 final class QuestionsComplete extends AskMeState {

@@ -113,7 +113,7 @@ class _AskMeFormSheetState extends State<AskMeFormSheet> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error)),
           );
-        } else if (state is QuestionInProgress) {
+        } else if (state is QuestionState) {
           context.pushNamed("ask-me-questions");
         }
       },
